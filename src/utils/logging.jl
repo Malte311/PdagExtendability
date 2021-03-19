@@ -13,7 +13,8 @@ julia> writelog("Hello, world!", Logging.Info)
 ```
 """
 function writelog(msg::String, lvl::Logging.LogLevel)
-	io = open("log.txt", "a+")
+	# TODO: Read logfile name from config
+	io = open("./logs/log.txt", "a+")
 	logger = SimpleLogger(io, Logging.Error)
 
 	msg = "[$(Dates.format(Dates.now(), "dd.mm.Y HH:MM:SS"))] $msg"

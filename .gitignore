@@ -26,3 +26,4 @@ Manifest.toml
 # Custom things
 .DS_Store
 .vscode
+/src/utils/logs/*.txt

@@ -1,0 +1,11 @@
+language: julia
+julia:
+  - 1.6
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: build docker image
+      script: bash ./build.sh
