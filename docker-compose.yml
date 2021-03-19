@@ -3,7 +3,7 @@ version: "2"
 services:
   pdag_extensions:
     restart: unless-stopped
-    image: quay.io/malte311/pdag_extensions
+    image: quay.io/malte311/pdag_extensions:latest
     container_name: pdag_extensions
     volumes:
       - ./configs/:/configs/
