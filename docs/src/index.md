@@ -1,5 +1,6 @@
 # PdagExtendability Documentation
 
-```@docs
-writelog
+## Table of Contents
+
+```@contents
 ```

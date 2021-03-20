@@ -13,8 +13,8 @@ makedocs(
 	sitename = "PdagExtendability",
 	expandfirst = [],
 	pages = [
-		"PdagExtendability.jl" => "index.md",
-		"Table of Contents" => "toc.md",
+		"Introduction" => "index.md",
+		"API Reference" => "api_reference.md",
 	],
 	format = Documenter.HTML(
 		prettyurls = get(ENV, "CI", nothing) == "true"
