@@ -18,4 +18,5 @@ cat VERSION | while read TAG; do
 done
 
 # Build Julia documentation
+julia -e 'using Pkg; Pkg.add("Documenter")'
 julia --project=docs/ docs/make.jl
