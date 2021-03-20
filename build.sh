@@ -18,5 +18,5 @@ cat VERSION | while read TAG; do
 done
 
 # Build Julia documentation
-julia --project=docs/ -e 'using Pkg; Pkg.activate("."); Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+julia --project=docs/ -e 'using Pkg; Pkg.add("Documenter"); Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
 julia --project=docs/ docs/make.jl

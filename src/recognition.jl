@@ -1,0 +1,4 @@
+function ismpdag()
+	
+end
+
