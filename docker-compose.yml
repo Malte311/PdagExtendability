@@ -2,10 +2,15 @@ version: "2"
 
 services:
   pdag_extensions:
-    restart: unless-stopped
-    image: quay.io/malte311/pdag_extensions:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - H_UID=1000
+        - H_GID=1000
     container_name: pdag_extensions
+    tty: true
     volumes:
-      - ./configs/:/configs/
-      - ./src/:/src/
-    #environment:
+      - ./configs/:/home/user/configs/
+      - ./src/:/home/user/src/
+    entrypoint: /bin/bash

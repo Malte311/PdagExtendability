@@ -1,9 +1,10 @@
 language: julia
 julia:
-  - 1.6
+  - 1.5
 
-services:
-  - docker
+before_deploy:
+  - julia --project=docs/ -e 'using Pkg; Pkg.add("Documenter"); Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+  - julia --project=docs/ docs/make.jl
 
 deploy:
 - provider: pages
@@ -12,8 +13,3 @@ deploy:
   skip-cleanup: true
   on:
     branch: master
-
-jobs:
-  include:
-    - stage: build docker image
-      script: bash ./build.sh
