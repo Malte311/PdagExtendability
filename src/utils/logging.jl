@@ -8,7 +8,8 @@ Write a log message to stdout and additionally to a file if the
 provided parameter lvl is of type Logging.Error.
 
 # Examples
-```julia
+```julia-repl
+julia> using Logging
 julia> writelog("Hello, world!", Logging.Info)
 ```
 """

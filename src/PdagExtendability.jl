@@ -1,5 +1,7 @@
 module PdagExtendability
 
-greet() = print("Hello World!")
+include("utils/logging.jl")
+
+export writelog
 
 end

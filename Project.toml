@@ -2,3 +2,8 @@ name = "PdagExtendability"
 uuid = "2480ea63-0ec8-4ecf-a149-52458e50e461"
 authors = ["Malte Luttermann"]
 version = "0.1.0"
+
+[deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
