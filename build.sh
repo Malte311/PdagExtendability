@@ -2,6 +2,7 @@
 
 IMAGE_NAME='pdag_extensions'
 
+# Build, tag and push Docker image
 echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin quay.io
 docker build -t $IMAGE_NAME .
 docker images
@@ -15,3 +16,6 @@ cat VERSION | while read TAG; do
 		docker push "quay.io/malte311/$IMAGE_NAME:$TAG"
 	fi
 done
+
+# Build Julia documentation
+julia --project=docs/ docs/make.jl

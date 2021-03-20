@@ -5,6 +5,14 @@ julia:
 services:
   - docker
 
+deploy:
+- provider: pages
+  github-token: $GITHUB_TOKEN
+  local-dir: "./docs/build/"
+  skip-cleanup: true
+  on:
+    branch: master
+
 jobs:
   include:
     - stage: build docker image
