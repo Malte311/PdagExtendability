@@ -1,0 +1,11 @@
+version: "2"
+
+services:
+  pdag_extensions:
+    restart: unless-stopped
+    build: .
+    container_name: pdag_extensions
+    volumes:
+      - ./configs/:/configs/
+      - ./src/:/src/
+    #environment:
