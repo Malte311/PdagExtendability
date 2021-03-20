@@ -27,3 +27,4 @@ Manifest.toml
 .DS_Store
 .vscode
 /src/utils/logs/*.txt
+/build/
