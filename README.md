@@ -1,7 +1,7 @@
 ![Build Status](https://travis-ci.com/Malte311/PDAG-Extendability.svg?token=peoMTzKpBjcCaX8BZgzt&branch=master)
-[![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://malte311.github.io/PDAG-Extendability/)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://malte311.github.io/PdagExtendability/)
 
-# PDAG-Extendability
+# PdagExtendability
 > TODO
 
 ## Usage

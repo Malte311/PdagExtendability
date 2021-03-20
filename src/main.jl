@@ -19,4 +19,8 @@ using GraphPlot
 # 	println(arg)
 # end
 
-print("Hallo!")
+# TODO: Init global logger here and remove logging.jl?
+
+for i = 1:5
+	@time print("Hallo!")
+end

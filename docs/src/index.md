@@ -1,1 +1,1 @@
-# PDAG-Extendability Documentation
+# PdagExtendability Documentation

@@ -3,7 +3,7 @@ using Documenter
 push!(LOAD_PATH, "../src/")
 
 makedocs(
-	sitename="PDAG-Extendability",
+	sitename="PdagExtendability",
 	format = Documenter.HTML(
 		prettyurls = get(ENV, "CI", nothing) == "true"
 	)
