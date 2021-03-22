@@ -2,23 +2,25 @@
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://malte311.github.io/PdagExtendability/)
 
 # PdagExtendability
-> TODO
+> TODO: Describe what this software does.
 
 ## Usage
-> TODO
+> TODO: Describe how to use the implemented algorithms and how to run benchmarks.
+
+On Linux: Set `H_UID` and `H_GID` in `docker-compose.yml`.
 
 ## Development
-> TODO
+The whole software is wrapped inside a Docker container. Thus, it is not even
+necessary to have Julia installed on your system. Using Docker, simply run
+`./run.sh` to start the system. Edit the source files as you like and execute
+them directly in the shell provided by Docker.
 
-```bash
-docker-compose -f docker-compose-dev.yml up --build
-docker-compose -f docker-compose-dev.yml exec --user www-data pdag_extensions bash
-```
+In case the Dockerfile changes, you can run `./run.sh b` to rebuild the
+Docker container before starting it.
 
-## Documentation
-> TODO
+## TODO
+A list of some things which need to be done.
 
-```bash
-julia -e 'using Pkg; Pkg.add("Documenter")'
-julia --project=docs/ docs/make.jl
-```
+- Maybe use the [CausalInference](https://juliahub.com/docs/CausalInference/aEe3Z/0.5.6/)
+package.
+- Sub-modules for Extendability, Recognition, Orientation?
