@@ -13,4 +13,6 @@ services:
     volumes:
       - ./configs/:/home/user/configs/
       - ./src/:/home/user/src/
+      - ./Manifest.toml:/home/user/Manifest.toml
+      - ./Project.toml:/home/user/Project.toml
     entrypoint: /bin/bash
