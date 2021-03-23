@@ -20,6 +20,7 @@
 # end
 
 # TODO: Init global logger here and remove logging.jl?
+# @elapsed
 
 for i = 1:5
 	@time print("Hallo!")
