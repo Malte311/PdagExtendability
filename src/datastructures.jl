@@ -82,5 +82,5 @@ function popps!(s::Vertex)
 
 end
 
-printgraph(init(2))
-printgraph(init(3))
+# printgraph(init(2))
+# printgraph(init(3))

@@ -1,4 +1,0 @@
-function ismpdag()
-	
-end
-
