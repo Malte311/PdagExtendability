@@ -15,7 +15,11 @@ Technicial Report R-185, Cognitive Systems Laboratory, UCLA
 
 # Examples
 ```julia-repl
-
+julia> g = SimpleDiGraph(3)
+julia> add_edge!(g, 1, 2)
+julia> add_edge!(g, 2, 3)
+julia> add_edge!(g, 3, 2)
+julia> dag = pdag2dag(g)
 ```
 """
 function pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
@@ -37,6 +41,22 @@ function pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 	result
 end
 
+"""
+	sink(g::SimpleDiGraph)::Int64
+
+Find a sink in a partially directed graph. The sink has no outgoing edges
+and all vertices connected to it via an undirected edge are adjacent to all
+adjacent vertices of the sink. If no sink is found, -1 is returned.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+julia> add_edge!(g, 1, 2)
+julia> add_edge!(g, 2, 3)
+julia> add_edge!(g, 3, 2)
+julia> x = sink(g)
+```
+"""
 function sink(g::SimpleDiGraph)::Int64
 	for vertex in vertices(g)
 		in_neighbors = inneighbors(g, vertex)
@@ -60,6 +80,8 @@ function sink(g::SimpleDiGraph)::Int64
 			end
 		end
 
+		return vertex
+
 		@label outer
 	end
 
@@ -72,5 +94,7 @@ add_edge!(g, 1, 2)
 add_edge!(g, 2, 3)
 add_edge!(g, 3, 2)
 
-println(pdag2dag(g))
 println(g)
+println(pdag2dag(g))
+
+# TODO: Add output to doc comments, remove testing code
