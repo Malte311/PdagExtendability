@@ -14,15 +14,63 @@ extension of a partially oriented graph.
 Technicial Report R-185, Cognitive Systems Laboratory, UCLA
 
 # Examples
+```julia-repl
 
+```
 """
 function pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
-	g
+	result = copy(g)
+	temp = copy(g)
+
+	while nv(temp) > 0
+		x = sink(temp)
+		x != -1 || return SimpleDiGraph(0)
+		
+		# Direct all adjacent edges towards x
+		for neighbor in outneighbors(temp, x)
+			rem_edge!(result, x, neighbor)
+		end
+
+		rem_vertex!(temp, x)
+	end
+
+	result
 end
 
-g = SimpleDiGraph(2)
+function sink(g::SimpleDiGraph)::Int64
+	for vertex in vertices(g)
+		in_neighbors = inneighbors(g, vertex)
+		out_neighbors = outneighbors(g, vertex)
+
+		# A sink has no outgoing edges, i.e., outneighbors is either
+		# empty or contains only vertices connected via undirected edges.
+		for neighbor in out_neighbors
+			# Edge must be undirected, otherwise no sink is possible
+			has_edge(g, neighbor, vertex) || @goto outer
+		end
+
+		# All vertices connected to x via an undirected edge (i.e., all
+		# vertices from outneighbors because we already verified that
+		# all outneighbors have undirected edges) must be adjacent to all
+		# vertices adjacent to x.
+		for neighbor in out_neighbors
+			for other in union(in_neighbors, out_neighbors)
+				neighbor != other || continue
+				has_edge(g, neighbor, other) || has_edge(g, other, neighbor) || @goto outer
+			end
+		end
+
+		@label outer
+	end
+
+	-1
+end
+
+g = SimpleDiGraph(3)
 
 add_edge!(g, 1, 2)
-add_edge!(g, 2, 1)
+add_edge!(g, 2, 3)
+add_edge!(g, 3, 2)
 
 println(pdag2dag(g))
+println(g)
