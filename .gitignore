@@ -21,4 +21,5 @@ docs/site/
 .DS_Store
 .vscode
 /logs/*.txt
+/logs/*.svg
 /build/
