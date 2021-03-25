@@ -1,7 +1,11 @@
 using LightGraphs
 using PdagExtendability, Test
 
-for test in readdir("../test/")
+tests = [
+	"extendability.jl"
+]
+
+for test in tests
 	test != "runtests.jl" || continue
 	@testset "$test" begin
 		include(test)
