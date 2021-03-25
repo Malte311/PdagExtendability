@@ -1,4 +1,6 @@
 {
-	"logfile": "../logs/log.txt",
+	"benchmarkdir": "../benchmarks/",
+	"logdir": "../logs/",
+	"logfile": "log.txt",
 	"visualize": true
 }

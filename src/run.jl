@@ -10,10 +10,15 @@ end
 
 config = JSON.parsefile(ARGS[1])
 
-io = open(config["logfile"], "a+")
+io = open(string(config["logdir"], config["logfile"]), "a+")
 global_logger(SimpleLogger(io))
 
-pdag = PdagExtendability.readinputgraph("../benchmarks/example.txt")
-dag = PdagExtendability.pdag2dag(pdag)
+for benchmark in readdir(config["benchmarkdir"])
+	pdag = PdagExtendability.readinputgraph(string(config["benchmarkdir"], benchmark))
+	dag = PdagExtendability.pdag2dag(pdag)
+	config["visualize"] || continue
+	PdagExtendability.plotsvg(pdag, string(config["logdir"], "input-", benchmark, ".svg"))
+	PdagExtendability.plotsvg(dag, string(config["logdir"], "output-", benchmark, ".svg"))
+end
 
 close(io)
