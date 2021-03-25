@@ -15,6 +15,7 @@ services:
       - ./configs/:/home/user/configs/
       - ./logs/:/home/user/logs/
       - ./src/:/home/user/src/
+      - ./test/:/home/user/test/
       - ./Manifest.toml:/home/user/Manifest.toml
       - ./Project.toml:/home/user/Project.toml
     entrypoint: /bin/bash
