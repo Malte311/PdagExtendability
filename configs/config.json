@@ -2,5 +2,5 @@
 	"benchmarkdir": "../benchmarks/",
 	"logdir": "../logs/",
 	"logfile": "log.txt",
-	"visualize": true
+	"visualize": false
 }
