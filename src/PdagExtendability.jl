@@ -1,5 +1,8 @@
 module PdagExtendability
 
-include("utils/logging.jl")
+include("extendability.jl")
+
+export pdag2dag
+export sink
 
 end

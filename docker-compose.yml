@@ -11,6 +11,7 @@ services:
     container_name: pdag_extensions
     tty: true
     volumes:
+      - ./logs/:/home/user/logs/
       - ./configs/:/home/user/configs/
       - ./src/:/home/user/src/
       - ./Manifest.toml:/home/user/Manifest.toml

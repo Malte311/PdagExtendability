@@ -1,3 +1,4 @@
 {
-	
+	"logfile": "../logs/log.txt",
+	"visualize": true
 }

@@ -1,3 +1,3 @@
-```@docs
-writelog
+```@autodocs
+Modules = [PdagExtendability]
 ```

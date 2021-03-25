@@ -16,10 +16,19 @@ Technicial Report R-185, Cognitive Systems Laboratory, UCLA
 # Examples
 ```julia-repl
 julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
 julia> add_edge!(g, 1, 2)
+true
 julia> add_edge!(g, 2, 3)
+true
 julia> add_edge!(g, 3, 2)
+true
 julia> dag = pdag2dag(g)
+{3, 2} directed simple Int64 graph
+julia> collect(edges(dag))
+2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+ Edge 2 => 3
 ```
 """
 function pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
@@ -51,10 +60,15 @@ adjacent vertices of the sink. If no sink is found, -1 is returned.
 # Examples
 ```julia-repl
 julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
 julia> add_edge!(g, 1, 2)
+true
 julia> add_edge!(g, 2, 3)
+true
 julia> add_edge!(g, 3, 2)
+true
 julia> x = sink(g)
+3
 ```
 """
 function sink(g::SimpleDiGraph)::Int64
@@ -87,14 +101,3 @@ function sink(g::SimpleDiGraph)::Int64
 
 	-1
 end
-
-g = SimpleDiGraph(3)
-
-add_edge!(g, 1, 2)
-add_edge!(g, 2, 3)
-add_edge!(g, 3, 2)
-
-println(g)
-println(pdag2dag(g))
-
-# TODO: Add output to doc comments, remove testing code
