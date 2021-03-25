@@ -17,10 +17,3 @@ them directly in the shell provided by Docker.
 
 In case the Dockerfile changes, you can run `./run.sh b` to rebuild the
 Docker container before starting it.
-
-## TODO
-A list of some things which need to be done.
-
-- Maybe use the [CausalInference](https://juliahub.com/docs/CausalInference/aEe3Z/0.5.6/)
-package.
-- Sub-modules for Extendability, Recognition, Orientation?
