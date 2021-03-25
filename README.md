@@ -7,6 +7,10 @@
 ## Usage
 > TODO: Describe how to use the implemented algorithms and how to run benchmarks.
 
+```bash
+julia run.jl "../configs/config.json"
+```
+
 On Linux: Set `H_UID` and `H_GID` in `docker-compose.yml`.
 
 ## Development
