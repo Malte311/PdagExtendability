@@ -20,5 +20,5 @@ docs/site/
 # Custom things
 .DS_Store
 .vscode
-/src/utils/logs/*.txt
+/logs/*.txt
 /build/
