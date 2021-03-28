@@ -7,6 +7,5 @@ include("extendability.jl")
 export plotsvg
 export readinputgraph
 export pdag2dag
-export sink
 
 end
