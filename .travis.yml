@@ -8,7 +8,9 @@ script:
 
 before_deploy:
   - julia --project=./ -e 'using Pkg; Pkg.instantiate()'
-  - julia --project=./ test/runtests.jl
+  - julia --project=./ --code-coverage test/runtests.jl
+
+coveralls: true
 
 deploy:
 - provider: pages

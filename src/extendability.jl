@@ -41,7 +41,7 @@ function pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 	ht = Dict()
 
 	# If one vertex is left there are no edges to other vertices anymore,
-	# so we can stop (no need to do another iteration when nv(temp) == 1).
+	# so we can stop (no need to do another iteration for nv(temp) == 1).
 	while nv(temp) > 1
 		x = sink(temp)
 		x != -1 || return SimpleDiGraph(0)
