@@ -12,14 +12,14 @@ config = JSON.parsefile(ARGS[1])
 io = open(joinpath(config["logdir"], config["logfile"]), "a+")
 global_logger(SimpleLogger(io))
 
-for benchmark in readdir(config["benchmarkdir"])
-	pdag = readinputgraph(joinpath(config["benchmarkdir"], benchmark))
+for f in readdir(config["benchmarkdir"])
+	pdag = readinputgraph(joinpath(config["benchmarkdir"], f))
 	dag = pdag2dag(pdag)
-	
+
 	config["visualize"] || continue
-	
-	plotsvg(pdag, string(config["logdir"], "input-", benchmark, ".svg"))
-	plotsvg(dag, string(config["logdir"], "output-", benchmark, ".svg"))
+
+	plotsvg(pdag, string(config["logdir"], "input-", replace(f, ".txt" => ""), ".svg"))
+	plotsvg(dag, string(config["logdir"], "output-", replace(f, ".txt" => ""), ".svg"))
 end
 
 close(io)
