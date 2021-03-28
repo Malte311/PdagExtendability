@@ -35,15 +35,23 @@ function pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 	result = copy(g)
 	temp = copy(g)
 
-	while nv(temp) > 0
+	# Hashtable for mappings of node labels because rem_vertex!
+	# swaps the vertex to be deleted with vertex |V| and deletes
+	# vertex |V| from the graph.
+	ht = Dict()
+
+	# If one vertex is left there are no edges to other vertices anymore,
+	# so we can stop (no need to do another iteration when nv(temp) == 1).
+	while nv(temp) > 1
 		x = sink(temp)
 		x != -1 || return SimpleDiGraph(0)
 		
 		# Direct all adjacent edges towards x
 		for neighbor in outneighbors(temp, x)
-			rem_edge!(result, x, neighbor)
+			rem_edge!(result, x, get(ht, neighbor, neighbor))
 		end
-
+		
+		ht[x] = get(ht, get(ht, x, nv(temp)), nv(temp))
 		rem_vertex!(temp, x)
 	end
 
