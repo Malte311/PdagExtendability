@@ -1,11 +1,15 @@
 module PdagExtendability
 
 include("utils/plotting.jl")
-include("utils/readinput.jl")
-include("extendability.jl")
-
 export plotsvg
+
+include("utils/readinput.jl")
 export readinputgraph
+
+include("extendability/dor_tarsi_algo.jl")
 export pdag2dag
+
+include("extendability/new_algo.jl")
+export fastpdag2dag
 
 end

@@ -1,3 +1,9 @@
+using LightGraphs
+
+function fastpdag2dag(g::SimpleDiGraph)
+
+end
+
 mutable struct Vertex
 	key::Int64
 	outedges::Vector{Vertex}

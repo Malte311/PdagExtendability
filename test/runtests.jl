@@ -2,7 +2,7 @@ using LightGraphs
 using PdagExtendability, Test
 
 tests = [
-	"test_extendability.jl"
+	"extendability/test_dor_tarsi_algo.jl"
 ]
 
 for test in tests
