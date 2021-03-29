@@ -49,6 +49,18 @@ function init(n::Int64)::HybridGraph
 end
 
 """
+	is_adjacent(g::HybridGraph, u::Int64, v::Int64)::Bool
+
+Check whether vertices u and v are adjacent in graph g.
+"""
+function is_adjacent(g::HybridGraph, u::Int64, v::Int64)::Bool
+	isassigned(g.g1.adjlist, u) || (g.g1.adjlist[u] = Set())
+	isassigned(g.g2.adjlist, u) || (g.g2.adjlist[u] = Set())
+
+	(v in g.g1.adjlist[u]) || (v in g.g2.adjlist[u])
+end
+
+"""
 	insert_arc!(g::HybridGraph, u::Int64, v::Int64)
 
 Insert an arc (a directed edge) from u to v into g.
@@ -56,49 +68,6 @@ Insert an arc (a directed edge) from u to v into g.
 function insert_arc!(g::HybridGraph, u::Int64, v::Int64)
 	insert_arc!(g.g2, u, v)
 	update_alphabeta!(g, u, v, +1)
-end
-
-"""
-	update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
-
-Update values for alpha and beta in g. Either add to (positive value for val)
-or subtract from (negative value for val) alpha and beta.
-"""
-function update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
-	isassigned(g.g1.adjlist, u) || (g.g1.adjlist[u] = Set())
-	isassigned(g.g1.adjlist, v) || (g.g1.adjlist[v] = Set())
-	isassigned(g.g2.ingoing, u) || (g.g2.ingoing[u] = Set())
-	isassigned(g.g2.outgoing, u) || (g.g2.outgoing[u] = Set())
-	isassigned(g.g2.ingoing, v) || (g.g2.ingoing[v] = Set())
-	isassigned(g.g2.outgoing, v) || (g.g2.outgoing[v] = Set())
-
-	for x in union(g.g1.adjlist[u], g.g2.ingoing[u], g.g2.outgoing[u])
-		(x in g.g1.adjlist[v]) || (x in g.g2.ingoing[v]) || (x in g.g2.outgoing[v]) || continue
-		(x in g.g1.adjlist[v]) && add_beta(g, v, val)
-		(x in g.g1.adjlist[u]) && (x in g.g1.adjlist[v]) && add_alpha(g, x, val)
-		(x in g.g2.outgoing[u]) && (x in g.g1.adjlist[v]) && add_beta(g, x, val)
-		(x in g.g2.outgoing[v]) && (x in g.g1.adjlist[u]) && add_beta(g, x, val)
-	end
-end
-
-"""
-	add_alpha(g::HybridGraph, index::Int64, val::Int64)
-
-Add val to alpha at index in g.
-"""
-function add_alpha(g::HybridGraph, index::Int64, val::Int64)
-	isassigned(g.alpha, index) || (g.alpha[index] = 0)
-	g.alpha[index] += val
-end
-
-"""
-	add_beta(g::HybridGraph, index::Int64, val::Int64)
-
-Add val to beta at index in g.
-"""
-function add_beta(g::HybridGraph, index::Int64, val::Int64)
-	isassigned(g.beta, index) || (g.beta[index] = 0)
-	g.beta[index] += val
 end
 
 """
@@ -115,6 +84,8 @@ function insert_arc!(g::DirectedGraph, u::Int64, v::Int64)
 	push!(g.ingoing[v], u)
 	isassigned(g.adjlist, u) || (g.adjlist[u] = Set())
 	push!(g.adjlist[u], v)
+	isassigned(g.adjlist, v) || (g.adjlist[v] = Set())
+	push!(g.adjlist[v], u)
 end
 
 """
@@ -149,6 +120,7 @@ function remove_arc!(g::DirectedGraph, u::Int64, v::Int64)
 	delete!(g.outgoing[u], v)
 	delete!(g.ingoing[v], u)
 	delete!(g.adjlist[u], v)
+	delete!(g.adjlist[v], u)
 end
 
 """
@@ -163,6 +135,47 @@ function remove_edge!(g::HybridGraph, u::Int64, v::Int64)
 end
 
 """
+	update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
+
+Update values for alpha and beta in g. Either add to (positive value for val)
+or subtract from (negative value for val) alpha and beta.
+"""
+function update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
+	isassigned(g.g1.adjlist, u) || (g.g1.adjlist[u] = Set())
+	isassigned(g.g1.adjlist, v) || (g.g1.adjlist[v] = Set())
+	isassigned(g.g2.outgoing, u) || (g.g2.outgoing[u] = Set())
+	isassigned(g.g2.outgoing, v) || (g.g2.outgoing[v] = Set())
+
+	for x in union(g.g1.adjlist[u], g.g2.adjlist[u])
+		is_adjacent(g, x, v) || continue
+		(x in g.g1.adjlist[v]) && add_beta(g, v, val)
+		(x in g.g1.adjlist[u]) && (x in g.g1.adjlist[v]) && add_alpha(g, x, val)
+		(x in g.g2.outgoing[u]) && (x in g.g1.adjlist[v]) && add_beta(g, x, val)
+		(x in g.g2.outgoing[v]) && (x in g.g1.adjlist[u]) && add_beta(g, x, val)
+	end
+end
+
+"""
+	add_alpha(g::HybridGraph, index::Int64, val::Int64)
+
+Add val to alpha at index in g.
+"""
+function add_alpha(g::HybridGraph, index::Int64, val::Int64)
+	isassigned(g.alpha, index) || (g.alpha[index] = 0)
+	g.alpha[index] += val
+end
+
+"""
+	add_beta(g::HybridGraph, index::Int64, val::Int64)
+
+Add val to beta at index in g.
+"""
+function add_beta(g::HybridGraph, index::Int64, val::Int64)
+	isassigned(g.beta, index) || (g.beta[index] = 0)
+	g.beta[index] += val
+end
+
+"""
 	is_ps(g::HybridGraph, s::Int64)::Bool
 
 Determine whether s is a potential sink in g.
@@ -173,8 +186,23 @@ function is_ps(g::HybridGraph, s::Int64)::Bool
 	g.g2.deltaplus[s] == 0
 end
 
-function is_adjacent(g::HybridGraph, u::Int64, v::Int64)::Bool
-	false
+"""
+	list_ps(g::HybridGraph)::Vector{Int64}
+
+List potential sinks in g.
+"""
+function list_ps(g::HybridGraph)::Vector{Int64}
+	result = Vector()
+	
+	for i = 1:length(g.alpha)
+		is_ps(g, i) && push!(result, i)
+	end
+
+	result
+end
+
+function pop_ps!(g::HybridGraph, s::Int64)::Int64
+	
 end
 
 function next_edge(g::HybridGraph, u::Int64, v::Int64)
@@ -187,16 +215,6 @@ end
 
 function next_in_arc(g::HybridGraph, u::Int64, v::Int64)
 	
-end
-
-
-
-function list_ps(g::HybridGraph)
-	
-end
-
-function pop_ps!(g::HybridGraph, s::Int64)
-
 end
 
 """
@@ -226,6 +244,9 @@ function print_graph(g::HybridGraph, io::Core.IO = stdout)
 	end	
 end
 
+
+# TODO: Add examples in comments, test if everything works, try to optimize
+# after verifying that it works
 g = init(3)
 insert_arc!(g, 1, 2)
 insert_edge!(g, 2, 3)
