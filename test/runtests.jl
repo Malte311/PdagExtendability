@@ -6,7 +6,6 @@ tests = [
 ]
 
 for test in tests
-	test != "runtests.jl" || continue
 	@testset "$test" begin
 		include(test)
 	end
