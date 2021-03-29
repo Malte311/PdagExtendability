@@ -55,18 +55,50 @@ Insert an arc (a directed edge) from u to v into g.
 """
 function insert_arc!(g::HybridGraph, u::Int64, v::Int64)
 	insert_arc!(g.g2, u, v)
-	# for x in union(g.g1.adjlist[u], g.g2.adjlist[u])
-	# 	(x in g.g1.adjlist[v]) || (x in g.g2.adjlist[v]) || continue
-		
-	# end
+	update_alphabeta!(g, u, v, +1)
 end
 
-function update_alpha!(g::HybridGraph, v::Int64, x::Int64, y::Int64)
-	
+"""
+	update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
+
+Update values for alpha and beta in g. Either add to (positive value for val)
+or subtract from (negative value for val) alpha and beta.
+"""
+function update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
+	isassigned(g.g1.adjlist, u) || (g.g1.adjlist[u] = Set())
+	isassigned(g.g1.adjlist, v) || (g.g1.adjlist[v] = Set())
+	isassigned(g.g2.ingoing, u) || (g.g2.ingoing[u] = Set())
+	isassigned(g.g2.outgoing, u) || (g.g2.outgoing[u] = Set())
+	isassigned(g.g2.ingoing, v) || (g.g2.ingoing[v] = Set())
+	isassigned(g.g2.outgoing, v) || (g.g2.outgoing[v] = Set())
+
+	for x in union(g.g1.adjlist[u], g.g2.ingoing[u], g.g2.outgoing[u])
+		(x in g.g1.adjlist[v]) || (x in g.g2.ingoing[v]) || (x in g.g2.outgoing[v]) || continue
+		(x in g.g1.adjlist[v]) && add_beta(g, v, val)
+		(x in g.g1.adjlist[u]) && (x in g.g1.adjlist[v]) && add_alpha(g, x, val)
+		(x in g.g2.outgoing[u]) && (x in g.g1.adjlist[v]) && add_beta(g, x, val)
+		(x in g.g2.outgoing[v]) && (x in g.g1.adjlist[u]) && add_beta(g, x, val)
+	end
 end
 
-function update_beta!(g::HybridGraph, v::Int64, x::Int64, y::Int64)
-	
+"""
+	add_alpha(g::HybridGraph, index::Int64, val::Int64)
+
+Add val to alpha at index in g.
+"""
+function add_alpha(g::HybridGraph, index::Int64, val::Int64)
+	isassigned(g.alpha, index) || (g.alpha[index] = 0)
+	g.alpha[index] += val
+end
+
+"""
+	add_beta(g::HybridGraph, index::Int64, val::Int64)
+
+Add val to beta at index in g.
+"""
+function add_beta(g::HybridGraph, index::Int64, val::Int64)
+	isassigned(g.beta, index) || (g.beta[index] = 0)
+	g.beta[index] += val
 end
 
 """
@@ -93,6 +125,7 @@ Insert an undirected edge between u and v into g.
 function insert_edge!(g::HybridGraph, u::Int64, v::Int64)
 	insert_arc!(g.g1, u, v)
 	insert_arc!(g.g1, v, u)
+	update_alphabeta!(g, u, v, +1)
 end
 
 """
@@ -102,6 +135,7 @@ Remove an arc (a directed edge) from u to v from g.
 """
 function remove_arc!(g::HybridGraph, u::Int64, v::Int64)
 	remove_arc!(g.g2, u, v)
+	update_alphabeta!(g, u, v, -1)
 end
 
 """
@@ -125,36 +159,51 @@ Remove an undirected edge between u and v from g.
 function remove_edge!(g::HybridGraph, u::Int64, v::Int64)
 	remove_arc!(g.g1, u, v)
 	remove_arc!(g.g1, v, u)
+	update_alphabeta!(g, u, v, -1)
 end
 
-function is_adjacent(g::DirectedGraph, u::Int64, v::Int64)::Bool
+"""
+	is_ps(g::HybridGraph, s::Int64)::Bool
+
+Determine whether s is a potential sink in g.
+"""
+function is_ps(g::HybridGraph, s::Int64)::Bool
+	g.alpha[s] == binomial(g.g1.deltaplus[s], 2) &&
+	g.beta[s] == g.g1.deltaplus[s] * g.g2.deltaminus[s] &&
+	g.g2.deltaplus[s] == 0
+end
+
+function is_adjacent(g::HybridGraph, u::Int64, v::Int64)::Bool
 	false
 end
 
-function next_edge(g::DirectedGraph, u::Int64, v::Int64)
+function next_edge(g::HybridGraph, u::Int64, v::Int64)
 	
 end
 
-function next_out_arc(g::DirectedGraph, u::Int64, v::Int64)
+function next_out_arc(g::HybridGraph, u::Int64, v::Int64)
 	
 end
 
-function next_in_arc(g::DirectedGraph, u::Int64, v::Int64)
+function next_in_arc(g::HybridGraph, u::Int64, v::Int64)
 	
 end
 
-function is_ps(g::DirectedGraph, s::Int64)::Bool
-	false
-end
 
-function list_ps(g::DirectedGraph)
+
+function list_ps(g::HybridGraph)
 	
 end
 
-function pop_ps!(g::DirectedGraph, s::Int64)
+function pop_ps!(g::HybridGraph, s::Int64)
 
 end
 
+"""
+	print_graph(g::HybridGraph, io::Core.IO = stdout)
+
+Print the components of a HybridGraph g.
+"""
 function print_graph(g::HybridGraph, io::Core.IO = stdout)
 	for i = 1:length(g.alpha)
 		println(io, "Vertex $i:")
@@ -181,3 +230,6 @@ g = init(3)
 insert_arc!(g, 1, 2)
 insert_edge!(g, 2, 3)
 print_graph(g)
+for i = 1:3
+	println("$i is a potential sink? => $(is_ps(g, i))")
+end
