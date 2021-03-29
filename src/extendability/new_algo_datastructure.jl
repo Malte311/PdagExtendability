@@ -49,20 +49,32 @@ function init(n::Int64)::HybridGraph
 end
 
 """
-	insertarc!(g::HybridGraph, u::Int64, v::Int64)
+	insert_arc!(g::HybridGraph, u::Int64, v::Int64)
 
 Insert an arc (a directed edge) from u to v into g.
 """
-function insertarc!(g::HybridGraph, u::Int64, v::Int64)
-	insertarc!(g.g2, u, v)
+function insert_arc!(g::HybridGraph, u::Int64, v::Int64)
+	insert_arc!(g.g2, u, v)
+	# for x in union(g.g1.adjlist[u], g.g2.adjlist[u])
+	# 	(x in g.g1.adjlist[v]) || (x in g.g2.adjlist[v]) || continue
+		
+	# end
+end
+
+function update_alpha!(g::HybridGraph, v::Int64, x::Int64, y::Int64)
+	
+end
+
+function update_beta!(g::HybridGraph, v::Int64, x::Int64, y::Int64)
+	
 end
 
 """
-	insertarc!(g::DirectedGraph, u::Int64, v::Int64)
+	insert_arc!(g::DirectedGraph, u::Int64, v::Int64)
 
 Insert an arc (a directed edge) from u to v into g.
 """
-function insertarc!(g::DirectedGraph, u::Int64, v::Int64)
+function insert_arc!(g::DirectedGraph, u::Int64, v::Int64)
 	g.deltaplus[u] += 1
 	g.deltaminus[v] += 1
 	isassigned(g.outgoing, u) || (g.outgoing[u] = Set())
@@ -74,30 +86,30 @@ function insertarc!(g::DirectedGraph, u::Int64, v::Int64)
 end
 
 """
-	insertedge!(g::HybridGraph, u::Int64, v::Int64)
+	insert_edge!(g::HybridGraph, u::Int64, v::Int64)
 
 Insert an undirected edge between u and v into g.
 """
-function insertedge!(g::HybridGraph, u::Int64, v::Int64)
-	insertarc!(g.g1, u, v)
-	insertarc!(g.g1, v, u)
+function insert_edge!(g::HybridGraph, u::Int64, v::Int64)
+	insert_arc!(g.g1, u, v)
+	insert_arc!(g.g1, v, u)
 end
 
 """
-	removearc!(g::HybridGraph, u::Int64, v::Int64)
+	remove_arc!(g::HybridGraph, u::Int64, v::Int64)
 
 Remove an arc (a directed edge) from u to v from g.
 """
-function removearc!(g::HybridGraph, u::Int64, v::Int64)
-	removearc!(g.g2, u, v)
+function remove_arc!(g::HybridGraph, u::Int64, v::Int64)
+	remove_arc!(g.g2, u, v)
 end
 
 """
-	removearc!(g::DirectedGraph, u::Int64, v::Int64)
+	remove_arc!(g::DirectedGraph, u::Int64, v::Int64)
 
 Remove an arc (a directed edge) from u to v from g.
 """
-function removearc!(g::DirectedGraph, u::Int64, v::Int64)
+function remove_arc!(g::DirectedGraph, u::Int64, v::Int64)
 	g.deltaplus[u] -= 1
 	g.deltaminus[v] -= 1
 	delete!(g.outgoing[u], v)
@@ -106,45 +118,66 @@ function removearc!(g::DirectedGraph, u::Int64, v::Int64)
 end
 
 """
-	removeedge!(g::HybridGraph, u::Int64, v::Int64)
+	remove_edge!(g::HybridGraph, u::Int64, v::Int64)
 
 Remove an undirected edge between u and v from g.
 """
-function removeedge!(g::HybridGraph, u::Int64, v::Int64)
-	removearc!(g.g1, u, v)
-	removearc!(g.g1, v, u)
+function remove_edge!(g::HybridGraph, u::Int64, v::Int64)
+	remove_arc!(g.g1, u, v)
+	remove_arc!(g.g1, v, u)
 end
 
-function isadjacent(g::DirectedGraph, u::Int64, v::Int64)::Bool
+function is_adjacent(g::DirectedGraph, u::Int64, v::Int64)::Bool
 	false
 end
 
-function nextedge(g::DirectedGraph, u::Int64, v::Int64)
+function next_edge(g::DirectedGraph, u::Int64, v::Int64)
 	
 end
 
-function nextoutarc(g::DirectedGraph, u::Int64, v::Int64)
+function next_out_arc(g::DirectedGraph, u::Int64, v::Int64)
 	
 end
 
-function nextinarc(g::DirectedGraph, u::Int64, v::Int64)
+function next_in_arc(g::DirectedGraph, u::Int64, v::Int64)
 	
 end
 
-function isps(g::DirectedGraph, s::Int64)::Bool
+function is_ps(g::DirectedGraph, s::Int64)::Bool
 	false
 end
 
-function listps(g::DirectedGraph)
+function list_ps(g::DirectedGraph)
 	
 end
 
-function popps!(g::DirectedGraph, s::Int64)
+function pop_ps!(g::DirectedGraph, s::Int64)
 
 end
 
-for i = 1:10
-	for n in [5, 50, 500, 5000]
-		@time init(n)
-	end
+function print_graph(g::HybridGraph, io::Core.IO = stdout)
+	for i = 1:length(g.alpha)
+		println(io, "Vertex $i:")
+		print(io, "\tAlpha   = $(isassigned(g.alpha, i) ? g.alpha[i] : 0)")
+		println(io, "\tBeta    = $(isassigned(g.beta, i) ? g.beta[i] : 0)")
+
+		print(io, "\tδ+(G1)  = $(isassigned(g.g1.deltaplus, i) ? g.g1.deltaplus[i] : 0)")
+		print(io, "\tδ-(G1)  = $(isassigned(g.g1.deltaminus, i) ? g.g1.deltaminus[i] : 0)")
+		print(io, "\tδ+(G2)  = $(isassigned(g.g2.deltaplus, i) ? g.g2.deltaplus[i] : 0)")
+		println(io, "\tδ-(G2)  = $(isassigned(g.g2.deltaminus, i) ? g.g2.deltaminus[i] : 0)")
+
+		print(io, "\tAdj(G1) = $(isassigned(g.g1.adjlist, i) ? join(collect(g.g1.adjlist[i]), ", ") : "-")")
+		println(io, "\tAdj(G2) = $(isassigned(g.g2.adjlist, i) ? join(collect(g.g2.adjlist[i]), ", ")  : "-")")
+
+		print(io, "\tIn(G1)  = $(isassigned(g.g1.ingoing, i) ? join(collect(g.g1.ingoing[i]), ", ") : "-")")
+		println(io, "\tIn(G2)  = $(isassigned(g.g2.ingoing, i) ? join(collect(g.g2.ingoing[i]), ", ")  : "-")")
+
+		print(io, "\tOut(G1) = $(isassigned(g.g1.outgoing, i) ? join(collect(g.g1.outgoing[i]), ", ") : "-")")
+		println(io, "\tOut(G2) = $(isassigned(g.g2.outgoing, i) ? join(collect(g.g2.outgoing[i]), ", ")  : "-")")
+	end	
 end
+
+g = init(3)
+insert_arc!(g, 1, 2)
+insert_edge!(g, 2, 3)
+print_graph(g)
