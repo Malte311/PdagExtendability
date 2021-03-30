@@ -2,11 +2,11 @@
 The datastructure to store a directed graph.
 """
 mutable struct DirectedGraph
-	adjlist::Vector{Set}      # List of adjacent vertices for each vertex
-	deltaplus::Vector{Int64}  # Out-degree for each vertex
-	deltaminus::Vector{Int64} # In-degree for each vertex
-	ingoing::Vector{Set}      # List of ingoing vertices for each vertex
-	outgoing::Vector{Set}     # List of outgoing vertices for each vertex
+	adjlist::Vector{Set{Int64}}  # List of adjacent vertices for each vertex
+	deltaplus::Vector{Int64}     # Out-degree for each vertex
+	deltaminus::Vector{Int64}    # In-degree for each vertex
+	ingoing::Vector{Set{Int64}}  # List of ingoing vertices for each vertex
+	outgoing::Vector{Set{Int64}} # List of outgoing vertices for each vertex
 end
 
 """
@@ -30,21 +30,21 @@ representing a graph with n vertices.
 function init(n::Int64)::HybridGraph
 	HybridGraph(
 		DirectedGraph(
-			Vector(undef, n),
-			Vector(undef, n),
-			Vector(undef, n),
-			Vector(undef, n),
-			Vector(undef, n)
+			Vector{Set{Int64}}(undef, n),
+			fill(0, n),
+			fill(0, n),
+			Vector{Set{Int64}}(undef, n),
+			Vector{Set{Int64}}(undef, n)
 		),
 		DirectedGraph(
-			Vector(undef, n),
-			Vector(undef, n),
-			Vector(undef, n),
-			Vector(undef, n),
-			Vector(undef, n)
+			Vector{Set{Int64}}(undef, n),
+			fill(0, n),
+			fill(0, n),
+			Vector{Set{Int64}}(undef, n),
+			Vector{Set{Int64}}(undef, n)
 		),
-		Vector(undef, n),
-		Vector(undef, n)
+		fill(0, n),
+		fill(0, n)
 	)
 end
 
@@ -54,8 +54,8 @@ end
 Check whether vertices u and v are adjacent in graph g.
 """
 function is_adjacent(g::HybridGraph, u::Int64, v::Int64)::Bool
-	isassigned(g.g1.adjlist, u) || (g.g1.adjlist[u] = Set())
-	isassigned(g.g2.adjlist, u) || (g.g2.adjlist[u] = Set())
+	isassigned(g.g1.adjlist, u) || (g.g1.adjlist[u] = Set{Int64}())
+	isassigned(g.g2.adjlist, u) || (g.g2.adjlist[u] = Set{Int64}())
 
 	(v in g.g1.adjlist[u]) || (v in g.g2.adjlist[u])
 end
@@ -78,13 +78,13 @@ Insert an arc (a directed edge) from u to v into g.
 function insert_arc!(g::DirectedGraph, u::Int64, v::Int64)
 	g.deltaplus[u] += 1
 	g.deltaminus[v] += 1
-	isassigned(g.outgoing, u) || (g.outgoing[u] = Set())
+	isassigned(g.outgoing, u) || (g.outgoing[u] = Set{Int64}())
 	push!(g.outgoing[u], v)
-	isassigned(g.ingoing, v) || (g.ingoing[v] = Set())
+	isassigned(g.ingoing, v) || (g.ingoing[v] = Set{Int64}())
 	push!(g.ingoing[v], u)
-	isassigned(g.adjlist, u) || (g.adjlist[u] = Set())
+	isassigned(g.adjlist, u) || (g.adjlist[u] = Set{Int64}())
 	push!(g.adjlist[u], v)
-	isassigned(g.adjlist, v) || (g.adjlist[v] = Set())
+	isassigned(g.adjlist, v) || (g.adjlist[v] = Set{Int64}())
 	push!(g.adjlist[v], u)
 end
 
@@ -141,10 +141,11 @@ Update values for alpha and beta in g. Either add to (positive value for val)
 or subtract from (negative value for val) alpha and beta.
 """
 function update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
-	isassigned(g.g1.adjlist, u) || (g.g1.adjlist[u] = Set())
-	isassigned(g.g1.adjlist, v) || (g.g1.adjlist[v] = Set())
-	isassigned(g.g2.outgoing, u) || (g.g2.outgoing[u] = Set())
-	isassigned(g.g2.outgoing, v) || (g.g2.outgoing[v] = Set())
+	isassigned(g.g1.adjlist, u) || (g.g1.adjlist[u] = Set{Int64}())
+	isassigned(g.g1.adjlist, v) || (g.g1.adjlist[v] = Set{Int64}())
+	isassigned(g.g2.adjlist, u) || (g.g2.adjlist[u] = Set{Int64}())
+	isassigned(g.g2.outgoing, u) || (g.g2.outgoing[u] = Set{Int64}())
+	isassigned(g.g2.outgoing, v) || (g.g2.outgoing[v] = Set{Int64}())
 
 	for x in union(g.g1.adjlist[u], g.g2.adjlist[u])
 		is_adjacent(g, x, v) || continue
@@ -192,7 +193,7 @@ end
 List potential sinks in g.
 """
 function list_ps(g::HybridGraph)::Vector{Int64}
-	result = Vector()
+	result = Vector{Int64}()
 	
 	for i = 1:length(g.alpha)
 		is_ps(g, i) && push!(result, i)
@@ -209,8 +210,10 @@ incident to s. Return a list of neighbors of s that became potential
 sinks after the removal.
 """
 function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
-	isassigned(g.g2.ingoing, s) || (g.g2.ingoing[s] = Set())
-	isassigned(g.g1.adjlist, s) || (g.g1.adjlist[s] = Set())
+	isassigned(g.g2.ingoing, s) || (g.g2.ingoing[s] = Set{Int64}())
+	isassigned(g.g1.adjlist, s) || (g.g1.adjlist[s] = Set{Int64}())
+
+	old_neighbors = union(g.g1.adjlist[s], g.g2.ingoing[s])
 
 	# Delete directed edges first (since s is a sink, there are
 	# only ingoing edges).
@@ -231,20 +234,38 @@ function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
 		remove_edge!(g, s, undirected)
 	end
 
-	# Mark s as deleted (set all values to undef).
-	g.alpha[s] = undef
-	g.beta[s] = undef
-	isassigned(g.g1.adjlist, s) && (g.g1.adjlist[s] = undef)
-	isassigned(g.g1.deltaminus, s) && (g.g1.deltaminus[s] = undef)
-	isassigned(g.g1.deltaplus, s) && (g.g1.deltaplus[s] = undef)
-	isassigned(g.g1.ingoing, s) && (g.g1.ingoing[s] = undef)
-	isassigned(g.g1.outgoing, s) && (g.g1.outgoing[s] = undef)
-	isassigned(g.g2.adjlist, s) && (g.g2.adjlist[s] = undef)
-	isassigned(g.g2.deltaminus, s) && (g.g2.deltaminus[s] = undef)
-	isassigned(g.g2.deltaplus, s) && (g.g2.deltaplus[s] = undef)
-	isassigned(g.g2.ingoing, s) && (g.g2.ingoing[s] = undef)
-	isassigned(g.g2.outgoing, s) && (g.g2.outgoing[s] = undef)
+	#mark_as_deleted!(g, s)
+
+	result = Vector{Int64}()
+	
+	for old_neighbor in old_neighbors
+		is_ps(g, old_neighbor) && push!(result, old_neighbor)
+	end
+
+	result
 end
+
+# """
+# 	mark_as_deleted!(g::HybridGraph, s::Int64)
+
+# Mark a vertex as deleted by setting all values for it to undef.
+# Only call this after all incident edges (directed and undirected)
+# have been removed.
+# """
+# function mark_as_deleted!(g::HybridGraph, s::Int64)
+# 	isassigned(g.alpha, s) && (g.alpha[s] = undef)
+# 	isassigned(g.beta, s) && (g.beta[s] = undef)
+# 	isassigned(g.g1.adjlist, s) && (g.g1.adjlist[s] = undef)
+# 	isassigned(g.g1.deltaminus, s) && (g.g1.deltaminus[s] = undef)
+# 	isassigned(g.g1.deltaplus, s) && (g.g1.deltaplus[s] = undef)
+# 	isassigned(g.g1.ingoing, s) && (g.g1.ingoing[s] = undef)
+# 	isassigned(g.g1.outgoing, s) && (g.g1.outgoing[s] = undef)
+# 	isassigned(g.g2.adjlist, s) && (g.g2.adjlist[s] = undef)
+# 	isassigned(g.g2.deltaminus, s) && (g.g2.deltaminus[s] = undef)
+# 	isassigned(g.g2.deltaplus, s) && (g.g2.deltaplus[s] = undef)
+# 	isassigned(g.g2.ingoing, s) && (g.g2.ingoing[s] = undef)
+# 	isassigned(g.g2.outgoing, s) && (g.g2.outgoing[s] = undef)
+# end
 
 """
 	print_graph(g::HybridGraph, io::Core.IO = stdout)
@@ -254,8 +275,8 @@ Print the components of a HybridGraph g.
 function print_graph(g::HybridGraph, io::Core.IO = stdout)
 	for i = 1:length(g.alpha)
 		println(io, "Vertex $i:")
-		print(io, "\tAlpha   = $(isassigned(g.alpha, i) ? g.alpha[i] : 0)")
-		println(io, "\tBeta    = $(isassigned(g.beta, i) ? g.beta[i] : 0)")
+		print(io,   "\tAlpha   = g.alpha[i])")
+		println(io, "\tBeta    = g.beta[i]")
 
 		print(io, "\tδ+(G1)  = $(isassigned(g.g1.deltaplus, i) ? g.g1.deltaplus[i] : 0)")
 		print(io, "\tδ-(G1)  = $(isassigned(g.g1.deltaminus, i) ? g.g1.deltaminus[i] : 0)")
@@ -271,15 +292,4 @@ function print_graph(g::HybridGraph, io::Core.IO = stdout)
 		print(io, "\tOut(G1) = $(isassigned(g.g1.outgoing, i) ? join(collect(g.g1.outgoing[i]), ", ") : "-")")
 		println(io, "\tOut(G2) = $(isassigned(g.g2.outgoing, i) ? join(collect(g.g2.outgoing[i]), ", ")  : "-")")
 	end	
-end
-
-
-# TODO: Add examples in comments, test if everything works, try to optimize
-# after verifying that it works
-g = init(3)
-insert_arc!(g, 1, 2)
-insert_edge!(g, 2, 3)
-print_graph(g)
-for i = 1:3
-	println("$i is a potential sink? => $(is_ps(g, i))")
 end
