@@ -27,7 +27,7 @@ function fastpdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 		if isundirected
 			key = "$(edge.src)-$(edge.dst)"
 			!(key in undirected) && insert_edge!(hg, edge.src, edge.dst)
-			push!(undirected, reverse(key))
+			push!(undirected, join(reverse(split(key, "-")), "-"))
 		else
 			insert_arc!(hg, edge.src, edge.dst)
 		end
