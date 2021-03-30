@@ -48,11 +48,11 @@ function fastpdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 		isempty(newps) || push!(ps, newps...)
 	end
 
-	SimpleDiGraph(0)
-end
+	# The graph is not extendable if no potential sinks are left but there
+	# are still edges in the graph.
+	isassigned(hg.g1.deltaplus) || (hg.g1.deltaplus = Vector{Int64}())
+	isassigned(hg.g2.deltaplus) || (hg.g2.deltaplus = Vector{Int64}())
+	sum(hg.g1.deltaplus) + sum(hg.g2.deltaplus) == 0 || return SimpleDiGraph(0)
 
-g = SimpleDiGraph(3)
-add_edge!(g, 1, 2)
-add_edge!(g, 2, 3)
-add_edge!(g, 3, 2)
-fastpdag2dag(g)
+	result
+end
