@@ -19,16 +19,18 @@ function fastpdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 	result = copy(g)
 	hg = init(nv(g))
 
-	println(hg.g1.deltaplus)
-	println(hg.g1.deltaminus)
-	println(hg.g2.deltaplus)
-	println(hg.g2.deltaminus)
-
+	# Set up the datastructure.
+	undirected = Set{String}()
 	for edge in edges(g)
 		isundirected = has_edge(g, edge.dst, edge.src)
-		# TODO: Use the general insert functions
-		# because alpha & beta are not updated otherwise
-		insert_arc!(isundirected ? hg.g1 : hg.g2, edge.src, edge.dst)
+
+		if isundirected
+			key = "$(edge.src)-$(edge.dst)"
+			!(key in undirected) && insert_edge!(hg, edge.src, edge.dst)
+			push!(undirected, reverse(key))
+		else
+			insert_arc!(hg, edge.src, edge.dst)
+		end
 	end
 
 	ps = list_ps(hg)
@@ -54,13 +56,3 @@ add_edge!(g, 1, 2)
 add_edge!(g, 2, 3)
 add_edge!(g, 3, 2)
 fastpdag2dag(g)
-
-# TODO: Add examples in comments, test if everything works, try to optimize
-# after verifying that it works
-# g = init(3)
-# insert_arc!(g, 1, 2)
-# insert_edge!(g, 2, 3)
-# print_graph(g)
-# for i = 1:3
-# 	println("$i is a potential sink? => $(is_ps(g, i))")
-# end

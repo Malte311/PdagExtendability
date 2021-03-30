@@ -6,8 +6,8 @@ using LightGraphs
 Read a graph from a file and return a SimpleDiGraph. The file must be
 formatted as follows. The first line contains the number of vertices and
 the number of edges, separated by a space. Afterwards, there is one line
-for each edge. Each line representing an edge has a start vertex and an
-end vertex, separated by a space. Undirected edges are represented by two
+for each edge. Each line representing an edge has a startvertex and an
+endvertex, separated by a space. Undirected edges are represented by two
 directed edges.
 
 # Examples

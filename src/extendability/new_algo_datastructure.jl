@@ -149,31 +149,11 @@ function update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
 
 	for x in union(g.g1.adjlist[u], g.g2.adjlist[u])
 		is_adjacent(g, x, v) || continue
-		(x in g.g1.adjlist[v]) && add_beta!(g, v, val)
-		(x in g.g1.adjlist[u]) && (x in g.g1.adjlist[v]) && add_alpha!(g, x, val)
-		(x in g.g2.outgoing[u]) && (x in g.g1.adjlist[v]) && add_beta!(g, x, val)
-		(x in g.g2.outgoing[v]) && (x in g.g1.adjlist[u]) && add_beta!(g, x, val)
+		(x in g.g1.adjlist[v]) && (g.beta[v] += val)
+		(x in g.g1.adjlist[u]) && (x in g.g1.adjlist[v]) && (g.alpha[x] += val)
+		(x in g.g2.outgoing[u]) && (x in g.g1.adjlist[v]) && (g.beta[x] += val)
+		(x in g.g2.outgoing[v]) && (x in g.g1.adjlist[u]) && (g.beta[x] += val)
 	end
-end
-
-"""
-	add_alpha(g::HybridGraph, index::Int64, val::Int64)
-
-Add val to alpha at index in g.
-"""
-function add_alpha!(g::HybridGraph, index::Int64, val::Int64)
-	isassigned(g.alpha, index) || (g.alpha[index] = 0)
-	g.alpha[index] += val
-end
-
-"""
-	add_beta(g::HybridGraph, index::Int64, val::Int64)
-
-Add val to beta at index in g.
-"""
-function add_beta!(g::HybridGraph, index::Int64, val::Int64)
-	isassigned(g.beta, index) || (g.beta[index] = 0)
-	g.beta[index] += val
 end
 
 """
@@ -220,10 +200,10 @@ function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
 	for ingoing in g.g2.ingoing[s]
 		for undirected in g.g1.adjlist[s]
 			isassigned(g.g1.adjlist, undirected) &&
-			(ingoing in g.g1.adjlist[undirected]) && add_alpha!(g, undirected, -1)
+			(ingoing in g.g1.adjlist[undirected]) && (g.alpha[undirected] += -1)
 			
 			isassigned(g.g2.ingoing, undirected) &&
-			(ingoing in g.g2.ingoing[undirected]) && add_beta!(g, undirected, -1)
+			(ingoing in g.g2.ingoing[undirected]) && (g.beta[undirected] += -1)
 		end
 
 		remove_arc!(g.g2, ingoing, s) # O(1) because no update of alpha & beta
@@ -234,8 +214,6 @@ function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
 		remove_edge!(g, s, undirected)
 	end
 
-	#mark_as_deleted!(g, s)
-
 	result = Vector{Int64}()
 	
 	for old_neighbor in old_neighbors
@@ -245,28 +223,6 @@ function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
 	result
 end
 
-# """
-# 	mark_as_deleted!(g::HybridGraph, s::Int64)
-
-# Mark a vertex as deleted by setting all values for it to undef.
-# Only call this after all incident edges (directed and undirected)
-# have been removed.
-# """
-# function mark_as_deleted!(g::HybridGraph, s::Int64)
-# 	isassigned(g.alpha, s) && (g.alpha[s] = undef)
-# 	isassigned(g.beta, s) && (g.beta[s] = undef)
-# 	isassigned(g.g1.adjlist, s) && (g.g1.adjlist[s] = undef)
-# 	isassigned(g.g1.deltaminus, s) && (g.g1.deltaminus[s] = undef)
-# 	isassigned(g.g1.deltaplus, s) && (g.g1.deltaplus[s] = undef)
-# 	isassigned(g.g1.ingoing, s) && (g.g1.ingoing[s] = undef)
-# 	isassigned(g.g1.outgoing, s) && (g.g1.outgoing[s] = undef)
-# 	isassigned(g.g2.adjlist, s) && (g.g2.adjlist[s] = undef)
-# 	isassigned(g.g2.deltaminus, s) && (g.g2.deltaminus[s] = undef)
-# 	isassigned(g.g2.deltaplus, s) && (g.g2.deltaplus[s] = undef)
-# 	isassigned(g.g2.ingoing, s) && (g.g2.ingoing[s] = undef)
-# 	isassigned(g.g2.outgoing, s) && (g.g2.outgoing[s] = undef)
-# end
-
 """
 	print_graph(g::HybridGraph, io::Core.IO = stdout)
 
@@ -275,21 +231,21 @@ Print the components of a HybridGraph g.
 function print_graph(g::HybridGraph, io::Core.IO = stdout)
 	for i = 1:length(g.alpha)
 		println(io, "Vertex $i:")
-		print(io,   "\tAlpha   = g.alpha[i])")
-		println(io, "\tBeta    = g.beta[i]")
+		print(io,   "\tAlpha   = $(g.alpha[i])")
+		println(io, "\tBeta    = $(g.beta[i])")
 
-		print(io, "\tδ+(G1)  = $(isassigned(g.g1.deltaplus, i) ? g.g1.deltaplus[i] : 0)")
-		print(io, "\tδ-(G1)  = $(isassigned(g.g1.deltaminus, i) ? g.g1.deltaminus[i] : 0)")
-		print(io, "\tδ+(G2)  = $(isassigned(g.g2.deltaplus, i) ? g.g2.deltaplus[i] : 0)")
-		println(io, "\tδ-(G2)  = $(isassigned(g.g2.deltaminus, i) ? g.g2.deltaminus[i] : 0)")
+		print(io,   "\tδ+(G1)  = $(g.g1.deltaplus[i])")
+		print(io,   "\tδ-(G1)  = $(g.g1.deltaminus[i])")
+		print(io,   "\tδ+(G2)  = $(g.g2.deltaplus[i])")
+		println(io, "\tδ-(G2)  = $(g.g2.deltaminus[i])")
 
-		print(io, "\tAdj(G1) = $(isassigned(g.g1.adjlist, i) ? join(collect(g.g1.adjlist[i]), ", ") : "-")")
+		print(io,   "\tAdj(G1) = $(isassigned(g.g1.adjlist, i) ? join(collect(g.g1.adjlist[i]), ", ") : "-")")
 		println(io, "\tAdj(G2) = $(isassigned(g.g2.adjlist, i) ? join(collect(g.g2.adjlist[i]), ", ")  : "-")")
 
-		print(io, "\tIn(G1)  = $(isassigned(g.g1.ingoing, i) ? join(collect(g.g1.ingoing[i]), ", ") : "-")")
+		print(io,   "\tIn(G1)  = $(isassigned(g.g1.ingoing, i) ? join(collect(g.g1.ingoing[i]), ", ") : "-")")
 		println(io, "\tIn(G2)  = $(isassigned(g.g2.ingoing, i) ? join(collect(g.g2.ingoing[i]), ", ")  : "-")")
 
-		print(io, "\tOut(G1) = $(isassigned(g.g1.outgoing, i) ? join(collect(g.g1.outgoing[i]), ", ") : "-")")
+		print(io,   "\tOut(G1) = $(isassigned(g.g1.outgoing, i) ? join(collect(g.g1.outgoing[i]), ", ") : "-")")
 		println(io, "\tOut(G2) = $(isassigned(g.g2.outgoing, i) ? join(collect(g.g2.outgoing[i]), ", ")  : "-")")
-	end	
+	end
 end
