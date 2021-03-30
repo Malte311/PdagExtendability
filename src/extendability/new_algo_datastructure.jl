@@ -148,10 +148,10 @@ function update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
 
 	for x in union(g.g1.adjlist[u], g.g2.adjlist[u])
 		is_adjacent(g, x, v) || continue
-		(x in g.g1.adjlist[v]) && add_beta(g, v, val)
-		(x in g.g1.adjlist[u]) && (x in g.g1.adjlist[v]) && add_alpha(g, x, val)
-		(x in g.g2.outgoing[u]) && (x in g.g1.adjlist[v]) && add_beta(g, x, val)
-		(x in g.g2.outgoing[v]) && (x in g.g1.adjlist[u]) && add_beta(g, x, val)
+		(x in g.g1.adjlist[v]) && add_beta!(g, v, val)
+		(x in g.g1.adjlist[u]) && (x in g.g1.adjlist[v]) && add_alpha!(g, x, val)
+		(x in g.g2.outgoing[u]) && (x in g.g1.adjlist[v]) && add_beta!(g, x, val)
+		(x in g.g2.outgoing[v]) && (x in g.g1.adjlist[u]) && add_beta!(g, x, val)
 	end
 end
 
@@ -160,7 +160,7 @@ end
 
 Add val to alpha at index in g.
 """
-function add_alpha(g::HybridGraph, index::Int64, val::Int64)
+function add_alpha!(g::HybridGraph, index::Int64, val::Int64)
 	isassigned(g.alpha, index) || (g.alpha[index] = 0)
 	g.alpha[index] += val
 end
@@ -170,7 +170,7 @@ end
 
 Add val to beta at index in g.
 """
-function add_beta(g::HybridGraph, index::Int64, val::Int64)
+function add_beta!(g::HybridGraph, index::Int64, val::Int64)
 	isassigned(g.beta, index) || (g.beta[index] = 0)
 	g.beta[index] += val
 end
@@ -201,20 +201,49 @@ function list_ps(g::HybridGraph)::Vector{Int64}
 	result
 end
 
-function pop_ps!(g::HybridGraph, s::Int64)::Int64
-	
-end
+"""
+	pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
 
-function next_edge(g::HybridGraph, u::Int64, v::Int64)
-	
-end
+Mark s as deleted and delete all edges (directed and undirected)
+incident to s. Return a list of neighbors of s that became potential
+sinks after the removal.
+"""
+function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
+	isassigned(g.g2.ingoing, s) || (g.g2.ingoing[s] = Set())
+	isassigned(g.g1.adjlist, s) || (g.g1.adjlist[s] = Set())
 
-function next_out_arc(g::HybridGraph, u::Int64, v::Int64)
-	
-end
+	# Delete directed edges first (since s is a sink, there are
+	# only ingoing edges).
+	for ingoing in g.g2.ingoing[s]
+		for undirected in g.g1.adjlist[s]
+			isassigned(g.g1.adjlist, undirected) &&
+			(ingoing in g.g1.adjlist[undirected]) && add_alpha!(g, undirected, -1)
+			
+			isassigned(g.g2.ingoing, undirected) &&
+			(ingoing in g.g2.ingoing[undirected]) && add_beta!(g, undirected, -1)
+		end
 
-function next_in_arc(g::HybridGraph, u::Int64, v::Int64)
-	
+		remove_arc!(g.g2, ingoing, s) # O(1) because no update of alpha & beta
+	end
+
+	# Delete undirected edges incident to s.
+	for undirected in g.g1.adjlist[s]
+		remove_edge!(g, s, undirected)
+	end
+
+	# Mark s as deleted (set all values to undef).
+	g.alpha[s] = undef
+	g.beta[s] = undef
+	isassigned(g.g1.adjlist, s) && (g.g1.adjlist[s] = undef)
+	isassigned(g.g1.deltaminus, s) && (g.g1.deltaminus[s] = undef)
+	isassigned(g.g1.deltaplus, s) && (g.g1.deltaplus[s] = undef)
+	isassigned(g.g1.ingoing, s) && (g.g1.ingoing[s] = undef)
+	isassigned(g.g1.outgoing, s) && (g.g1.outgoing[s] = undef)
+	isassigned(g.g2.adjlist, s) && (g.g2.adjlist[s] = undef)
+	isassigned(g.g2.deltaminus, s) && (g.g2.deltaminus[s] = undef)
+	isassigned(g.g2.deltaplus, s) && (g.g2.deltaplus[s] = undef)
+	isassigned(g.g2.ingoing, s) && (g.g2.ingoing[s] = undef)
+	isassigned(g.g2.outgoing, s) && (g.g2.outgoing[s] = undef)
 end
 
 """

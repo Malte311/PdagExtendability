@@ -4,7 +4,8 @@ using LightGraphs
 	pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 
 Convert a partially directed acyclic graph (PDAG) into a fully
-directed acyclic graph (DAG).
+directed acyclic graph (DAG). If this is not possible, an empty
+graph is returned.
 
 Undirected edges are represented as two directed edges.
 
