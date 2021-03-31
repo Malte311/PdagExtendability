@@ -35,22 +35,15 @@ function degeneracy_ordering(g::SimpleDiGraph)::Vector{Int64}
 	# Compute initial degrees for each vertex, updated in each iteration
 	(aux_array, deg_str) = deg_struct(g)
 
-	# Hashtable for mappings of node labels because rem_vertex! swaps
-	# the vertex to be deleted with vertex |V| and deletes vertex |V|
-	# from the graph.
-	ht = Dict()
-
 	while j > 0
 		v = pop_min_deg_vertex!(deg_str)
-		v = get(ht, v, v) # TODO: Make sure this works, because it doesn't atm
 
-		adjacent = union(Set(inneighbors(h, v)), Set(outneighbors(h, v)))
-		for adj in adjacent
+		for adj in union(Set(inneighbors(h, v)), Set(outneighbors(h, v)))
 			update_deg!(adj, aux_array, deg_str)
+			has_edge(h, adj, v) && rem_edge!(h, adj, v)
+			has_edge(h, v, adj) && rem_edge!(h, v, adj)
 		end
 
-		ht[v] = get(ht, get(ht, v, nv(h)), nv(h))
-		rem_vertex!(h, v)
 		result[j] = v
 		j -= 1
 	end
@@ -163,9 +156,3 @@ function update_deg!(v::Int64, aux::Vector{Int64}, degs::Vector{Set{Int64}})
 	push!(degs[index-1], v)
 	aux[v] -= 1
 end
-
-# g = SimpleDiGraph(3)
-# add_edge!(g, 1, 2)
-# add_edge!(g, 2, 3)
-# add_edge!(g, 3, 2)
-# println(degeneracy_ordering(g))
