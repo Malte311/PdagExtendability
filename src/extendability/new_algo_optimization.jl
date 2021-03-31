@@ -31,7 +31,9 @@ function degeneracy_ordering(g::SimpleDiGraph)::Vector{Int64}
 	j = nv(g)
 	h = copy(g)
 	result = Vector{Int64}(undef, j)
-	(aux_array, deg_str) = deg_struct(g) # Compute degrees for each vertex
+
+	# Compute initial degrees for each vertex, updated in each iteration
+	(aux_array, deg_str) = deg_struct(g)
 
 	# Hashtable for mappings of node labels because rem_vertex! swaps
 	# the vertex to be deleted with vertex |V| and deletes vertex |V|
@@ -40,23 +42,16 @@ function degeneracy_ordering(g::SimpleDiGraph)::Vector{Int64}
 
 	while j > 0
 		v = pop_min_deg_vertex!(deg_str)
-		v = get(ht, v, v)
-		mindeg = aux_array[v]
-		adjlist = union(
-			Set{Int64}(inneighbors(h, v)),
-			Set{Int64}(outneighbors(h, v))
-		)
-		for adj in adjlist
-			deg = aux_array[adj]+1
-			delete!(deg_str[deg], adj)
-			isassigned(deg_str, deg-1) || (deg_str[deg-1] = Set{Int64}())
-			push!(deg_str[deg-1], adj)
-			aux_array[adj] -= 1
+		v = get(ht, v, v) # TODO: Make sure this works, because it doesn't atm
+
+		adjacent = union(Set(inneighbors(h, v)), Set(outneighbors(h, v)))
+		for adj in adjacent
+			update_deg!(adj, aux_array, deg_str)
 		end
 
-		result[j] = v
 		ht[v] = get(ht, get(ht, v, nv(h)), nv(h))
 		rem_vertex!(h, v)
+		result[j] = v
 		j -= 1
 	end
 
@@ -91,20 +86,14 @@ julia> deg_struct(g)
 """
 function deg_struct(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
 	n = nv(g)
-	deg_str = Vector{Set{Int64}}(undef, n)
 	aux_array = Vector{Int64}(undef, n)
+	deg_str = Vector{Set{Int64}}(undef, n)
 
-	for vertex = 1:n
-		# TODO: How to obtain the degree efficiently? Problem is that
-		# undirected edges are represented as two edges which must not be
-		# counted twice!
-		deg = length(union(
-			Set{Int64}(inneighbors(g, vertex)),
-			Set{Int64}(outneighbors(g, vertex))
-		))
+	for v = 1:n
+		deg = length(union(Set(inneighbors(g, v)), Set(outneighbors(g, v))))
+		aux_array[v] = deg
 		isassigned(deg_str, deg+1) || (deg_str[deg+1] = Set{Int64}())
-		push!(deg_str[deg+1], vertex)
-		aux_array[vertex] = deg
+		push!(deg_str[deg+1], v)
 	end
 
 	aux_array, deg_str
@@ -142,3 +131,41 @@ function pop_min_deg_vertex!(degs::Vector{Set{Int64}})::Int64
 
 	-1
 end
+
+"""
+	update_deg!(v::Int64, degs::Vector{Int64}, aux::Vector{Set{Int64}})
+
+Update the degree of a vertex after an adjacent vertex has been removed,
+i.e., reduce the degree by one and move it into the correct set in the
+degree structure.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> (aux, degs) = deg_struct(g)
+([1, 2, 1], Set{Int64}[#undef, Set([3, 1]), Set([2])])
+julia> update_deg!(3, aux, degs)
+julia> (aux, degs)
+([1, 2, 0], Set{Int64}[Set([3]), Set([1]), Set([2])])
+```
+"""
+function update_deg!(v::Int64, aux::Vector{Int64}, degs::Vector{Set{Int64}})
+	index = aux[v]+1 # Index 1 holds degree 0, index 2 degree 1, and so on
+	delete!(degs[index], v)
+	isassigned(degs, index-1) || (degs[index-1] = Set{Int64}())
+	push!(degs[index-1], v)
+	aux[v] -= 1
+end
+
+# g = SimpleDiGraph(3)
+# add_edge!(g, 1, 2)
+# add_edge!(g, 2, 3)
+# add_edge!(g, 3, 2)
+# println(degeneracy_ordering(g))
