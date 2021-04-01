@@ -10,7 +10,7 @@ WORKDIR /home/user/src/
 USER user
 
 COPY Manifest.toml Project.toml /home/user/
-RUN julia --project=/home/user/ -e 'using Pkg; Pkg.instantiate()' \
+RUN julia --project=/home/user/ -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()' \
 	&& echo 'alias julia="julia --project=/home/user/ $@"' >> ~/.bashrc
 
 CMD ["/bin/bash"]
