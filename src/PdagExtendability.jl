@@ -10,6 +10,6 @@ include("extendability/dor_tarsi_algo.jl")
 export pdag2dag
 
 include("extendability/new_algo.jl")
-export fastpdag2dag
+export init, is_adjacent, insert_arc!, insert_edge!, update_alphabeta!, fastpdag2dag
 
 end
