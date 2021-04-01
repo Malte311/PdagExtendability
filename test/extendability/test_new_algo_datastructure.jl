@@ -56,33 +56,106 @@ end
 end
 
 @testset "insert_edge!" begin
-	
+	g = init(3)
+	insert_edge!(g, 1, 2)
+	for i = 1:3 # Edges are inserted into g.g1, thus g.g2 must be unchanged
+		@test 0 == g.alpha[i]
+		@test 0 == g.beta[i]
+		@test !isassigned(g.g2.adjlist, i) || 0 == length(g.g2.adjlist[i])
+		@test !isassigned(g.g2.ingoing, i) || 0 == length(g.g2.ingoing[i])
+		@test !isassigned(g.g2.outgoing, i) || 0 == length(g.g2.outgoing[i])
+		@test 0 == g.g2.deltaplus[i]
+		@test 0 == g.g2.deltaminus[i]
+	end
+	@test 2 in g.g1.adjlist[1] && 1 == length(g.g1.adjlist[1])
+	@test 1 in g.g1.adjlist[2] && 1 == length(g.g1.adjlist[2])
+	@test !isassigned(g.g1.adjlist, 3) || 0 == length(g.g1.adjlist[3])
+	@test 2 in g.g1.ingoing[1] && 1 == length(g.g1.ingoing[1])
+	@test 1 in g.g1.ingoing[2] && 1 == length(g.g1.ingoing[2])
+	@test !isassigned(g.g1.ingoing, 3) || 0 == length(g.g1.ingoing[3])
+	@test 2 in g.g1.outgoing[1] && 1 == length(g.g1.outgoing[1])
+	@test 1 in g.g1.outgoing[2] && 1 == length(g.g1.outgoing[2])
+	@test !isassigned(g.g1.outgoing, 3) || 0 == length(g.g1.outgoing[3])
+	@test 1 == g.g1.deltaplus[1]
+	@test 1 == g.g1.deltaplus[2]
+	@test 0 == g.g1.deltaplus[3]
+	@test 1 == g.g1.deltaminus[1]
+	@test 1 == g.g1.deltaminus[2]
+	@test 0 == g.g1.deltaminus[3]
 end
 
 @testset "remove_arc!" begin
-	
+	g = init(3)
+	insert_arc!(g, 1, 2)
+	remove_arc!(g, 1, 2)
+	for i = 1:3
+		@test 0 == g.alpha[i]
+		@test 0 == g.beta[i]
+		@test !isassigned(g.g1.adjlist, i) || 0 == length(g.g1.adjlist[i])
+		@test !isassigned(g.g1.ingoing, i) || 0 == length(g.g1.ingoing[i])
+		@test !isassigned(g.g1.outgoing, i) || 0 == length(g.g1.outgoing[i])
+		@test 0 == g.g1.deltaplus[i]
+		@test 0 == g.g1.deltaminus[i]
+		@test !isassigned(g.g2.adjlist, i) || 0 == length(g.g2.adjlist[i])
+		@test !isassigned(g.g2.ingoing, i) || 0 == length(g.g2.ingoing[i])
+		@test !isassigned(g.g2.outgoing, i) || 0 == length(g.g2.outgoing[i])
+		@test 0 == g.g1.deltaplus[i]
+		@test 0 == g.g1.deltaminus[i]
+	end
 end
 
 @testset "remove_edge!" begin
-	
-end
-
-@testset "update_alphabeta!" begin
-	
+	g = init(3)
+	insert_edge!(g, 1, 2)
+	remove_edge!(g, 1, 2)
+	for i = 1:3
+		@test 0 == g.alpha[i]
+		@test 0 == g.beta[i]
+		@test !isassigned(g.g1.adjlist, i) || 0 == length(g.g1.adjlist[i])
+		@test !isassigned(g.g1.ingoing, i) || 0 == length(g.g1.ingoing[i])
+		@test !isassigned(g.g1.outgoing, i) || 0 == length(g.g1.outgoing[i])
+		@test 0 == g.g1.deltaplus[i]
+		@test 0 == g.g1.deltaminus[i]
+		@test !isassigned(g.g2.adjlist, i) || 0 == length(g.g2.adjlist[i])
+		@test !isassigned(g.g2.ingoing, i) || 0 == length(g.g2.ingoing[i])
+		@test !isassigned(g.g2.outgoing, i) || 0 == length(g.g2.outgoing[i])
+		@test 0 == g.g1.deltaplus[i]
+		@test 0 == g.g1.deltaminus[i]
+	end
 end
 
 @testset "is_ps" begin
-	
+	g = init(3)
+	@test is_ps(g, 1)
+	@test is_ps(g, 2)
+	@test is_ps(g, 3)
+	insert_arc!(g, 1, 2)
+	@test !is_ps(g, 1)
+	@test is_ps(g, 2)
+	@test is_ps(g, 3)
+	insert_edge!(g, 2, 3)
+	@test !is_ps(g, 1)
+	@test !is_ps(g, 2)
+	@test is_ps(g, 3)
 end
 
 @testset "list_ps" begin
-	
+	g = init(3)
+	@test 1 in list_ps(g) && 2 in list_ps(g) && 3 in list_ps(g)
+	insert_arc!(g, 1, 2)
+	@test !(1 in list_ps(g)) && 2 in list_ps(g) && 3 in list_ps(g)
+	insert_edge!(g, 2, 3)
+	@test !(1 in list_ps(g)) && !(2 in list_ps(g)) && 3 in list_ps(g)
 end
 
 @testset "pop_ps!" begin
-	
-end
-
-@testset "print_graph" begin
-	
+	g = init(3)
+	insert_arc!(g, 1, 2)
+	insert_edge!(g, 2, 3)
+	newps = pop_ps!(g, 3)
+	@test 2 in newps && 1 == length(newps)
+	@test !is_adjacent(g, 2, 3) && !is_adjacent(g, 3, 2)
+	newps = pop_ps!(g, 2)
+	@test 1 in newps && 1 == length(newps)
+	@test !is_adjacent(g, 1, 2) && !is_adjacent(g, 2, 1)
 end
