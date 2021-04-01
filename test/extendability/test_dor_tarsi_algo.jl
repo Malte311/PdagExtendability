@@ -117,3 +117,15 @@
 		@test nv(out) == 0 && ne(out) == 0
 	end
 end
+
+@testset "sink" begin
+	in = SimpleDiGraph(3)
+	add_edge!(in, 1, 2)
+	add_edge!(in, 2, 3)
+	add_edge!(in, 3, 2)
+	@test 3 == sink(in)
+	rem_vertex!(in, 3)
+	@test 2 == sink(in)
+	rem_vertex!(in, 2)
+	@test 1 == sink(in)
+end

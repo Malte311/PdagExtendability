@@ -126,7 +126,7 @@ function pop_min_deg_vertex!(degs::Vector{Set{Int64}})::Int64
 end
 
 """
-	update_deg!(v::Int64, degs::Vector{Int64}, aux::Vector{Set{Int64}})
+	update_deg!(v::Int64, aux::Vector{Int64}, degs::Vector{Set{Int64}})
 
 Update the degree of a vertex after an adjacent vertex has been removed,
 i.e., reduce the degree by one and move it into the correct set in the
