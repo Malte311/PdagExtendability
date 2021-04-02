@@ -237,7 +237,14 @@ function update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
 
 	for x in union(g.g1.adjlist[u], g.g2.adjlist[u])
 		is_adjacent(g, x, v) || continue
-		(x in g.g1.adjlist[v]) && (g.beta[v] += val)
+		(u in g.g1.adjlist[v]) && (u in g.g1.adjlist[x]) && (g.alpha[u] += val)
+		(u in g.g1.adjlist[v]) && (u in g.g2.outgoing[x]) && (g.beta[u] += val)
+		(u in g.g2.outgoing[v]) && (u in g.g1.adjlist[x]) && (g.beta[u] += val)
+
+		(v in g.g1.adjlist[x]) && (v in g.g1.adjlist[u]) && (g.alpha[v] += val)
+		(v in g.g1.adjlist[x]) && (v in g.g2.outgoing[u]) && (g.beta[v] += val)
+		(v in g.g2.outgoing[x]) && (v in g.g1.adjlist[u]) && (g.beta[v] += val)
+
 		(x in g.g1.adjlist[u]) && (x in g.g1.adjlist[v]) && (g.alpha[x] += val)
 		(x in g.g2.outgoing[u]) && (x in g.g1.adjlist[v]) && (g.beta[x] += val)
 		(x in g.g2.outgoing[v]) && (x in g.g1.adjlist[u]) && (g.beta[x] += val)
