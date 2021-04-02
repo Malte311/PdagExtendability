@@ -117,3 +117,87 @@
 		@test nv(out) == 0 && ne(out) == 0
 	end
 end
+
+@testset "standardsetup" begin
+	ingraph = SimpleDiGraph(3)
+	add_edge!(ingraph, 1, 2)
+	add_edge!(ingraph, 2, 3)
+	add_edge!(ingraph, 3, 2)
+	g = standardsetup(ingraph)
+	for i = 1:3
+		@test 0 == g.alpha[i]
+		@test 0 == g.beta[i]
+	end
+	@test (1 in g.g2.adjlist[2]) && 1 == length(g.g2.adjlist[2])
+	@test (2 in g.g2.adjlist[1]) && 1 == length(g.g2.adjlist[1])
+	@test !isassigned(g.g2.adjlist, 3) || isempty(g.g2.adjlist[3])
+	@test !isassigned(g.g1.adjlist, 1) || isempty(g.g1.adjlist[1])
+	@test (3 in g.g1.adjlist[2]) && 1 == length(g.g1.adjlist[2])
+	@test (2 in g.g1.adjlist[3]) && 1 == length(g.g1.adjlist[3])
+	@test (1 in g.g2.ingoing[2]) && 1 == length(g.g2.ingoing[2])
+	@test !isassigned(g.g2.ingoing, 1) || isempty(g.g2.ingoing[1])
+	@test !isassigned(g.g2.ingoing, 3) || isempty(g.g2.ingoing[3])
+	@test !isassigned(g.g1.ingoing, 1) || isempty(g.g1.ingoing[1])
+	@test (3 in g.g1.ingoing[2]) && 1 == length(g.g1.ingoing[2])
+	@test (2 in g.g1.ingoing[3]) && 1 == length(g.g1.ingoing[3])
+	@test (2 in g.g2.outgoing[1]) && 1 == length(g.g2.outgoing[1])
+	@test !isassigned(g.g2.outgoing, 2) || isempty(g.g2.outgoing[2])
+	@test !isassigned(g.g2.outgoing, 3) || isempty(g.g2.outgoing[3])
+	@test !isassigned(g.g1.outgoing, 1) || isempty(g.g1.outgoing[1])
+	@test (3 in g.g1.outgoing[2]) && 1 == length(g.g1.outgoing[2])
+	@test (2 in g.g1.outgoing[3]) && 1 == length(g.g1.outgoing[3])
+	@test 0 == g.g1.deltaplus[1]
+	@test 1 == g.g1.deltaplus[2]
+	@test 1 == g.g1.deltaplus[3]
+	@test 1 == g.g2.deltaplus[1]
+	@test 0 == g.g2.deltaplus[2]
+	@test 0 == g.g2.deltaplus[3]
+	@test 0 == g.g1.deltaminus[1]
+	@test 1 == g.g1.deltaminus[2]
+	@test 1 == g.g1.deltaminus[3]
+	@test 0 == g.g2.deltaminus[1]
+	@test 1 == g.g2.deltaminus[2]
+	@test 0 == g.g2.deltaminus[3]
+end
+
+@testset "optimizedsetup" begin
+	ingraph = SimpleDiGraph(3)
+	add_edge!(ingraph, 1, 2)
+	add_edge!(ingraph, 2, 3)
+	add_edge!(ingraph, 3, 2)
+	g = optimizedsetup(ingraph)
+	for i = 1:3
+		@test 0 == g.alpha[i]
+		@test 0 == g.beta[i]
+	end
+	@test (1 in g.g2.adjlist[2]) && 1 == length(g.g2.adjlist[2])
+	@test (2 in g.g2.adjlist[1]) && 1 == length(g.g2.adjlist[1])
+	@test !isassigned(g.g2.adjlist, 3) || isempty(g.g2.adjlist[3])
+	@test !isassigned(g.g1.adjlist, 1) || isempty(g.g1.adjlist[1])
+	@test (3 in g.g1.adjlist[2]) && 1 == length(g.g1.adjlist[2])
+	@test (2 in g.g1.adjlist[3]) && 1 == length(g.g1.adjlist[3])
+	@test (1 in g.g2.ingoing[2]) && 1 == length(g.g2.ingoing[2])
+	@test !isassigned(g.g2.ingoing, 1) || isempty(g.g2.ingoing[1])
+	@test !isassigned(g.g2.ingoing, 3) || isempty(g.g2.ingoing[3])
+	@test !isassigned(g.g1.ingoing, 1) || isempty(g.g1.ingoing[1])
+	@test (3 in g.g1.ingoing[2]) && 1 == length(g.g1.ingoing[2])
+	@test (2 in g.g1.ingoing[3]) && 1 == length(g.g1.ingoing[3])
+	@test (2 in g.g2.outgoing[1]) && 1 == length(g.g2.outgoing[1])
+	@test !isassigned(g.g2.outgoing, 2) || isempty(g.g2.outgoing[2])
+	@test !isassigned(g.g2.outgoing, 3) || isempty(g.g2.outgoing[3])
+	@test !isassigned(g.g1.outgoing, 1) || isempty(g.g1.outgoing[1])
+	@test (3 in g.g1.outgoing[2]) && 1 == length(g.g1.outgoing[2])
+	@test (2 in g.g1.outgoing[3]) && 1 == length(g.g1.outgoing[3])
+	@test 0 == g.g1.deltaplus[1]
+	@test 1 == g.g1.deltaplus[2]
+	@test 1 == g.g1.deltaplus[3]
+	@test 1 == g.g2.deltaplus[1]
+	@test 0 == g.g2.deltaplus[2]
+	@test 0 == g.g2.deltaplus[3]
+	@test 0 == g.g1.deltaminus[1]
+	@test 1 == g.g1.deltaminus[2]
+	@test 1 == g.g1.deltaminus[3]
+	@test 0 == g.g2.deltaminus[1]
+	@test 1 == g.g2.deltaminus[2]
+	@test 0 == g.g2.deltaminus[3]
+end

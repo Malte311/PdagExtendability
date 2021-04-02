@@ -1,3 +1,25 @@
+@testset "init" begin
+	for n in [2, 20, 200]
+		g = init(n)
+		testvec = fill(true, 12)
+		for i = 1:n
+			testvec[1] &= (0 == g.alpha[i])
+			testvec[2] &= (0 == g.beta[i])
+			testvec[3] &= !isassigned(g.g1.adjlist, i)
+			testvec[4] &= !isassigned(g.g2.adjlist, i)
+			testvec[5] &= !isassigned(g.g1.ingoing, i)
+			testvec[6] &= !isassigned(g.g2.ingoing, i)
+			testvec[7] &= !isassigned(g.g1.outgoing, i)
+			testvec[8] &= !isassigned(g.g2.outgoing, i)
+			testvec[9] &= (0 == g.g1.deltaplus[i])
+			testvec[10] &= (0 == g.g2.deltaplus[i])
+			testvec[11] &= (0 == g.g1.deltaminus[i])
+			testvec[12] &= (0 == g.g2.deltaminus[i])
+		end
+		@test reduce(&, testvec, init = true)
+	end
+end
+
 @testset "is_adjacent" begin
 	g = init(3)
 	insert_arc!(g, 1, 2)

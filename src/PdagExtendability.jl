@@ -9,7 +9,7 @@ remove_arc!, remove_edge!, update_alphabeta!,
 is_ps, list_ps, pop_ps!, print_graph
 export degeneracy_ordering, deg_struct, pop_min_deg_vertex!,
 update_deg!
-export fastpdag2dag
+export fastpdag2dag, standardsetup, optimizedsetup
 
 include("utils/plotting.jl")
 export plotsvg
