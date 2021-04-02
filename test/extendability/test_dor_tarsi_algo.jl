@@ -113,6 +113,48 @@
 		@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 4, 1) &&
 			has_edge(out, 5, 4) && has_edge(out, 5, 2) &&
 			has_edge(out, 5, 3) && has_edge(out, 3, 2)
+
+		input = SimpleDiGraph(5)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 5, 4)
+		add_edge!(input, 5, 2)
+		add_edge!(input, 5, 3)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		out = pdag2dag(input)
+		@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 4, 1) &&
+			has_edge(out, 5, 4) && has_edge(out, 5, 2) &&
+			has_edge(out, 5, 3) && has_edge(out, 3, 2)
+
+		input = SimpleDiGraph(5)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 5)
+		add_edge!(input, 5, 4)
+		add_edge!(input, 5, 2)
+		add_edge!(input, 5, 3)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		out = pdag2dag(input)
+		@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 1, 4) &&
+			has_edge(out, 4, 5) && has_edge(out, 5, 2) &&
+			has_edge(out, 5, 3) && has_edge(out, 3, 2)
+
+		input = SimpleDiGraph(5)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 4, 5)
+		add_edge!(input, 5, 4)
+		add_edge!(input, 5, 2)
+		add_edge!(input, 2, 5)
+		add_edge!(input, 5, 3)
+		add_edge!(input, 3, 5)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		out = pdag2dag(input)
+		@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 4, 1) &&
+			has_edge(out, 5, 4) && has_edge(out, 5, 2) &&
+			has_edge(out, 3, 5) && has_edge(out, 3, 2)
 	end
 
 	@testset "Empty graph if no consistent extension is possible" begin
@@ -150,6 +192,19 @@
 			output = pdag2dag(input)
 			@test nv(output) == 0 && ne(output) == 0
 		end
+
+		input = SimpleDiGraph(5)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 5)
+		add_edge!(input, 5, 4)
+		add_edge!(input, 5, 2)
+		add_edge!(input, 5, 3)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		out = pdag2dag(input)
+		@test nv(out) == 0 && ne(out) == 0
 	end
 end
 

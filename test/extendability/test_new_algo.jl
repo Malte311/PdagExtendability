@@ -111,6 +111,62 @@
 				end
 				@test isok
 			end
+
+			input = SimpleDiGraph(5)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 1)
+			add_edge!(input, 4, 5)
+			add_edge!(input, 5, 4)
+			add_edge!(input, 5, 2)
+			add_edge!(input, 5, 3)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			out = fastpdag2dag(input, optimize)
+			@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 1, 4) &&
+				has_edge(out, 4, 5) && has_edge(out, 5, 2) &&
+				has_edge(out, 5, 3) && has_edge(out, 2, 3)
+
+			input = SimpleDiGraph(5)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 1)
+			add_edge!(input, 5, 4)
+			add_edge!(input, 5, 2)
+			add_edge!(input, 5, 3)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			out = fastpdag2dag(input, optimize)
+			@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 4, 1) &&
+				has_edge(out, 5, 4) && has_edge(out, 5, 2) &&
+				has_edge(out, 5, 3) && has_edge(out, 2, 3)
+
+			input = SimpleDiGraph(5)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 5)
+			add_edge!(input, 5, 4)
+			add_edge!(input, 5, 2)
+			add_edge!(input, 5, 3)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			out = fastpdag2dag(input, optimize)
+			@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 1, 4) &&
+				has_edge(out, 4, 5) && has_edge(out, 5, 2) &&
+				has_edge(out, 5, 3) && has_edge(out, 2, 3)
+
+			input = SimpleDiGraph(5)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 1)
+			add_edge!(input, 4, 5)
+			add_edge!(input, 5, 4)
+			add_edge!(input, 5, 2)
+			add_edge!(input, 2, 5)
+			add_edge!(input, 5, 3)
+			add_edge!(input, 3, 5)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			out = fastpdag2dag(input, optimize)
+			@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 1, 4) &&
+				has_edge(out, 4, 5) && has_edge(out, 5, 2) &&
+				has_edge(out, 5, 3) && has_edge(out, 2, 3)
 		end
 	end
 
@@ -150,6 +206,19 @@
 				output = fastpdag2dag(input, optimize)
 				@test nv(output) == 0 && ne(output) == 0
 			end
+
+			input = SimpleDiGraph(5)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 5)
+			add_edge!(input, 5, 4)
+			add_edge!(input, 5, 2)
+			add_edge!(input, 5, 3)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			out = fastpdag2dag(input, optimize)
+			@test nv(out) == 0 && ne(out) == 0
 		end
 	end
 end
