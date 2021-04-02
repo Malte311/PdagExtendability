@@ -11,6 +11,15 @@
 		out = pdag2dag(input)
 		@test nv(out) == 3 && ne(out) == 2 && has_edge(out, 1, 2) &&
 			has_edge(out, 2, 3)
+
+		for n in [50, 100, 500]
+			input = SimpleDiGraph(n)
+			for i = 1:n-1
+				add_edge!(input, i, i+1)
+			end
+			output = pdag2dag(input)
+			@test input == output
+		end
 	end
 
 	@testset "Meek Rule R1" begin
@@ -115,6 +124,18 @@
 		add_edge!(input, 4, 3)
 		out = pdag2dag(input)
 		@test nv(out) == 0 && ne(out) == 0
+
+		for n in [50, 100, 500]
+			input = SimpleDiGraph(n)
+			for i = 1:n-1
+				add_edge!(input, i, i+1)
+				add_edge!(input, i+1, i)
+			end
+			add_edge!(input, 1, n)
+			add_edge!(input, n, 1)
+			output = pdag2dag(input)
+			@test nv(output) == 0 && ne(output) == 0
+		end
 	end
 end
 
