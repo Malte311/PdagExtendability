@@ -49,7 +49,7 @@ function pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 		
 		# Direct all adjacent edges towards x
 		for neighbor in outneighbors(temp, x)
-			rem_edge!(result, x, get(ht, neighbor, neighbor))
+			rem_edge!(result, get(ht, x, x), get(ht, neighbor, neighbor))
 		end
 		
 		ht[x] = get(ht, get(ht, x, nv(temp)), nv(temp))

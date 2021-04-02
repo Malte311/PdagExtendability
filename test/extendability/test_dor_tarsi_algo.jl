@@ -83,7 +83,7 @@
 		add_edge!(input, 3, 4)
 		out = pdag2dag(input)
 		@test nv(out) == 4 && ne(out) == 3 && has_edge(out, 1, 2) &&
-		has_edge(out, 2, 3) && has_edge(out, 3, 4)
+			has_edge(out, 2, 3) && has_edge(out, 3, 4)
 
 		for n in [20, 50, 100]
 			input = SimpleDiGraph(n)
@@ -99,6 +99,20 @@
 			end
 			@test isok
 		end
+
+		input = SimpleDiGraph(5)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 4, 5)
+		add_edge!(input, 5, 4)
+		add_edge!(input, 5, 2)
+		add_edge!(input, 5, 3)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		out = pdag2dag(input)
+		@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 4, 1) &&
+			has_edge(out, 5, 4) && has_edge(out, 5, 2) &&
+			has_edge(out, 5, 3) && has_edge(out, 3, 2)
 	end
 
 	@testset "Empty graph if no consistent extension is possible" begin

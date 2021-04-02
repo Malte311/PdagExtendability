@@ -95,7 +95,7 @@
 			add_edge!(input, 3, 4)
 			out = fastpdag2dag(input, optimize)
 			@test nv(out) == 4 && ne(out) == 3 && has_edge(out, 1, 2) &&
-			has_edge(out, 2, 3) && has_edge(out, 3, 4)
+				has_edge(out, 2, 3) && has_edge(out, 3, 4)
 
 			for n in [20, 50, 100]
 				input = SimpleDiGraph(n)
