@@ -57,15 +57,13 @@ function fastpdag2dag(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
 		for undirected in hg.g1.adjlist[s]
 			rem_edge!(result, s, undirected)
 		end
-		
+
 		newps = pop_ps!(hg, s)
 		isempty(newps) || push!(ps, newps...)
 	end
 
 	# The graph is not extendable if no potential sinks are left but there
 	# are still edges in the graph.
-	isassigned(hg.g1.deltaplus) || (hg.g1.deltaplus = Vector{Int64}())
-	isassigned(hg.g2.deltaplus) || (hg.g2.deltaplus = Vector{Int64}())
 	sum(hg.g1.deltaplus) + sum(hg.g2.deltaplus) == 0 || return SimpleDiGraph(0)
 
 	result

@@ -38,7 +38,7 @@ function degeneracy_ordering(g::SimpleDiGraph)::Vector{Int64}
 	while j > 0
 		v = pop_min_deg_vertex!(deg_str)
 
-		for adj in union(Set(inneighbors(h, v)), Set(outneighbors(h, v)))
+		for adj in Set(all_neighbors(h, v))
 			update_deg!(adj, aux_array, deg_str)
 			has_edge(h, adj, v) && rem_edge!(h, adj, v)
 			has_edge(h, v, adj) && rem_edge!(h, v, adj)
@@ -83,7 +83,7 @@ function deg_struct(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
 	deg_str = Vector{Set{Int64}}(undef, n)
 
 	for v = 1:n
-		deg = length(union(Set(inneighbors(g, v)), Set(outneighbors(g, v))))
+		deg = length(Set(all_neighbors(g, v)))
 		aux_array[v] = deg
 		isassigned(deg_str, deg+1) || (deg_str[deg+1] = Set{Int64}())
 		push!(deg_str[deg+1], v)
