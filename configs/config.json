@@ -3,5 +3,6 @@
 	"logdir": "../logs/",
 	"logfile": "log.txt",
 	"logtofile": false,
+	"only_undirected": false,
 	"visualize": false
 }

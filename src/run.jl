@@ -1,4 +1,7 @@
-using BenchmarkTools, JSON, Logging, PdagExtendability
+using BenchmarkTools, Dates, JSON, Logging, PdagExtendability
+
+BenchmarkTools.DEFAULT_PARAMETERS.samples = 100000
+BenchmarkTools.DEFAULT_PARAMETERS.evals = 1
 
 if length(ARGS) != 1 || !isfile(ARGS[1])
 	@error "Run the script via 'julia run.jl <path/to/config.json>'."
@@ -13,8 +16,13 @@ if config["logtofile"]
 end
 
 for f in readdir(config["benchmarkdir"])
-	@info "Running benchmark for '$f'..."
-	pdag = readinputgraph(joinpath(config["benchmarkdir"], f))
+	isfile(joinpath(config["benchmarkdir"], f)) || continue
+
+	@info "[$(Dates.format(now(), "HH:MM"))] Running benchmark for '$f'..."
+	pdag = readinputgraph(
+		joinpath(config["benchmarkdir"], f),
+		config["only_undirected"]
+	)
 
 	bench1 = @benchmark pdag2dag($pdag)
 	bench2 = @benchmark fastpdag2dag($pdag, false)
