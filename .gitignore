@@ -24,3 +24,4 @@ docs/site/
 /logs/*.svg
 /build/
 /configs/dummy.json
+/benchmarks/dummy/
