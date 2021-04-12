@@ -1,6 +1,4 @@
-using JSON
-using Logging
-using PdagExtendability
+using BenchmarkTools, JSON, Logging, PdagExtendability
 
 if length(ARGS) != 1 || !isfile(ARGS[1])
 	@error "Run the script via 'julia run.jl <path/to/config.json>'."
@@ -15,14 +13,31 @@ if config["logtofile"]
 end
 
 for f in readdir(config["benchmarkdir"])
+	@info "Running benchmark for '$f'..."
 	pdag = readinputgraph(joinpath(config["benchmarkdir"], f))
-	dag = pdag2dag(pdag)
-	@info "Completed $f"
+
+	bench1 = @benchmark pdag2dag($pdag)
+	bench2 = @benchmark fastpdag2dag($pdag, false)
+	bench3 = @benchmark fastpdag2dag($pdag, true)
+
+	for b in [bench1, bench2, bench3]
+		@info "Minimum time: $(round(minimum(b.times), digits=2))"
+		@info "Median time:  $(round(median(b.times), digits=2))"
+		@info "Mean time:    $(round(mean(b.times), digits=2))"
+		@info "Maximum time: $(round(maximum(b.times), digits=2))"
+		@info "---------------------"
+	end
 
 	config["visualize"] || continue
 
-	plotsvg(pdag, string(config["logdir"], "input-", replace(f, ".txt" => ""), ".svg"))
-	plotsvg(dag, string(config["logdir"], "output-", replace(f, ".txt" => ""), ".svg"))
+	dag1 = pdag2dag(pdag)
+	dag2 = fastpdag2dag(pdag, false)
+	dag3 = fastpdag2dag(pdag, true)
+
+	plotsvg(pdag, string(config["logdir"], "in-", replace(f, ".txt" => ""), ".svg"))
+	plotsvg(dag1, string(config["logdir"], "out1-", replace(f, ".txt" => ""), ".svg"))
+	plotsvg(dag2, string(config["logdir"], "out2-", replace(f, ".txt" => ""), ".svg"))
+	plotsvg(dag3, string(config["logdir"], "out3-", replace(f, ".txt" => ""), ".svg"))
 end
 
 config["logtofile"] && close(io)
