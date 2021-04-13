@@ -32,18 +32,17 @@ representing a graph with n vertices.
 julia> g = init(3)
 HybridGraph(
 	DirectedGraph(
-		Set{Int64}[#undef, #undef, #undef],
-		[0, 0, 0],
-		[0, 0, 0],
-		Set{Int64}[#undef, #undef, #undef],
-		Set{Int64}[#undef, #undef, #undef]
+		Set{Int64}[Set(), Set(), Set()],
+		[0, 0, 0], [0, 0, 0],
+		Set{Int64}[Set(), Set(), Set()],
+		Set{Int64}[Set(), Set(), Set()]
 	),
 	DirectedGraph(
-		Set{Int64}[#undef, #undef, #undef],
+		Set{Int64}[Set(), Set(), Set()],
 		[0, 0, 0],
 		[0, 0, 0],
-		Set{Int64}[#undef, #undef, #undef],
-		Set{Int64}[#undef, #undef, #undef]
+		Set{Int64}[Set(), Set(), Set()],
+		Set{Int64}[Set(), Set(), Set()]
 	),
 	[0, 0, 0],
 	[0, 0, 0]
@@ -355,9 +354,9 @@ julia> print_graph(g)
 Vertex 1:
         Alpha   = 0     Beta    = 0
         δ+(G1)  = 0     δ-(G1)  = 0     δ+(G2)  = 0     δ-(G2)  = 0
-        Adj(G1) = -     Adj(G2) = -
-        In(G1)  = -     In(G2)  = -
-        Out(G1) = -     Out(G2) = -
+        Adj(G1) =       Adj(G2) = 
+        In(G1)  =       In(G2)  = 
+        Out(G1) =       Out(G2) = 
 ```
 """
 function print_graph(g::HybridGraph, io::Core.IO = stdout)

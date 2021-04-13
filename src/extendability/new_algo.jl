@@ -89,14 +89,14 @@ HybridGraph(
 		Set{Int64}[Set(), Set([3]), Set([2])],
 		[0, 1, 1],
 		[0, 1, 1],
-		Set{Int64}[#undef, Set([3]), Set([2])],
-		Set{Int64}[#undef, Set([3]), Set([2])]
+		Set{Int64}[Set(), Set([3]), Set([2])],
+		Set{Int64}[Set(), Set([3]), Set([2])]
 	),
 	DirectedGraph(
 		Set{Int64}[Set([2]), Set([1]), Set()],
 		[1, 0, 0],
 		[0, 1, 0],
-		Set{Int64}[#undef, Set([1]), #undef],
+		Set{Int64}[Set(), Set([1]), Set()],
 		Set{Int64}[Set([2]), Set(), Set()]
 	),
 	[0, 0, 0],
@@ -144,14 +144,14 @@ HybridGraph(
 		Set{Int64}[Set(), Set([3]), Set([2])],
 		[0, 1, 1],
 		[0, 1, 1],
-		Set{Int64}[#undef, Set([3]), Set([2])],
-		Set{Int64}[#undef, Set([3]), Set([2])]
+		Set{Int64}[Set(), Set([3]), Set([2])],
+		Set{Int64}[Set(), Set([3]), Set([2])]
 	),
 	DirectedGraph(
 		Set{Int64}[Set([2]), Set([1]), Set()],
 		[1, 0, 0],
 		[0, 1, 0],
-		Set{Int64}[#undef, Set([1]), #undef],
+		Set{Int64}[Set(), Set([1]), Set()],
 		Set{Int64}[Set([2]), Set(), Set()]
 	),
 	[0, 0, 0],

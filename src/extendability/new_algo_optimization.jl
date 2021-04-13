@@ -74,7 +74,7 @@ true
 julia> add_edge!(g, 3, 2)
 true
 julia> deg_struct(g)
-([1, 2, 1], Set{Int64}[#undef, Set([3, 1]), Set([2])])
+([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])
 ```
 """
 function deg_struct(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
@@ -110,7 +110,7 @@ true
 julia> add_edge!(g, 3, 2)
 true
 julia> (_, degs) = deg_struct(g)
-([1, 2, 1], Set{Int64}[#undef, Set([3, 1]), Set([2])])
+([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])
 julia> pop_min_deg_vertex!(degs)
 3
 ```
@@ -141,7 +141,7 @@ true
 julia> add_edge!(g, 3, 2)
 true
 julia> (aux, degs) = deg_struct(g)
-([1, 2, 1], Set{Int64}[#undef, Set([3, 1]), Set([2])])
+([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])
 julia> update_deg!(3, aux, degs)
 julia> (aux, degs)
 ([1, 2, 0], Set{Int64}[Set([3]), Set([1]), Set([2])])
