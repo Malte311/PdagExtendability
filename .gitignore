@@ -22,6 +22,8 @@ docs/site/
 .vscode
 /logs/*.txt
 /logs/*.svg
+/logs/*.csv
 /build/
 /configs/dummy.json
 /benchmarks/dummy/
+.Rproj.user
