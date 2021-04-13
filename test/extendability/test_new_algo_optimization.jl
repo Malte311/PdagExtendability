@@ -18,8 +18,8 @@ end
 	g = SimpleDiGraph(3)
 	(aux_array, deg_str) = deg_struct(g)
 	@test 0 == aux_array[1] && 0 == aux_array[2] && 0 == aux_array[3]
-	@test 3 == length(deg_str[1]) && !isassigned(deg_str, 2) &&
-		!isassigned(deg_str, 3)
+	@test 3 == length(deg_str[1]) && isempty(deg_str[2]) &&
+	isempty(deg_str[3])
 	@test 1 in deg_str[1] && 2 in deg_str[1] && 3 in deg_str[1]
 
 	g = SimpleDiGraph(5)

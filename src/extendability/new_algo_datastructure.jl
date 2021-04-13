@@ -53,18 +53,18 @@ HybridGraph(
 function init(n::Int64)::HybridGraph
 	HybridGraph(
 		DirectedGraph(
-			Vector{Set{Int64}}(undef, n),
+			[Set{Int64}() for _ in 1:n],
 			fill(0, n),
 			fill(0, n),
-			Vector{Set{Int64}}(undef, n),
-			Vector{Set{Int64}}(undef, n)
+			[Set{Int64}() for _ in 1:n],
+			[Set{Int64}() for _ in 1:n]
 		),
 		DirectedGraph(
-			Vector{Set{Int64}}(undef, n),
+			[Set{Int64}() for _ in 1:n],
 			fill(0, n),
 			fill(0, n),
-			Vector{Set{Int64}}(undef, n),
-			Vector{Set{Int64}}(undef, n)
+			[Set{Int64}() for _ in 1:n],
+			[Set{Int64}() for _ in 1:n]
 		),
 		fill(0, n),
 		fill(0, n)
@@ -88,9 +88,6 @@ true
 ```
 """
 function is_adjacent(g::HybridGraph, u::Int64, v::Int64)::Bool
-	isassigned(g.g1.adjlist, u) || (g.g1.adjlist[u] = Set{Int64}())
-	isassigned(g.g2.adjlist, u) || (g.g2.adjlist[u] = Set{Int64}())
-
 	(v in g.g1.adjlist[u]) || (v in g.g2.adjlist[u])
 end
 
@@ -126,13 +123,10 @@ datastructure instead.
 function insert_arc!(g::DirectedGraph, u::Int64, v::Int64)
 	g.deltaplus[u] += 1
 	g.deltaminus[v] += 1
-	isassigned(g.outgoing, u) || (g.outgoing[u] = Set{Int64}())
+
 	push!(g.outgoing[u], v)
-	isassigned(g.ingoing, v) || (g.ingoing[v] = Set{Int64}())
 	push!(g.ingoing[v], u)
-	isassigned(g.adjlist, u) || (g.adjlist[u] = Set{Int64}())
 	push!(g.adjlist[u], v)
-	isassigned(g.adjlist, v) || (g.adjlist[v] = Set{Int64}())
 	push!(g.adjlist[v], u)
 end
 
@@ -229,12 +223,6 @@ Is called internally whenever an edge (both directed and undirected) is
 inserted or removed. Do not call this function by hand.
 """
 function update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
-	isassigned(g.g1.adjlist, u) || (g.g1.adjlist[u] = Set{Int64}())
-	isassigned(g.g1.adjlist, v) || (g.g1.adjlist[v] = Set{Int64}())
-	isassigned(g.g2.adjlist, u) || (g.g2.adjlist[u] = Set{Int64}())
-	isassigned(g.g2.outgoing, u) || (g.g2.outgoing[u] = Set{Int64}())
-	isassigned(g.g2.outgoing, v) || (g.g2.outgoing[v] = Set{Int64}())
-
 	for x in union(g.g1.adjlist[u], g.g2.adjlist[u])
 		is_adjacent(g, x, v) || continue
 		(u in g.g1.adjlist[v]) && (u in g.g1.adjlist[x]) && (g.alpha[u] += val)
@@ -326,19 +314,14 @@ julia> pop_ps!(g, 3)
 ```
 """
 function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
-	isassigned(g.g2.ingoing, s) || (g.g2.ingoing[s] = Set{Int64}())
-	isassigned(g.g1.adjlist, s) || (g.g1.adjlist[s] = Set{Int64}())
-
 	old_neighbors = union(g.g1.adjlist[s], g.g2.ingoing[s])
 
 	# Delete directed edges first (since s is a sink, there are
 	# only ingoing edges).
 	for ingoing in g.g2.ingoing[s]
 		for undirected in g.g1.adjlist[s]
-			isassigned(g.g1.adjlist, undirected) &&
 			(ingoing in g.g1.adjlist[undirected]) && (g.alpha[undirected] += -1)
-			
-			isassigned(g.g2.ingoing, undirected) &&
+
 			(ingoing in g.g2.ingoing[undirected]) && (g.beta[undirected] += -1)
 		end
 
@@ -388,13 +371,13 @@ function print_graph(g::HybridGraph, io::Core.IO = stdout)
 		print(io,   "\tδ+(G2)  = $(g.g2.deltaplus[i])")
 		println(io, "\tδ-(G2)  = $(g.g2.deltaminus[i])")
 
-		print(io,   "\tAdj(G1) = $(isassigned(g.g1.adjlist, i) ? join(collect(g.g1.adjlist[i]), ", ") : "-")")
-		println(io, "\tAdj(G2) = $(isassigned(g.g2.adjlist, i) ? join(collect(g.g2.adjlist[i]), ", ")  : "-")")
+		print(io,   "\tAdj(G1) = $(join(collect(g.g1.adjlist[i]), ", "))")
+		println(io, "\tAdj(G2) = $(join(collect(g.g2.adjlist[i]), ", "))")
 
-		print(io,   "\tIn(G1)  = $(isassigned(g.g1.ingoing, i) ? join(collect(g.g1.ingoing[i]), ", ") : "-")")
-		println(io, "\tIn(G2)  = $(isassigned(g.g2.ingoing, i) ? join(collect(g.g2.ingoing[i]), ", ")  : "-")")
+		print(io,   "\tIn(G1)  = $(join(collect(g.g1.ingoing[i]), ", "))")
+		println(io, "\tIn(G2)  = $(join(collect(g.g2.ingoing[i]), ", "))")
 
-		print(io,   "\tOut(G1) = $(isassigned(g.g1.outgoing, i) ? join(collect(g.g1.outgoing[i]), ", ") : "-")")
-		println(io, "\tOut(G2) = $(isassigned(g.g2.outgoing, i) ? join(collect(g.g2.outgoing[i]), ", ")  : "-")")
+		print(io,   "\tOut(G1) = $(join(collect(g.g1.outgoing[i]), ", "))")
+		println(io, "\tOut(G2) = $(join(collect(g.g2.outgoing[i]), ", "))")
 	end
 end

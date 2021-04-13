@@ -5,12 +5,12 @@
 		for i = 1:n
 			testvec[1] &= (0 == g.alpha[i])
 			testvec[2] &= (0 == g.beta[i])
-			testvec[3] &= !isassigned(g.g1.adjlist, i)
-			testvec[4] &= !isassigned(g.g2.adjlist, i)
-			testvec[5] &= !isassigned(g.g1.ingoing, i)
-			testvec[6] &= !isassigned(g.g2.ingoing, i)
-			testvec[7] &= !isassigned(g.g1.outgoing, i)
-			testvec[8] &= !isassigned(g.g2.outgoing, i)
+			testvec[3] &= isempty(g.g1.adjlist[i])
+			testvec[4] &= isempty(g.g2.adjlist[i])
+			testvec[5] &= isempty(g.g1.ingoing[i])
+			testvec[6] &= isempty(g.g2.ingoing[i])
+			testvec[7] &= isempty(g.g1.outgoing[i])
+			testvec[8] &= isempty(g.g2.outgoing[i])
 			testvec[9] &= (0 == g.g1.deltaplus[i])
 			testvec[10] &= (0 == g.g2.deltaplus[i])
 			testvec[11] &= (0 == g.g1.deltaminus[i])
@@ -54,21 +54,21 @@ end
 	for i = 1:3 # Arcs are inserted into g.g2, thus g.g1 must be unchanged
 		@test 0 == g.alpha[i]
 		@test 0 == g.beta[i]
-		@test !isassigned(g.g1.adjlist, i) || 0 == length(g.g1.adjlist[i])
-		@test !isassigned(g.g1.ingoing, i) || 0 == length(g.g1.ingoing[i])
-		@test !isassigned(g.g1.outgoing, i) || 0 == length(g.g1.outgoing[i])
+		@test isempty(g.g1.adjlist[i])
+		@test isempty(g.g1.ingoing[i])
+		@test isempty(g.g1.outgoing[i])
 		@test 0 == g.g1.deltaplus[i]
 		@test 0 == g.g1.deltaminus[i]
 	end
 	@test 2 in g.g2.adjlist[1] && 1 == length(g.g2.adjlist[1])
 	@test 1 in g.g2.adjlist[2] && 1 == length(g.g2.adjlist[2])
-	@test !isassigned(g.g2.adjlist, 3) || 0 == length(g.g2.adjlist[3])
-	@test !isassigned(g.g2.ingoing, 1) || 0 == length(g.g2.ingoing[1])
+	@test isempty(g.g2.adjlist[3])
+	@test isempty(g.g2.ingoing[1])
 	@test 1 in g.g2.ingoing[2] && 1 == length(g.g2.ingoing[2])
-	@test !isassigned(g.g2.ingoing, 3) || 0 == length(g.g2.ingoing[3])
+	@test isempty(g.g2.ingoing[3])
 	@test 2 in g.g2.outgoing[1] && 1 == length(g.g2.outgoing[1])
-	@test !isassigned(g.g2.outgoing, 2) || 0 == length(g.g2.outgoing[2])
-	@test !isassigned(g.g2.outgoing, 3) || 0 == length(g.g2.outgoing[3])
+	@test isempty(g.g2.outgoing[2])
+	@test isempty(g.g2.outgoing[3])
 	@test 1 == g.g2.deltaplus[1]
 	@test 0 == g.g2.deltaplus[2]
 	@test 0 == g.g2.deltaplus[3]
@@ -83,21 +83,21 @@ end
 	for i = 1:3 # Edges are inserted into g.g1, thus g.g2 must be unchanged
 		@test 0 == g.alpha[i]
 		@test 0 == g.beta[i]
-		@test !isassigned(g.g2.adjlist, i) || 0 == length(g.g2.adjlist[i])
-		@test !isassigned(g.g2.ingoing, i) || 0 == length(g.g2.ingoing[i])
-		@test !isassigned(g.g2.outgoing, i) || 0 == length(g.g2.outgoing[i])
+		@test isempty(g.g2.adjlist[i])
+		@test isempty(g.g2.ingoing[i])
+		@test isempty(g.g2.outgoing[i])
 		@test 0 == g.g2.deltaplus[i]
 		@test 0 == g.g2.deltaminus[i]
 	end
 	@test 2 in g.g1.adjlist[1] && 1 == length(g.g1.adjlist[1])
 	@test 1 in g.g1.adjlist[2] && 1 == length(g.g1.adjlist[2])
-	@test !isassigned(g.g1.adjlist, 3) || 0 == length(g.g1.adjlist[3])
+	@test isempty(g.g1.adjlist[3])
 	@test 2 in g.g1.ingoing[1] && 1 == length(g.g1.ingoing[1])
 	@test 1 in g.g1.ingoing[2] && 1 == length(g.g1.ingoing[2])
-	@test !isassigned(g.g1.ingoing, 3) || 0 == length(g.g1.ingoing[3])
+	@test isempty(g.g1.ingoing[3])
 	@test 2 in g.g1.outgoing[1] && 1 == length(g.g1.outgoing[1])
 	@test 1 in g.g1.outgoing[2] && 1 == length(g.g1.outgoing[2])
-	@test !isassigned(g.g1.outgoing, 3) || 0 == length(g.g1.outgoing[3])
+	@test isempty(g.g1.outgoing[3])
 	@test 1 == g.g1.deltaplus[1]
 	@test 1 == g.g1.deltaplus[2]
 	@test 0 == g.g1.deltaplus[3]
@@ -113,14 +113,14 @@ end
 	for i = 1:3
 		@test 0 == g.alpha[i]
 		@test 0 == g.beta[i]
-		@test !isassigned(g.g1.adjlist, i) || 0 == length(g.g1.adjlist[i])
-		@test !isassigned(g.g1.ingoing, i) || 0 == length(g.g1.ingoing[i])
-		@test !isassigned(g.g1.outgoing, i) || 0 == length(g.g1.outgoing[i])
+		@test isempty(g.g1.adjlist[i])
+		@test isempty(g.g1.ingoing[i])
+		@test isempty(g.g1.outgoing[i])
 		@test 0 == g.g1.deltaplus[i]
 		@test 0 == g.g1.deltaminus[i]
-		@test !isassigned(g.g2.adjlist, i) || 0 == length(g.g2.adjlist[i])
-		@test !isassigned(g.g2.ingoing, i) || 0 == length(g.g2.ingoing[i])
-		@test !isassigned(g.g2.outgoing, i) || 0 == length(g.g2.outgoing[i])
+		@test isempty(g.g2.adjlist[i])
+		@test isempty(g.g2.ingoing[i])
+		@test isempty(g.g2.outgoing[i])
 		@test 0 == g.g1.deltaplus[i]
 		@test 0 == g.g1.deltaminus[i]
 	end
@@ -133,14 +133,14 @@ end
 	for i = 1:3
 		@test 0 == g.alpha[i]
 		@test 0 == g.beta[i]
-		@test !isassigned(g.g1.adjlist, i) || 0 == length(g.g1.adjlist[i])
-		@test !isassigned(g.g1.ingoing, i) || 0 == length(g.g1.ingoing[i])
-		@test !isassigned(g.g1.outgoing, i) || 0 == length(g.g1.outgoing[i])
+		@test isempty(g.g1.adjlist[i])
+		@test isempty(g.g1.ingoing[i])
+		@test isempty(g.g1.outgoing[i])
 		@test 0 == g.g1.deltaplus[i]
 		@test 0 == g.g1.deltaminus[i]
-		@test !isassigned(g.g2.adjlist, i) || 0 == length(g.g2.adjlist[i])
-		@test !isassigned(g.g2.ingoing, i) || 0 == length(g.g2.ingoing[i])
-		@test !isassigned(g.g2.outgoing, i) || 0 == length(g.g2.outgoing[i])
+		@test isempty(g.g2.adjlist[i])
+		@test isempty(g.g2.ingoing[i])
+		@test isempty(g.g2.outgoing[i])
 		@test 0 == g.g1.deltaplus[i]
 		@test 0 == g.g1.deltaminus[i]
 	end

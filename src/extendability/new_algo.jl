@@ -53,7 +53,6 @@ function fastpdag2dag(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
 		s = pop!(ps)
 
 		# Direct all edges incident to ps towards ps.
-		isassigned(hg.g1.adjlist, s) || (hg.g1.adjlist[s] = Set{Int64}())
 		for undirected in hg.g1.adjlist[s]
 			rem_edge!(result, s, undirected)
 		end

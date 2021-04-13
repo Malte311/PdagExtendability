@@ -79,13 +79,12 @@ julia> deg_struct(g)
 """
 function deg_struct(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
 	n = nv(g)
-	aux_array = Vector{Int64}(undef, n)
-	deg_str = Vector{Set{Int64}}(undef, n)
+	aux_array = fill(0, n)
+	deg_str = [Set{Int64}() for _ in 1:n]
 
 	for v = 1:n
 		deg = length(Set(all_neighbors(g, v)))
 		aux_array[v] = deg
-		isassigned(deg_str, deg+1) || (deg_str[deg+1] = Set{Int64}())
 		push!(deg_str[deg+1], v)
 	end
 
@@ -118,7 +117,6 @@ julia> pop_min_deg_vertex!(degs)
 """
 function pop_min_deg_vertex!(degs::Vector{Set{Int64}})::Int64
 	for deg = 1:length(degs)
-		isassigned(degs, deg) || continue
 		!isempty(degs[deg]) && return pop!(degs[deg])
 	end
 
@@ -152,7 +150,6 @@ julia> (aux, degs)
 function update_deg!(v::Int64, aux::Vector{Int64}, degs::Vector{Set{Int64}})
 	index = aux[v]+1 # Index 1 holds degree 0, index 2 degree 1, and so on
 	delete!(degs[index], v)
-	isassigned(degs, index-1) || (degs[index-1] = Set{Int64}())
 	push!(degs[index-1], v)
 	aux[v] -= 1
 end
