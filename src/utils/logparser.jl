@@ -1,6 +1,6 @@
 using JSON
 
-function extract_times(file::String)
+function extract_times(file::String)::Dict
 	io = open(file, "r")
 	log = readlines(io)
 	close(io)
@@ -32,5 +32,23 @@ function extract_times(file::String)
 	times
 end
 
+function dict_to_csv(times::Dict, val::String = "median")::String
+	csv_str = "Algorithm;Instance;Time\n"
 
-print(json(extract_times("/home/user/logs/dummylog.txt"), 4))
+	for (key, value) in times
+		csv_str = string(csv_str, "DorTarsi", ";", key, ";", value[val][1], "\n")
+		csv_str = string(csv_str, "NewAlgo", ";", key, ";", value[val][2], "\n")
+		csv_str = string(csv_str, "NewAlgoOpt", ";", key, ";", value[val][3], "\n")
+	end
+
+	csv_str
+end
+
+function save_as_csv(contents::String, file::String)
+	open(file, "w+") do io
+		write(io, contents)
+	end
+end
+
+# save_as_csv(dict_to_csv(extract_times("/home/user/logs/abc.txt")), "times2.csv")
+# print(dict_to_csv(extract_times("/home/user/logs/dummylog.txt")))
