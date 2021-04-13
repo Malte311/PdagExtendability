@@ -16,7 +16,7 @@ samples = config["num_samples"]
 evals = config["num_evals"]
 
 for f in readdir(config["benchmarkdir"])
-	isfile(joinpath(config["benchmarkdir"], f)) || continue
+	isfile(joinpath(config["benchmarkdir"], f)) && f != ".DS_Store" || continue
 
 	@info "[$(Dates.format(now(), "HH:MM"))] Running benchmark for '$f'..."
 	pdag = readinputgraph(
@@ -29,10 +29,10 @@ for f in readdir(config["benchmarkdir"])
 	bench3 = @benchmark fastpdag2dag($pdag, true) samples=samples evals=evals
 
 	for b in [bench1, bench2, bench3]
-		@info "Minimum time: $(round(minimum(b.times), digits=2))"
-		@info "Median time:  $(round(median(b.times), digits=2))"
-		@info "Mean time:    $(round(mean(b.times), digits=2))"
-		@info "Maximum time: $(round(maximum(b.times), digits=2))"
+		@info "Minimum time: $(minimum(b.times))"
+		@info "Median time:  $(median(b.times))"
+		@info "Mean time:    $(mean(b.times))"
+		@info "Maximum time: $(maximum(b.times))"
 		@info "--------------------------------------------------"
 	end
 
