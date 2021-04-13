@@ -1,8 +1,5 @@
 using BenchmarkTools, Dates, JSON, Logging, PdagExtendability
 
-samples = 1000
-evals = 1
-
 if length(ARGS) != 1 || !isfile(ARGS[1])
 	@error "Run the script via 'julia run.jl <path/to/config.json>'."
 	exit()
@@ -14,6 +11,9 @@ if config["logtofile"]
 	io = open(joinpath(config["logdir"], config["logfile"]), "a+")
 	global_logger(SimpleLogger(io))
 end
+
+samples = config["num_samples"]
+evals = config["num_evals"]
 
 for f in readdir(config["benchmarkdir"])
 	isfile(joinpath(config["benchmarkdir"], f)) || continue

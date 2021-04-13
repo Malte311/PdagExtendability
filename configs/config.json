@@ -3,6 +3,8 @@
 	"logdir": "../logs/",
 	"logfile": "log.txt",
 	"logtofile": false,
+	"num_evals": 1,
+	"num_samples": 1000,
 	"only_undirected": false,
 	"visualize": false
 }
