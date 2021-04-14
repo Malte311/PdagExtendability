@@ -2,6 +2,7 @@
 	"algorithm": "pdag2dag",
 	"algorithm_params": [],
 	"benchmarkdir": "../benchmarks/",
+	"create_csv": false,
 	"logdir": "../logs/",
 	"logfile": "log.txt",
 	"logtofile": false,

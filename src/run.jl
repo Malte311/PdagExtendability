@@ -46,8 +46,20 @@ for f in readdir(config["benchmarkdir"])
 
 	dag = getfield(Main, algo)(pdag)
 
-	plotsvg(pdag, string(config["logdir"], "in-", replace(f, ".txt" => ""), ".svg"))
-	plotsvg(dag, string(config["logdir"], "out-", replace(f, ".txt" => ""), ".svg"))
+	plotsvg(pdag, string(config["logdir"], "in-", replace(f, ".txt" => ".svg")))
+	plotsvg(dag, string(config["logdir"], "out-", replace(f, ".txt" => ".svg")))
 end
 
 config["logtofile"] && close(io)
+
+if config["create_csv"]
+	times = get_times_dict(joinpath(config["logdir"], config["logfile"]))
+
+	dict_to_csv(
+		times,
+		file = replace(
+			string(config["logdir"], config["logfile"]),
+			".txt" => ".csv"
+		)
+	)
+end
