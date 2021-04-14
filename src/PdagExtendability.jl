@@ -11,6 +11,9 @@ export degeneracy_ordering, deg_struct, pop_min_deg_vertex!,
 update_deg!
 export fastpdag2dag, standardsetup, optimizedsetup
 
+include("utils/logparser.jl")
+export get_times_dict, dict_to_csv, print_dict
+
 include("utils/plotting.jl")
 export plotsvg
 
