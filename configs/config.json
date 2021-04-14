@@ -1,4 +1,5 @@
 {
+	"algorithm": "pdag2dag",
 	"benchmarkdir": "../benchmarks/",
 	"logdir": "../logs/",
 	"logfile": "log.txt",

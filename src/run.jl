@@ -15,6 +15,8 @@ end
 samples = config["num_samples"]
 evals = config["num_evals"]
 
+algo = Symbol(config["algorithm"])
+
 for f in readdir(config["benchmarkdir"])
 	isfile(joinpath(config["benchmarkdir"], f)) && f != ".DS_Store" || continue
 
@@ -24,30 +26,22 @@ for f in readdir(config["benchmarkdir"])
 		config["only_undirected"]
 	)
 
-	bench1 = @benchmark pdag2dag($pdag) samples=samples evals=evals
-	bench2 = @benchmark fastpdag2dag($pdag, false) samples=samples evals=evals
-	bench3 = @benchmark fastpdag2dag($pdag, true) samples=samples evals=evals
+	bench = @benchmark getfield(Main, algo)($pdag) samples=samples evals=evals
 
-	for b in [bench1, bench2, bench3]
-		@info "Minimum time: $(minimum(b.times))"
-		@info "Median time:  $(median(b.times))"
-		@info "Mean time:    $(mean(b.times))"
-		@info "Maximum time: $(maximum(b.times))"
-		@info "--------------------------------------------------"
-	end
+	@info "Minimum time: $(minimum(bench.times))"
+	@info "Median time:  $(median(bench.times))"
+	@info "Mean time:    $(mean(bench.times))"
+	@info "Maximum time: $(maximum(bench.times))"
+	@info "--------------------------------------------------"
 
 	config["logtofile"] && flush(io)
 
 	config["visualize"] || continue
 
-	dag1 = pdag2dag(pdag)
-	dag2 = fastpdag2dag(pdag, false)
-	dag3 = fastpdag2dag(pdag, true)
+	dag = getfield(Main, algo)(pdag)
 
 	plotsvg(pdag, string(config["logdir"], "in-", replace(f, ".txt" => ""), ".svg"))
-	plotsvg(dag1, string(config["logdir"], "out1-", replace(f, ".txt" => ""), ".svg"))
-	plotsvg(dag2, string(config["logdir"], "out2-", replace(f, ".txt" => ""), ".svg"))
-	plotsvg(dag3, string(config["logdir"], "out3-", replace(f, ".txt" => ""), ".svg"))
+	plotsvg(dag, string(config["logdir"], "out-", replace(f, ".txt" => ""), ".svg"))
 end
 
 config["logtofile"] && close(io)
