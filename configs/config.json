@@ -1,5 +1,6 @@
 {
 	"algorithm": "pdag2dag",
+	"algorithm_params": [],
 	"benchmarkdir": "../benchmarks/",
 	"logdir": "../logs/",
 	"logfile": "log.txt",

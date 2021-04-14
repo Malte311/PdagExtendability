@@ -26,7 +26,10 @@ for f in readdir(config["benchmarkdir"])
 		config["only_undirected"]
 	)
 
-	bench = @benchmark getfield(Main, algo)($pdag) samples=samples evals=evals
+	bench = @benchmark getfield(Main, algo)(
+		$pdag,
+		config["algorithm_params"]...
+	) samples=samples evals=evals
 
 	@info "Minimum time: $(minimum(bench.times))"
 	@info "Median time:  $(median(bench.times))"
