@@ -43,7 +43,7 @@ julia> collect(edges(dag))
 """
 function fastpdag2dag(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
 	result = copy(g)
-	
+
 	# Set up the datastructure.
 	hg = optimize ? optimizedsetup(g) : standardsetup(g)
 

@@ -283,7 +283,7 @@ julia> list_ps(g)
 """
 function list_ps(g::HybridGraph)::Vector{Int64}
 	result = Vector{Int64}()
-	
+
 	for i = 1:length(g.alpha)
 		is_ps(g, i) && push!(result, i)
 	end
@@ -317,10 +317,9 @@ function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
 
 	# Delete directed edges first (since s is a sink, there are
 	# only ingoing edges).
-	for ingoing in g.g2.ingoing[s]
+	for ingoing in copy(g.g2.ingoing[s])
 		for undirected in g.g1.adjlist[s]
 			(ingoing in g.g1.adjlist[undirected]) && (g.alpha[undirected] += -1)
-
 			(ingoing in g.g2.ingoing[undirected]) && (g.beta[undirected] += -1)
 		end
 
@@ -333,7 +332,7 @@ function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
 	end
 
 	result = Vector{Int64}()
-	
+
 	for old_neighbor in old_neighbors
 		is_ps(g, old_neighbor) && push!(result, old_neighbor)
 	end

@@ -1,7 +1,8 @@
 using LightGraphs
 
 """
-The datastructure to store a partially directed graph.
+The datastructure to store a partially directed graph, using the
+LightGraphs library internally.
 """
 mutable struct Graph
 	g::SimpleDiGraph     # The actual graph
@@ -128,17 +129,15 @@ end
 
 
 function pop_ps_lg!(graph::Graph, s::Int64)::Vector{Int64}
-	old_neighbors = all_neighbors(graph.g, s)
-
-	# Since s is a sink, all outneighbors have undirected edges.
-	undir_neighbors = outneighbors(graph.g, s)
+	old_neighbors = copy(all_neighbors(graph.g, s))
 
 	# Delete directed edges first (since s is a sink, there are
 	# only ingoing edges which are directed).
-	for ingoing in inneighbors(graph.g, s)
+	for ingoing in copy(inneighbors(graph.g, s))
 		is_directed_lg(graph, ingoing, s) || continue
 
-		for undirected in undir_neighbors
+		# Since s is a sink, all outneighbors have undirected edges.
+		for undirected in outneighbors(graph.g, s)
 			is_undirected_lg(graph, ingoing, undirected) && (graph.alpha[undirected] += -1)
 			is_directed_lg(graph, ingoing, undirected) && (graph.beta[undirected] += -1)
 		end
@@ -149,12 +148,12 @@ function pop_ps_lg!(graph::Graph, s::Int64)::Vector{Int64}
 	end
 
 	# Delete undirected edges incident to s.
-	for undirected in undir_neighbors
+	for undirected in outneighbors(graph.g, s)
 		remove_edge_lg!(graph, s, undirected)
 	end
 
 	result = Vector{Int64}()
-	
+
 	for old_neighbor in old_neighbors
 		is_ps_lg(graph, old_neighbor) && push!(result, old_neighbor)
 	end
