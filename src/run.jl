@@ -18,7 +18,7 @@ evals = config["num_evals"]
 algo = Symbol(config["algorithm"])
 
 alg_str = string(config["algorithm"], "(", config["algorithm_params"]..., ")")
-@info "[$(Dates.format(now(), "HH:MM"))] Running algorithm '$alg_str'"
+@info "Running algorithm '$alg_str'"
 
 for f in readdir(config["benchmarkdir"])
 	isfile(joinpath(config["benchmarkdir"], f)) && f != ".DS_Store" || continue
