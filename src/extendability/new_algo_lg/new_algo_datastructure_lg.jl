@@ -137,9 +137,9 @@ function pop_ps_lg!(graph::Graph, s::Int64)::Vector{Int64}
 		is_directed_lg(graph, ingoing, s) || continue
 
 		# Since s is a sink, all outneighbors have undirected edges.
-		for undirected in outneighbors(graph.g, s)
-			is_undirected_lg(graph, ingoing, undirected) && (graph.alpha[undirected] += -1)
-			is_directed_lg(graph, ingoing, undirected) && (graph.beta[undirected] += -1)
+		for undir in outneighbors(graph.g, s)
+			is_undirected_lg(graph, ingoing, undir) && (graph.alpha[undir] += -1)
+			is_directed_lg(graph, ingoing, undir) && (graph.beta[undir] += -1)
 		end
 
 		rem_edge!(graph.g, ingoing, s)
@@ -148,8 +148,8 @@ function pop_ps_lg!(graph::Graph, s::Int64)::Vector{Int64}
 	end
 
 	# Delete undirected edges incident to s.
-	for undirected in outneighbors(graph.g, s)
-		remove_edge_lg!(graph, s, undirected)
+	for undir in copy(outneighbors(graph.g, s))
+		remove_edge_lg!(graph, s, undir)
 	end
 
 	result = Vector{Int64}()

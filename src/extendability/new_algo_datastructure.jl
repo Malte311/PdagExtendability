@@ -327,7 +327,7 @@ function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
 	end
 
 	# Delete undirected edges incident to s.
-	for undirected in g.g1.adjlist[s]
+	for undirected in copy(g.g1.adjlist[s])
 		remove_edge!(g, s, undirected)
 	end
 
