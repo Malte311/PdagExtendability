@@ -1,5 +1,6 @@
 {
 	"algorithm": "pdag2dag",
+	"algorithm_log_id": "1",
 	"algorithm_params": [],
 	"benchmarkdir": "../benchmarks/",
 	"create_csv": false,
