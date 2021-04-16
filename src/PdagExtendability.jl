@@ -12,7 +12,7 @@ update_deg!
 export fastpdag2dag, standardsetup, optimizedsetup
 
 include("extendability/new_algo_lg/new_algo_lg.jl")
-export fastpdag2dag_lg
+export fastpdag2dag_lg, standardsetup_lg, extend_graph_lg
 
 include("utils/logparser.jl")
 export get_times_dict, dict_to_csv, print_dict

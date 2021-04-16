@@ -34,10 +34,10 @@ for f in readdir(config["benchmarkdir"])
 		config["algorithm_params"]...
 	) samples=samples evals=evals
 
-	@info "Minimum time: $(minimum(bench.times))"
-	@info "Median time:  $(median(bench.times))"
-	@info "Mean time:    $(mean(bench.times))"
-	@info "Maximum time: $(maximum(bench.times))"
+	@info "Minimum time (ns): $(minimum(bench.times))"
+	@info "Median time (ns):  $(median(bench.times))"
+	@info "Mean time (ns):    $(mean(bench.times))"
+	@info "Maximum time (ns): $(maximum(bench.times))"
 	@info "--------------------------------------------------"
 
 	config["logtofile"] && flush(io)

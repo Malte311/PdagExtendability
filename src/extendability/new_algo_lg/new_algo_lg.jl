@@ -3,24 +3,9 @@ using LightGraphs
 include("new_algo_datastructure_lg.jl")
 
 function fastpdag2dag_lg(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
-	result = copy(g)
 	graph = standardsetup_lg(g)
-	ps = list_ps_lg(graph)
 
-	while !isempty(ps)
-		s = pop!(ps)
-
-		for undirected in outneighbors(graph.g, s)
-			rem_edge!(result, s, undirected)
-		end
-
-		newps = pop_ps_lg!(graph, s)
-		isempty(newps) || push!(ps, newps...)
-	end
-
-	isempty(edges(graph.g)) || return SimpleDiGraph(0)
-
-	result
+	extend_graph_lg(g, graph)
 end
 
 
@@ -40,4 +25,25 @@ function standardsetup_lg(g::SimpleDiGraph)::Graph
 	end
 
 	graph
+end
+
+function extend_graph_lg(g::SimpleDiGraph, graph::Graph)::SimpleDiGraph
+	result = copy(g)
+
+	ps = list_ps_lg(graph)
+
+	while !isempty(ps)
+		s = pop!(ps)
+
+		for undirected in outneighbors(graph.g, s)
+			rem_edge!(result, s, undirected)
+		end
+
+		newps = pop_ps_lg!(graph, s)
+		isempty(newps) || push!(ps, newps...)
+	end
+
+	isempty(edges(graph.g)) || return SimpleDiGraph(0)
+
+	result
 end
