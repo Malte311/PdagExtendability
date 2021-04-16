@@ -36,7 +36,7 @@ end
 
 
 function is_directed_lg(graph::Graph, u::Int64, v::Int64)::Bool
-	has_edge(graph.g, u, v) && !has_edge(graph.g, v, u)
+	!has_edge(graph.g, v, u) && has_edge(graph.g, u, v)
 end
 
 
@@ -92,28 +92,35 @@ end
 
 
 function update_alphabeta_lg!(g::Graph, u::Int64, v::Int64, val::Int64)
+	is_uv_undir = is_undirected_lg(g, u, v)
+	is_uv_dir = is_directed_lg(g, u, v)
+	is_vu_dir = is_directed_lg(g, v, u)
+
 	for x in all_neighbors(g.g, u)
 		is_adjacent_lg(g, x, v) || continue
 
-		is_undirected_lg(g, u, v) && is_undirected_lg(g, u, x) && (g.alpha[u] += val)
-		is_undirected_lg(g, u, v) && is_directed_lg(g, x, u)   && (g.beta[u]  += val)
-		is_directed_lg(g, v, u)   && is_undirected_lg(g, u, x) && (g.beta[u]  += val)
+		is_ux_undir = is_undirected_lg(g, u, x)
+		is_vx_undir = is_undirected_lg(g, v, x)
 
-		is_undirected_lg(g, v, x) && is_undirected_lg(g, v, u) && (g.alpha[v] += val)
-		is_undirected_lg(g, v, x) && is_directed_lg(g, u, v)   && (g.beta[v]  += val)
-		is_directed_lg(g, x, v)   && is_undirected_lg(g, v, u) && (g.beta[v]  += val)
+		is_uv_undir && is_ux_undir && (g.alpha[u] += val)
+		is_uv_undir && is_directed_lg(g, x, u) && (g.beta[u] += val)
+		is_vu_dir   && is_ux_undir && (g.beta[u] += val)
 
-		is_undirected_lg(g, x, u) && is_undirected_lg(g, x, v) && (g.alpha[x] += val)
-		is_directed_lg(g, u, x)   && is_undirected_lg(g, x, v) && (g.beta[x]  += val)
-		is_directed_lg(g, v, x)   && is_undirected_lg(g, x, u) && (g.beta[x]  += val)
+		is_uv_undir && is_vx_undir && (g.alpha[v] += val)
+		is_uv_dir   && is_vx_undir && (g.beta[v] += val)
+		is_uv_undir && is_directed_lg(g, x, v) && (g.beta[v] += val)
+
+		is_ux_undir && is_vx_undir && (g.alpha[x] += val)
+		is_vx_undir && is_directed_lg(g, u, x) && (g.beta[x] += val)
+		is_ux_undir && is_directed_lg(g, v, x) && (g.beta[x] += val)
 	end
 end
 
 
 function is_ps_lg(g::Graph, s::Int64)::Bool
-	g.alpha[s] == binomial(g.deltaplus_undir[s], 2) &&
+	g.deltaplus_dir[s] == 0 &&
 	g.beta[s] == g.deltaplus_undir[s] * g.deltaminus_dir[s] &&
-	g.deltaplus_dir[s] == 0
+	g.alpha[s] == binomial(g.deltaplus_undir[s], 2)
 end
 
 
