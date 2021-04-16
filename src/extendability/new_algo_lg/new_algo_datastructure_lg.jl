@@ -51,7 +51,7 @@ function insert_arc_lg!(graph::Graph, u::Int64, v::Int64)
 	graph.deltaplus_dir[u] += 1
 	graph.deltaminus_dir[v] += 1
 
-	update_alphabeta_lg!(graph, u, v, +1)
+	update_alphabeta_lg!(graph, u, v, +1, true)
 end
 
 
@@ -64,7 +64,7 @@ function insert_edge_lg!(graph::Graph, u::Int64, v::Int64)
 	graph.deltaplus_undir[v] += 1
 	graph.deltaminus_undir[u] += 1
 
-	update_alphabeta_lg!(graph, u, v, +1)
+	update_alphabeta_lg!(graph, u, v, +1, false)
 end
 
 
@@ -74,7 +74,7 @@ function remove_arc_lg!(graph::Graph, u::Int64, v::Int64)
 	graph.deltaplus_dir[u] -= 1
 	graph.deltaminus_dir[v] -= 1
 
-	update_alphabeta_lg!(graph, u, v, -1)
+	update_alphabeta_lg!(graph, u, v, -1, true)
 end
 
 
@@ -87,28 +87,23 @@ function remove_edge_lg!(graph::Graph, u::Int64, v::Int64)
 	graph.deltaplus_undir[v] -= 1
 	graph.deltaminus_undir[u] -= 1
 
-	update_alphabeta_lg!(graph, u, v, -1)
+	update_alphabeta_lg!(graph, u, v, -1, false)
 end
 
 
-function update_alphabeta_lg!(g::Graph, u::Int64, v::Int64, val::Int64)
-	is_uv_undir = is_undirected_lg(g, u, v)
-	is_uv_dir = is_directed_lg(g, u, v)
-	is_vu_dir = is_directed_lg(g, v, u)
-
+function update_alphabeta_lg!(g::Graph, u::Int64, v::Int64, val::Int64, is_uv_dir::Bool)
 	for x in all_neighbors(g.g, u)
 		is_adjacent_lg(g, x, v) || continue
 
 		is_ux_undir = is_undirected_lg(g, u, x)
 		is_vx_undir = is_undirected_lg(g, v, x)
 
-		is_uv_undir && is_ux_undir && (g.alpha[u] += val)
-		is_uv_undir && is_directed_lg(g, x, u) && (g.beta[u] += val)
-		is_vu_dir   && is_ux_undir && (g.beta[u] += val)
+		!is_uv_dir && is_ux_undir && (g.alpha[u] += val)
+		!is_uv_dir && is_directed_lg(g, x, u) && (g.beta[u] += val)
 
-		is_uv_undir && is_vx_undir && (g.alpha[v] += val)
-		is_uv_dir   && is_vx_undir && (g.beta[v] += val)
-		is_uv_undir && is_directed_lg(g, x, v) && (g.beta[v] += val)
+		!is_uv_dir && is_vx_undir && (g.alpha[v] += val)
+		is_uv_dir  && is_vx_undir && (g.beta[v] += val)
+		!is_uv_dir && is_directed_lg(g, x, v) && (g.beta[v] += val)
 
 		is_ux_undir && is_vx_undir && (g.alpha[x] += val)
 		is_vx_undir && is_directed_lg(g, u, x) && (g.beta[x] += val)
