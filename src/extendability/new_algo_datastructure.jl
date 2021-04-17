@@ -24,7 +24,7 @@ end
 """
 	init(n::Int64)::HybridGraph
 
-Allocate uninitialized memory for the HybridGraph datastructure
+Allocate memory for the HybridGraph datastructure
 representing a graph with n vertices.
 
 # Examples

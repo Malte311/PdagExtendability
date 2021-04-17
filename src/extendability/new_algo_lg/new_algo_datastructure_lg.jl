@@ -16,7 +16,26 @@ mutable struct Graph
 	deltaminus_undir::Vector{Int64} # In-degree for each vertex (undirected)
 end
 
+"""
+	init_lg(n::Int64)::Graph
 
+Allocate memory for the HybridGraph datastructure
+representing a graph with n vertices.
+
+# Examples
+```julia-repl
+julia> g = init_lg(3)
+Graph(
+	{3, 0} directed simple Int64 graph,
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0]
+)
+```
+"""
 function init_lg(n::Int64)::Graph
 	Graph(
 		SimpleDiGraph(n),
@@ -40,22 +59,76 @@ function fast_has_edge(g::SimpleDiGraph{T}, s, d) where T
 	return insorted(d, list)
 end
 
+"""
+	is_adjacent_lg(graph::Graph, u::Int64, v::Int64)::Bool
 
+Check whether vertices u and v are adjacent in the given graph.
+
+# Examples
+```julia-repl
+julia> g = init_lg(3)
+...
+julia> is_adjacent_lg(g, 1, 2)
+false
+julia> insert_arc_lg!(g, 1, 2)
+julia> is_adjacent_lg(g, 1, 2)
+true
+```
+"""
 function is_adjacent_lg(graph::Graph, u::Int64, v::Int64)::Bool
 	fast_has_edge(graph.g, u, v) || fast_has_edge(graph.g, v, u)
 end
 
+"""
+	is_directed_lg(graph::Graph, u::Int64, v::Int64)::Bool
 
+Check whether the given graph contains a directed edge from u to v.
+
+# Examples
+```julia-repl
+julia> g = init_lg(3)
+...
+julia> insert_arc_lg!(g, 1, 2)
+julia> is_directed_lg(g, 1, 2)
+true
+```
+"""
 function is_directed_lg(graph::Graph, u::Int64, v::Int64)::Bool
 	!fast_has_edge(graph.g, v, u) && fast_has_edge(graph.g, u, v)
 end
 
+"""
+	is_undirected_lg(graph::Graph, u::Int64, v::Int64)::Bool
 
+Check whether the given graph contains an undirected edge between u and v.
+
+# Examples
+```julia-repl
+julia> g = init_lg(3)
+...
+julia> insert_arc_lg!(g, 1, 2)
+julia> is_undirected_lg(g, 1, 2)
+false
+```
+"""
 function is_undirected_lg(graph::Graph, u::Int64, v::Int64)::Bool
 	fast_has_edge(graph.g, u, v) && fast_has_edge(graph.g, v, u)
 end
 
+"""
+	insert_arc_lg!(graph::Graph, u::Int64, v::Int64)
 
+Insert an arc (a directed edge) from u to v into the given graph.
+
+# Examples
+```julia-repl
+julia> g = init_lg(3)
+...
+julia> insert_arc_lg!(g, 1, 2)
+julia> is_adjacent_lg(g, 1, 2)
+true
+```
+"""
 function insert_arc_lg!(graph::Graph, u::Int64, v::Int64)
 	add_edge!(graph.g, u, v)
 
@@ -65,7 +138,20 @@ function insert_arc_lg!(graph::Graph, u::Int64, v::Int64)
 	update_alphabeta_lg!(graph, u, v, +1, true)
 end
 
+"""
+	insert_edge_lg!(graph::Graph, u::Int64, v::Int64)
 
+Insert an undirected edge between u and v into the given graph.
+
+# Examples
+```julia-repl
+julia> g = init_lg(3)
+...
+julia> insert_edge_lg!(g, 2, 3)
+julia> is_adjacent_lg(g, 2, 3)
+true
+```
+"""
 function insert_edge_lg!(graph::Graph, u::Int64, v::Int64)
 	add_edge!(graph.g, u, v)
 	add_edge!(graph.g, v, u)
@@ -78,7 +164,23 @@ function insert_edge_lg!(graph::Graph, u::Int64, v::Int64)
 	update_alphabeta_lg!(graph, u, v, +1, false)
 end
 
+"""
+	remove_arc_lg!(graph::Graph, u::Int64, v::Int64)
 
+Remove an arc (a directed edge) from u to v from the given graph.
+
+# Examples
+```julia-repl
+julia> g = init_lg(3)
+...
+julia> insert_arc_lg!(g, 1, 2)
+julia> is_adjacent_lg(g, 1, 2)
+true
+julia> remove_arc_lg!(g, 1, 2)
+julia> is_adjacent_lg(g, 1, 2)
+false
+```
+"""
 function remove_arc_lg!(graph::Graph, u::Int64, v::Int64)
 	rem_edge!(graph.g, u, v)
 
@@ -88,7 +190,23 @@ function remove_arc_lg!(graph::Graph, u::Int64, v::Int64)
 	update_alphabeta_lg!(graph, u, v, -1, true)
 end
 
+"""
+	remove_edge_lg!(graph::Graph, u::Int64, v::Int64)
 
+Remove an undirected edge between u and v from the given graph.
+
+# Examples
+```julia-repl
+julia> g = init_lg(3)
+...
+julia> insert_edge_lg!(g, 2, 3)
+julia> is_adjacent_lg(g, 2, 3)
+true
+julia> remove_edge_lg!(g, 2, 3)
+julia> is_adjacent_lg(g, 2, 3)
+false
+```
+"""
 function remove_edge_lg!(graph::Graph, u::Int64, v::Int64)
 	rem_edge!(graph.g, u, v)
 	rem_edge!(graph.g, v, u)
@@ -101,7 +219,16 @@ function remove_edge_lg!(graph::Graph, u::Int64, v::Int64)
 	update_alphabeta_lg!(graph, u, v, -1, false)
 end
 
+"""
+	update_alphabeta_lg!(g::Graph, u::Int64, v::Int64, val::Int64, is_uv_dir::Bool)
 
+Update values for alpha and beta in g. Either add to (positive value for val)
+or subtract from (negative value for val) alpha and beta. The parameter
+is_uv_dir indicates whether the edge between u and v is directed from u to v.
+
+Is called internally whenever an edge (both directed and undirected) is
+inserted or removed. Do not call this function by hand.
+"""
 function update_alphabeta_lg!(g::Graph, u::Int64, v::Int64, val::Int64, is_uv_dir::Bool)
 	for x in all_neighbors(g.g, u)
 		is_adjacent_lg(g, x, v) || continue
@@ -122,14 +249,49 @@ function update_alphabeta_lg!(g::Graph, u::Int64, v::Int64, val::Int64, is_uv_di
 	end
 end
 
+"""
+	is_ps_lg(g::Graph, s::Int64)::Bool
 
+Determine whether s is a potential sink in g.
+
+# Examples
+```julia-repl
+julia> g = init_lg(3)
+...
+julia> is_ps_lg(g, 1)
+true
+julia> insert_arc_lg!(g, 1, 2)
+julia> is_ps_lg(g, 1)
+false
+```
+"""
 function is_ps_lg(g::Graph, s::Int64)::Bool
 	@inbounds g.deltaplus_dir[s] == 0 &&
 	@inbounds g.beta[s] == g.deltaplus_undir[s] * g.deltaminus_dir[s] &&
 	@inbounds g.alpha[s] == binomial(g.deltaplus_undir[s], 2)
 end
 
+"""
+	list_ps_lg(graph::Graph)::Vector{Int64}
 
+List potential sinks in the given graph.
+
+# Examples
+```julia-repl
+julia> g = init_lg(3)
+...
+julia> list_ps_lg(g)
+3-element Vector{Int64}:
+ 1
+ 2
+ 3
+julia> insert_arc_lg!(g, 1, 2)
+julia> insert_edge_lg!(g, 2, 3)
+julia> list_ps_lg(g)
+1-element Vector{Int64}:
+ 3
+```
+"""
 function list_ps_lg(graph::Graph)::Vector{Int64}
 	result = Vector{Int64}()
 	
@@ -140,7 +302,27 @@ function list_ps_lg(graph::Graph)::Vector{Int64}
 	result
 end
 
+"""
+	pop_ps_lg!(graph::Graph, s::Int64)::Vector{Int64}
 
+Mark s as deleted and delete all edges (directed and undirected)
+incident to s. Return a list of neighbors of s that became potential
+sinks after the removal.
+
+# Examples
+```julia-repl
+julia> g = init_lg(3)
+...
+julia> insert_arc_lg!(g, 1, 2)
+julia> insert_edge_lg!(g, 2, 3)
+julia> list_ps_lg(g)
+1-element Vector{Int64}:
+ 3
+julia> pop_ps_lg!(g, 3)
+1-element Vector{Int64}:
+ 2
+```
+"""
 function pop_ps_lg!(graph::Graph, s::Int64)::Vector{Int64}
 	old_neighbors = copy(all_neighbors(graph.g, s))
 
@@ -174,7 +356,24 @@ function pop_ps_lg!(graph::Graph, s::Int64)::Vector{Int64}
 	result
 end
 
+"""
+	print_graph_lg(graph::Graph, io::Core.IO = stdout)
 
+Print the components of a given graph.
+
+# Examples
+```julia-repl
+julia> g = init_lg(1)
+...
+julia> print_graph_lg(g)
+Vertex 1:
+        Alpha   = 0     Beta    = 0
+        δ+(G1)  = 0     δ-(G1)  = 0     δ+(G2)  = 0     δ-(G2)  = 0
+        Adj     = 
+        In      = 
+        Out     = 
+```
+"""
 function print_graph_lg(graph::Graph, io::Core.IO = stdout)
 	for i = 1:nv(graph.g)
 		println(io, "Vertex $i:")
