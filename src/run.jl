@@ -20,34 +20,36 @@ algo = Symbol(config["algorithm"])
 alg_str = string(config["algorithm"], "(", config["algorithm_params"]..., ")")
 @info "Running algorithm '$alg_str-$(config["algorithm_log_id"])'"
 
-for f in readdir(config["benchmarkdir"])
-	isfile(joinpath(config["benchmarkdir"], f)) && f != ".DS_Store" || continue
-
-	@info "[$(Dates.format(now(), "HH:MM"))] Running benchmark for '$f'..."
-	pdag = readinputgraph(
-		joinpath(config["benchmarkdir"], f),
-		config["only_undirected"]
-	)
-
-	bench = @benchmark getfield(Main, algo)(
-		$pdag,
-		config["algorithm_params"]...
-	) samples=samples evals=evals
-
-	@info "Minimum time (ns): $(minimum(bench.times))"
-	@info "Median time (ns):  $(median(bench.times))"
-	@info "Mean time (ns):    $(mean(bench.times))"
-	@info "Maximum time (ns): $(maximum(bench.times))"
-	@info "--------------------------------------------------"
-
-	config["logtofile"] && flush(io)
-
-	config["visualize"] || continue
-
-	dag = getfield(Main, algo)(pdag)
-
-	plotsvg(pdag, string(config["logdir"], "in-", replace(f, ".txt" => ".svg")))
-	plotsvg(dag, string(config["logdir"], "out-", replace(f, ".txt" => ".svg")))
+for (root, dirs, files) in walkdir(config["benchmarkdir"])
+	for f in joinpath.(root, files)
+		!occursin(".DS_Store", f) || continue
+	
+		@info "[$(Dates.format(now(), "HH:MM"))] Running benchmark for '$f'..."
+		pdag = readinputgraph(
+			joinpath(config["benchmarkdir"], f),
+			config["only_undirected"]
+		)
+	
+		bench = @benchmark getfield(Main, algo)(
+			$pdag,
+			config["algorithm_params"]...
+		) samples=samples evals=evals
+	
+		@info "Minimum time (ns): $(minimum(bench.times))"
+		@info "Median time (ns):  $(median(bench.times))"
+		@info "Mean time (ns):    $(mean(bench.times))"
+		@info "Maximum time (ns): $(maximum(bench.times))"
+		@info "--------------------------------------------------"
+	
+		config["logtofile"] && flush(io)
+	
+		config["visualize"] || continue
+	
+		dag = getfield(Main, algo)(pdag)
+	
+		plotsvg(pdag, string(config["logdir"], "in-", replace(f, ".txt" => ".svg")))
+		plotsvg(dag, string(config["logdir"], "out-", replace(f, ".txt" => ".svg")))
+	end
 end
 
 config["logtofile"] && close(io)
