@@ -30,18 +30,29 @@ function init_lg(n::Int64)::Graph
 end
 
 
+function fast_has_edge(g::SimpleDiGraph{T}, s, d) where T
+	@inbounds list = g.fadjlist[s]
+	@inbounds list_backedge = g.badjlist[d]
+	if length(list) > length(list_backedge)
+		d = s
+		list = list_backedge
+	end
+	return insorted(d, list)
+end
+
+
 function is_adjacent_lg(graph::Graph, u::Int64, v::Int64)::Bool
-	has_edge(graph.g, u, v) || has_edge(graph.g, v, u)
+	fast_has_edge(graph.g, u, v) || fast_has_edge(graph.g, v, u)
 end
 
 
 function is_directed_lg(graph::Graph, u::Int64, v::Int64)::Bool
-	!has_edge(graph.g, v, u) && has_edge(graph.g, u, v)
+	!fast_has_edge(graph.g, v, u) && fast_has_edge(graph.g, u, v)
 end
 
 
 function is_undirected_lg(graph::Graph, u::Int64, v::Int64)::Bool
-	has_edge(graph.g, u, v) && has_edge(graph.g, v, u)
+	fast_has_edge(graph.g, u, v) && fast_has_edge(graph.g, v, u)
 end
 
 

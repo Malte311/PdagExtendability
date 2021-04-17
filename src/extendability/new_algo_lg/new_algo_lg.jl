@@ -14,7 +14,7 @@ function standardsetup_lg(g::SimpleDiGraph)::Graph
 	done = Set{String}()
 
 	for e in edges(g)
-		isundirected = has_edge(g, e.dst, e.src)
+		isundirected = fast_has_edge(g, e.dst, e.src)
 
 		if isundirected
 			!("$(e.src)-$(e.dst)" in done) && insert_edge_lg!(graph, e.src, e.dst)
