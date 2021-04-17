@@ -1,6 +1,6 @@
 language: julia
 julia:
-  - 1.5
+  - 1.6
 
 script:
   - julia --project=docs/ -e 'using Pkg; Pkg.add("Documenter"); Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
