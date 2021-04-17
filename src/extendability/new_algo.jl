@@ -42,30 +42,11 @@ julia> collect(edges(dag))
 ```
 """
 function fastpdag2dag(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
-	result = copy(g)
-
 	# Set up the datastructure.
 	hg = optimize ? optimizedsetup(g) : standardsetup(g)
 
-	ps = list_ps(hg)
-
-	while !isempty(ps)
-		s = pop!(ps)
-
-		# Direct all edges incident to ps towards ps.
-		for undirected in hg.g1.adjlist[s]
-			rem_edge!(result, s, undirected)
-		end
-
-		newps = pop_ps!(hg, s)
-		isempty(newps) || push!(ps, newps...)
-	end
-
-	# The graph is not extendable if no potential sinks are left but there
-	# are still edges in the graph.
-	sum(hg.g1.deltaplus) + sum(hg.g2.deltaplus) == 0 || return SimpleDiGraph(0)
-
-	result
+	# Compute result and return it.
+	extendgraph(g, hg)
 end
 
 """
@@ -180,4 +161,49 @@ function optimizedsetup(g::SimpleDiGraph)::HybridGraph
 	end
 
 	hg
+end
+
+"""
+	extendgraph(g::SimpleDiGraph, hg::HybridGraph)::SimpleDiGraph
+
+Compute the extension of graph hg.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> hg = standardsetup(g)
+...
+julia> extendgraph(g, hg)
+{3, 2} directed simple Int64 graph
+```
+"""
+function extendgraph(g::SimpleDiGraph, hg::HybridGraph)::SimpleDiGraph
+	result = copy(g)
+
+	ps = list_ps(hg)
+
+	while !isempty(ps)
+		s = pop!(ps)
+
+		# Direct all edges incident to ps towards ps.
+		for undirected in hg.g1.adjlist[s]
+			rem_edge!(result, s, undirected)
+		end
+
+		newps = pop_ps!(hg, s)
+		isempty(newps) || push!(ps, newps...)
+	end
+
+	# The graph is not extendable if no potential sinks are left but there
+	# are still edges in the graph.
+	sum(hg.g1.deltaplus) + sum(hg.g2.deltaplus) == 0 || return SimpleDiGraph(0)
+
+	result
 end

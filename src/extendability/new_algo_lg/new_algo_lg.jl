@@ -32,7 +32,7 @@ julia> collect(edges(dag))
 function fastpdag2dag_lg(g::SimpleDiGraph)::SimpleDiGraph
 	graph = standardsetup_lg(g)
 
-	extend_graph_lg(g, graph)
+	extendgraph_lg(g, graph)
 end
 
 """
@@ -81,7 +81,7 @@ function standardsetup_lg(g::SimpleDiGraph)::Graph
 end
 
 """
-	extend_graph_lg(g::SimpleDiGraph, graph::Graph)::SimpleDiGraph
+	extendgraph_lg(g::SimpleDiGraph, graph::Graph)::SimpleDiGraph
 
 Extend a given graph represented by the datastructure.
 
@@ -105,11 +105,11 @@ Graph(
 	[0, 1, 0],
 	[0, 1, 1]
 )
-julia> extend_graph_lg(g, graph)
+julia> extendgraph_lg(g, graph)
 {3, 2} directed simple Int64 graph
 ```
 """
-function extend_graph_lg(g::SimpleDiGraph, graph::Graph)::SimpleDiGraph
+function extendgraph_lg(g::SimpleDiGraph, graph::Graph)::SimpleDiGraph
 	result = copy(g)
 
 	ps = list_ps_lg(graph)
