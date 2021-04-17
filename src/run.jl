@@ -21,14 +21,11 @@ alg_str = string(config["algorithm"], "(", config["algorithm_params"]..., ")")
 @info "Running algorithm '$alg_str-$(config["algorithm_log_id"])'"
 
 for (root, dirs, files) in walkdir(config["benchmarkdir"])
-	for f in joinpath.(root, files)
+	for f in files
 		!occursin(".DS_Store", f) || continue
 	
 		@info "[$(Dates.format(now(), "HH:MM"))] Running benchmark for '$f'..."
-		pdag = readinputgraph(
-			joinpath(config["benchmarkdir"], f),
-			config["only_undirected"]
-		)
+		pdag = readinputgraph(joinpath(root, f), config["only_undirected"])
 	
 		bench = @benchmark getfield(Main, algo)(
 			$pdag,
