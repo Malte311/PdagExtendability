@@ -20,9 +20,7 @@ docs/site/
 # Custom things
 .DS_Store
 .vscode
-/logs/*.txt
-/logs/*.svg
-/logs/*.csv
+/logs/*.*
 /build/
 /configs/dummy.json
 /benchmarks/dummy/
