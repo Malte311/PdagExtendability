@@ -17,6 +17,9 @@ insert_arc_lg!, insert_edge_lg!, remove_arc_lg!, remove_edge_lg!,
 update_alphabeta_lg!, is_ps_lg, list_ps_lg, pop_ps_lg!, print_graph_lg
 export fastpdag2dag_lg, standardsetup_lg, extendgraph_lg
 
+include("utils/utils.jl")
+export nanosec2millisec
+
 include("utils/logparser.jl")
 export get_times_dict, dict_to_csv, print_dict
 

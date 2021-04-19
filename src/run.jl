@@ -32,10 +32,10 @@ for (root, dirs, files) in walkdir(config["benchmarkdir"])
 			config["algorithm_params"]...
 		) samples=samples evals=evals
 	
-		@info "Minimum time (ns): $(minimum(bench.times))"
-		@info "Median time (ns):  $(median(bench.times))"
-		@info "Mean time (ns):    $(mean(bench.times))"
-		@info "Maximum time (ns): $(maximum(bench.times))"
+		@info "Minimum time (ms): $(nanosec2millisec(minimum(bench.times)))"
+		@info "Median time (ms):  $(nanosec2millisec(median(bench.times)))"
+		@info "Mean time (ms):    $(nanosec2millisec(mean(bench.times)))"
+		@info "Maximum time (ms): $(nanosec2millisec(maximum(bench.times)))"
 		@info "--------------------------------------------------"
 	
 		config["logtofile"] && flush(io)
