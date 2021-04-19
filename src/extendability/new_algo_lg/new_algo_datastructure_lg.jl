@@ -48,7 +48,16 @@ function init_lg(n::Int64)::Graph
 	)
 end
 
+"""
+	fast_has_edge(g::SimpleDiGraph{T}, s, d) where T
 
+Check whether g contains an edge from s to d.
+
+# Implementation Notes
+Taken from the LightGraphs implementation but without
+check whether s and d are valid vertices to speed things
+up.
+"""
 function fast_has_edge(g::SimpleDiGraph{T}, s, d) where T
 	@inbounds list = g.fadjlist[s]
 	@inbounds list_backedge = g.badjlist[d]
