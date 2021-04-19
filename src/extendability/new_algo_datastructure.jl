@@ -255,9 +255,9 @@ false
 ```
 """
 function is_ps(g::HybridGraph, s::Int64)::Bool
-	g.alpha[s] == binomial(g.g1.deltaplus[s], 2) &&
+	g.g2.deltaplus[s] == 0 &&
 	g.beta[s] == g.g1.deltaplus[s] * g.g2.deltaminus[s] &&
-	g.g2.deltaplus[s] == 0
+	g.alpha[s] == binomial(g.g1.deltaplus[s], 2)
 end
 
 """
@@ -317,7 +317,7 @@ function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
 
 	# Delete directed edges first (since s is a sink, there are
 	# only ingoing edges).
-	for ingoing in copy(g.g2.ingoing[s])
+	for ingoing in g.g2.ingoing[s]
 		for undirected in g.g1.adjlist[s]
 			(ingoing in g.g1.adjlist[undirected]) && (g.alpha[undirected] += -1)
 			(ingoing in g.g2.ingoing[undirected]) && (g.beta[undirected] += -1)
@@ -327,7 +327,7 @@ function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
 	end
 
 	# Delete undirected edges incident to s.
-	for undirected in copy(g.g1.adjlist[s])
+	for undirected in g.g1.adjlist[s]
 		remove_edge!(g, s, undirected)
 	end
 
