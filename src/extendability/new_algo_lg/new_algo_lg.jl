@@ -63,19 +63,8 @@ Graph(
 ```
 """
 function standardsetup_lg(g::SimpleDiGraph)::Graph
-	graph = init_lg(nv(g))
-	done = Set{String}()
-
-	for e in edges(g)
-		isundirected = fast_has_edge(g, e.dst, e.src)
-
-		if isundirected
-			!("$(e.src)-$(e.dst)" in done) && insert_edge_lg!(graph, e.src, e.dst)
-			push!(done, "$(e.dst)-$(e.src)") # Mark edge as done
-		else
-			insert_arc_lg!(graph, e.src, e.dst)
-		end
-	end
+	graph = init_lg(g)
+	init_auxvectors_lg!(graph)
 
 	graph
 end

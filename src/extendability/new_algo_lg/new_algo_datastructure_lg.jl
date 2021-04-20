@@ -17,14 +17,14 @@ mutable struct Graph
 end
 
 """
-	init_lg(n::Int64)::Graph
+	init_lg(g::SimpleDiGraph)::Graph
 
 Allocate memory for the HybridGraph datastructure
 representing a graph with n vertices.
 
 # Examples
 ```julia-repl
-julia> g = init_lg(3)
+julia> g = init_lg(SimpleDiGraph(3))
 Graph(
 	{3, 0} directed simple Int64 graph,
 	[0, 0, 0],
@@ -36,9 +36,11 @@ Graph(
 )
 ```
 """
-function init_lg(n::Int64)::Graph
+function init_lg(g::SimpleDiGraph)::Graph
+	n = nv(g)
+
 	Graph(
-		SimpleDiGraph(n),
+		copy(g),
 		fill(0, n),
 		fill(0, n),
 		fill(0, n),
@@ -139,12 +141,8 @@ true
 ```
 """
 function insert_arc_lg!(graph::Graph, u::Int64, v::Int64)
-	add_edge!(graph.g, u, v)
-
 	@inbounds graph.deltaplus_dir[u] += 1
 	@inbounds graph.deltaminus_dir[v] += 1
-
-	update_alphabeta_lg!(graph, u, v, +1, true)
 end
 
 """
@@ -162,15 +160,10 @@ true
 ```
 """
 function insert_edge_lg!(graph::Graph, u::Int64, v::Int64)
-	add_edge!(graph.g, u, v)
-	add_edge!(graph.g, v, u)
-
 	@inbounds graph.deltaplus_undir[u] += 1
 	@inbounds graph.deltaminus_undir[v] += 1
 	@inbounds graph.deltaplus_undir[v] += 1
 	@inbounds graph.deltaminus_undir[u] += 1
-
-	update_alphabeta_lg!(graph, u, v, +1, false)
 end
 
 """
@@ -255,6 +248,44 @@ function update_alphabeta_lg!(g::Graph, u::Int64, v::Int64, val::Int64, is_uv_di
 		is_ux_undir && is_vx_undir && @inbounds (g.alpha[x] += val)
 		is_vx_undir && is_directed_lg(g, u, x) && @inbounds (g.beta[x] += val)
 		is_ux_undir && is_directed_lg(g, v, x) && @inbounds (g.beta[x] += val)
+	end
+end
+
+function init_auxvectors_lg!(g::Graph)
+	done = Set{String}()
+
+	for e in edges(g.g)
+		u = e.src
+		v = e.dst
+
+		!("$u-$v" in done) || continue
+
+		is_uv_dir = !has_edge(g.g, v, u)
+		is_uv_dir && insert_arc_lg!(g, u, v)
+		!is_uv_dir && insert_edge_lg!(g, u, v)
+
+		for x in all_neighbors(g.g, u)
+			is_adjacent_lg(g, x, v) || continue
+
+			is_ux_undir = is_undirected_lg(g, u, x)
+			(!("$u-$x" in done) && (!is_ux_undir || !("$x-$u" in done))) || continue
+			is_vx_undir = is_undirected_lg(g, v, x)
+			(!("$v-$x" in done) && (is_vx_undir || !("$x-$v" in done))) || continue
+	
+			!is_uv_dir && is_ux_undir && @inbounds (g.alpha[u] += 1)
+			!is_uv_dir && is_directed_lg(g, x, u) && @inbounds (g.beta[u] += 1)
+	
+			!is_uv_dir && is_vx_undir && @inbounds (g.alpha[v] += 1)
+			is_uv_dir  && is_vx_undir && @inbounds (g.beta[v] += 1)
+			!is_uv_dir && is_directed_lg(g, x, v) && @inbounds (g.beta[v] += 1)
+	
+			is_ux_undir && is_vx_undir && @inbounds (g.alpha[x] += 1)
+			is_vx_undir && is_directed_lg(g, u, x) && @inbounds (g.beta[x] += 1)
+			is_ux_undir && is_directed_lg(g, v, x) && @inbounds (g.beta[x] += 1)
+		end
+
+		push!(done, "$u-$v")
+		!is_uv_dir && push!(done, "$v-$u")
 	end
 end
 
