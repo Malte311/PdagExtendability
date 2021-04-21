@@ -1,7 +1,7 @@
 using LightGraphs
 
 """
-	pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
+	pdag2dag_lg(g::SimpleDiGraph)::SimpleDiGraph
 
 Convert a partially directed acyclic graph (PDAG) into a fully
 directed acyclic graph (DAG). If this is not possible, an empty
@@ -24,7 +24,7 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> dag = pdag2dag(g)
+julia> dag = pdag2dag_lg(g)
 {3, 2} directed simple Int64 graph
 julia> collect(edges(dag))
 2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
@@ -32,7 +32,7 @@ julia> collect(edges(dag))
  Edge 2 => 3
 ```
 """
-function pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
+function pdag2dag_lg(g::SimpleDiGraph)::SimpleDiGraph
 	result = copy(g)
 	temp = copy(g)
 
@@ -44,7 +44,7 @@ function pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 	# If one vertex is left there are no edges to other vertices anymore,
 	# so we can stop (no need to do another iteration for nv(temp) == 1).
 	while nv(temp) > 1
-		x = sink(temp)
+		x = sink_lg(temp)
 		x != -1 || return SimpleDiGraph(0)
 		
 		# Direct all adjacent edges towards x
@@ -60,7 +60,7 @@ function pdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 end
 
 """
-	sink(g::SimpleDiGraph)::Int64
+	sink_lg(g::SimpleDiGraph)::Int64
 
 Find a sink in a partially directed graph. The sink has no outgoing edges
 and all vertices connected to it via an undirected edge are adjacent to all
@@ -76,11 +76,11 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> x = sink(g)
+julia> x = sink_lg(g)
 3
 ```
 """
-function sink(g::SimpleDiGraph)::Int64
+function sink_lg(g::SimpleDiGraph)::Int64
 	for vertex in vertices(g)
 		in_neighbors = inneighbors(g, vertex)
 		out_neighbors = outneighbors(g, vertex)

@@ -1,7 +1,7 @@
 using LightGraphs
 
 """
-	degeneracy_ordering(g::SimpleDiGraph)::Vector{Int64}
+	degeneracy_ordering_hs(g::SimpleDiGraph)::Vector{Int64}
 
 Compute a degeneracy ordering for the skeleton of the graph g.
 
@@ -20,26 +20,26 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> degeneracy_ordering(g)
+julia> degeneracy_ordering_hs(g)
 3-element Array{Int64,1}:
  1
  2
  3
 ```
 """
-function degeneracy_ordering(g::SimpleDiGraph)::Vector{Int64}
+function degeneracy_ordering_hs(g::SimpleDiGraph)::Vector{Int64}
 	j = nv(g)
 	h = copy(g)
 	result = Vector{Int64}(undef, j)
 
 	# Compute initial degrees for each vertex, updated in each iteration
-	(aux_array, deg_str) = deg_struct(g)
+	(aux_array, deg_str) = deg_struct_hs(g)
 
 	while j > 0
-		v = pop_min_deg_vertex!(deg_str)
+		v = pop_min_deg_vertex_hs!(deg_str)
 
 		for adj in Set(all_neighbors(h, v))
-			update_deg!(adj, aux_array, deg_str)
+			update_deg_hs!(adj, aux_array, deg_str)
 			has_edge(h, adj, v) && rem_edge!(h, adj, v)
 			has_edge(h, v, adj) && rem_edge!(h, v, adj)
 		end
@@ -52,7 +52,7 @@ function degeneracy_ordering(g::SimpleDiGraph)::Vector{Int64}
 end
 
 """
-	deg_struct(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
+	deg_struct_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
 
 Compute the degree structure for the graph g. Return a tuple consisting of an
 array holding the degree for each vertex in g and an array where each index
@@ -73,11 +73,11 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> deg_struct(g)
+julia> deg_struct_hs(g)
 ([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])
 ```
 """
-function deg_struct(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
+function deg_struct_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
 	n = nv(g)
 	aux_array = fill(0, n)
 	deg_str = [Set{Int64}() for _ in 1:n]
@@ -92,7 +92,7 @@ function deg_struct(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
 end
 
 """
-	pop_min_deg_vertex!(degs::Vector{Set{Int64}})::Int64
+	pop_min_deg_vertex_hs!(degs::Vector{Set{Int64}})::Int64
 
 Find the vertex with minimum degree in the given degree structure. The
 vertex will be removed from the structure before returning it. In case
@@ -109,13 +109,13 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> (_, degs) = deg_struct(g)
+julia> (_, degs) = deg_struct_hs(g)
 ([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])
-julia> pop_min_deg_vertex!(degs)
+julia> pop_min_deg_vertex_hs!(degs)
 3
 ```
 """
-function pop_min_deg_vertex!(degs::Vector{Set{Int64}})::Int64
+function pop_min_deg_vertex_hs!(degs::Vector{Set{Int64}})::Int64
 	for deg = 1:length(degs)
 		!isempty(degs[deg]) && return pop!(degs[deg])
 	end
@@ -124,7 +124,7 @@ function pop_min_deg_vertex!(degs::Vector{Set{Int64}})::Int64
 end
 
 """
-	update_deg!(v::Int64, aux::Vector{Int64}, degs::Vector{Set{Int64}})
+	update_deg_hs!(v::Int64, aux::Vector{Int64}, degs::Vector{Set{Int64}})
 
 Update the degree of a vertex after an adjacent vertex has been removed,
 i.e., reduce the degree by one and move it into the correct set in the
@@ -140,14 +140,14 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> (aux, degs) = deg_struct(g)
+julia> (aux, degs) = deg_struct_hs(g)
 ([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])
-julia> update_deg!(3, aux, degs)
+julia> update_deg_hs!(3, aux, degs)
 julia> (aux, degs)
 ([1, 2, 0], Set{Int64}[Set([3]), Set([1]), Set([2])])
 ```
 """
-function update_deg!(v::Int64, aux::Vector{Int64}, degs::Vector{Set{Int64}})
+function update_deg_hs!(v::Int64, aux::Vector{Int64}, degs::Vector{Set{Int64}})
 	index = aux[v]+1 # Index 1 holds degree 0, index 2 degree 1, and so on
 	delete!(degs[index], v)
 	push!(degs[index-1], v)

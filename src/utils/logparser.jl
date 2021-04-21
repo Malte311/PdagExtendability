@@ -19,7 +19,7 @@ dictionary has the following structure:
 ```julia-repl
 julia> get_times_dict("../logs/log.txt")
 Dict{String,Dict{Any,Any}} with 1 entry:
-  "pdag2dag()" => Dict{Any,Any}("example.txt"=>Dict("median"=>2426.5,"mean"=>2594.65))
+  "pdag2dag_lg()" => Dict{Any,Any}("example.txt"=>Dict("median"=>2426.5,"mean"=>2594.65))
 ```
 """
 function get_times_dict(file::String)::Dict
@@ -62,9 +62,9 @@ string in that given file.
 ```julia-repl
 julia> dict = get_times_dict("../logs/log.txt")
 Dict{String,Dict{Any,Any}} with 1 entry:
-  "pdag2dag()" => Dict{Any,Any}("example.txt"=>Dict("median"=>2426.5,"mean"=>2594.65))
+  "pdag2dag_lg()" => Dict{Any,Any}("example.txt"=>Dict("median"=>2426.5,"mean"=>2594.65))
 julia> dict_to_csv(dict)
-  "Algorithm;Instance;Time\npdag2dag();example.txt;2426.5\n"
+  "Algorithm;Instance;Time\npdag2dag_lg();example.txt;2426.5\n"
 ```
 """
 function dict_to_csv(dict::Dict; use_median::Bool = true, file::String = "")::String
@@ -95,10 +95,10 @@ with readable indentation.
 ```julia-repl
 julia> dict = get_times_dict("../logs/log.txt")
 Dict{String,Dict{Any,Any}} with 1 entry:
-  "pdag2dag()" => Dict{Any,Any}("example.txt"=>Dict("median"=>2426.5,"mean"=>2594.65))
+  "pdag2dag_lg()" => Dict{Any,Any}("example.txt"=>Dict("median"=>2426.5,"mean"=>2594.65))
 julia> julia> print_dict(dict)
 {
-    "pdag2dag()": {
+    "pdag2dag_lg()": {
         "example.txt": {
             "median": 2426.5,
             "mean": 2594.646

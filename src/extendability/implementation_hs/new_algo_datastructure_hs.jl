@@ -22,14 +22,14 @@ mutable struct HybridGraph
 end
 
 """
-	init(n::Int64)::HybridGraph
+	init_hs(n::Int64)::HybridGraph
 
 Allocate memory for the HybridGraph datastructure
 representing a graph with n vertices.
 
 # Examples
 ```julia-repl
-julia> g = init(3)
+julia> g = init_hs(3)
 HybridGraph(
 	DirectedGraph(
 		Set{Int64}[Set(), Set(), Set()],
@@ -49,7 +49,7 @@ HybridGraph(
 )
 ```
 """
-function init(n::Int64)::HybridGraph
+function init_hs(n::Int64)::HybridGraph
 	HybridGraph(
 		DirectedGraph(
 			[Set{Int64}() for _ in 1:n],
@@ -71,55 +71,55 @@ function init(n::Int64)::HybridGraph
 end
 
 """
-	is_adjacent(g::HybridGraph, u::Int64, v::Int64)::Bool
+	is_adjacent_hs(g::HybridGraph, u::Int64, v::Int64)::Bool
 
 Check whether vertices u and v are adjacent in graph g.
 
 # Examples
 ```julia-repl
-julia> g = init(3)
+julia> g = init_hs(3)
 ...
-julia> is_adjacent(g, 1, 2)
+julia> is_adjacent_hs(g, 1, 2)
 false
-julia> insert_arc!(g, 1, 2)
-julia> is_adjacent(g, 1, 2)
+julia> insert_arc_hs!(g, 1, 2)
+julia> is_adjacent_hs(g, 1, 2)
 true
 ```
 """
-function is_adjacent(g::HybridGraph, u::Int64, v::Int64)::Bool
+function is_adjacent_hs(g::HybridGraph, u::Int64, v::Int64)::Bool
 	(v in g.g1.adjlist[u]) || (v in g.g2.adjlist[u])
 end
 
 """
-	insert_arc!(g::HybridGraph, u::Int64, v::Int64)
+	insert_arc_hs!(g::HybridGraph, u::Int64, v::Int64)
 
 Insert an arc (a directed edge) from u to v into g.
 
 # Examples
 ```julia-repl
-julia> g = init(3)
+julia> g = init_hs(3)
 ...
-julia> insert_arc!(g, 1, 2)
-julia> is_adjacent(g, 1, 2)
+julia> insert_arc_hs!(g, 1, 2)
+julia> is_adjacent_hs(g, 1, 2)
 true
 ```
 """
-function insert_arc!(g::HybridGraph, u::Int64, v::Int64)
-	insert_arc!(g.g2, u, v)
-	update_alphabeta!(g, u, v, +1)
+function insert_arc_hs!(g::HybridGraph, u::Int64, v::Int64)
+	insert_arc_hs!(g.g2, u, v)
+	update_alphabeta_hs!(g, u, v, +1)
 end
 
 """
-	insert_arc!(g::DirectedGraph, u::Int64, v::Int64)
+	insert_arc_hs!(g::DirectedGraph, u::Int64, v::Int64)
 
 Insert an arc (a directed edge) from u to v into g.
 
 Is called internally and should not be called by hand! For inserting
-arcs, use the function insert_arc! directly on the HybridGraph
+arcs, use the function insert_arc_hs! directly on the HybridGraph
 datastructure instead.
 ```
 """
-function insert_arc!(g::DirectedGraph, u::Int64, v::Int64)
+function insert_arc_hs!(g::DirectedGraph, u::Int64, v::Int64)
 	g.deltaplus[u] += 1
 	g.deltaminus[v] += 1
 
@@ -130,57 +130,57 @@ function insert_arc!(g::DirectedGraph, u::Int64, v::Int64)
 end
 
 """
-	insert_edge!(g::HybridGraph, u::Int64, v::Int64)
+	insert_edge_hs!(g::HybridGraph, u::Int64, v::Int64)
 
 Insert an undirected edge between u and v into g.
 
 # Examples
 ```julia-repl
-julia> g = init(3)
+julia> g = init_hs(3)
 ...
-julia> insert_edge!(g, 2, 3)
-julia> is_adjacent(g, 2, 3)
+julia> insert_edge_hs!(g, 2, 3)
+julia> is_adjacent_hs(g, 2, 3)
 true
 ```
 """
-function insert_edge!(g::HybridGraph, u::Int64, v::Int64)
-	insert_arc!(g.g1, u, v)
-	insert_arc!(g.g1, v, u)
-	update_alphabeta!(g, u, v, +1)
+function insert_edge_hs!(g::HybridGraph, u::Int64, v::Int64)
+	insert_arc_hs!(g.g1, u, v)
+	insert_arc_hs!(g.g1, v, u)
+	update_alphabeta_hs!(g, u, v, +1)
 end
 
 """
-	remove_arc!(g::HybridGraph, u::Int64, v::Int64)
+	remove_arc_hs!(g::HybridGraph, u::Int64, v::Int64)
 
 Remove an arc (a directed edge) from u to v from g.
 
 # Examples
 ```julia-repl
-julia> g = init(3)
+julia> g = init_hs(3)
 ...
-julia> insert_arc!(g, 1, 2)
-julia> is_adjacent(g, 1, 2)
+julia> insert_arc_hs!(g, 1, 2)
+julia> is_adjacent_hs(g, 1, 2)
 true
-julia> remove_arc!(g, 1, 2)
-julia> is_adjacent(g, 1, 2)
+julia> remove_arc_hs!(g, 1, 2)
+julia> is_adjacent_hs(g, 1, 2)
 false
 ```
 """
-function remove_arc!(g::HybridGraph, u::Int64, v::Int64)
-	remove_arc!(g.g2, u, v)
-	update_alphabeta!(g, u, v, -1)
+function remove_arc_hs!(g::HybridGraph, u::Int64, v::Int64)
+	remove_arc_hs!(g.g2, u, v)
+	update_alphabeta_hs!(g, u, v, -1)
 end
 
 """
-	remove_arc!(g::DirectedGraph, u::Int64, v::Int64)
+	remove_arc_hs!(g::DirectedGraph, u::Int64, v::Int64)
 
 Remove an arc (a directed edge) from u to v from g.
 
 Is called internally and should not be called by hand! For removing
-arcs, use the function remove_arc! directly on the HybridGraph
+arcs, use the function remove_arc_hs! directly on the HybridGraph
 datastructure instead.
 """
-function remove_arc!(g::DirectedGraph, u::Int64, v::Int64)
+function remove_arc_hs!(g::DirectedGraph, u::Int64, v::Int64)
 	g.deltaplus[u] -= 1
 	g.deltaminus[v] -= 1
 	delete!(g.outgoing[u], v)
@@ -190,30 +190,30 @@ function remove_arc!(g::DirectedGraph, u::Int64, v::Int64)
 end
 
 """
-	remove_edge!(g::HybridGraph, u::Int64, v::Int64)
+	remove_edge_hs!(g::HybridGraph, u::Int64, v::Int64)
 
 Remove an undirected edge between u and v from g.
 
 # Examples
 ```julia-repl
-julia> g = init(3)
+julia> g = init_hs(3)
 ...
-julia> insert_edge!(g, 2, 3)
-julia> is_adjacent(g, 2, 3)
+julia> insert_edge_hs!(g, 2, 3)
+julia> is_adjacent_hs(g, 2, 3)
 true
-julia> remove_edge!(g, 2, 3)
-julia> is_adjacent(g, 2, 3)
+julia> remove_edge_hs!(g, 2, 3)
+julia> is_adjacent_hs(g, 2, 3)
 false
 ```
 """
-function remove_edge!(g::HybridGraph, u::Int64, v::Int64)
-	remove_arc!(g.g1, u, v)
-	remove_arc!(g.g1, v, u)
-	update_alphabeta!(g, u, v, -1)
+function remove_edge_hs!(g::HybridGraph, u::Int64, v::Int64)
+	remove_arc_hs!(g.g1, u, v)
+	remove_arc_hs!(g.g1, v, u)
+	update_alphabeta_hs!(g, u, v, -1)
 end
 
 """
-	update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
+	update_alphabeta_hs!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
 
 Update values for alpha and beta in g. Either add to (positive value for val)
 or subtract from (negative value for val) alpha and beta.
@@ -221,9 +221,9 @@ or subtract from (negative value for val) alpha and beta.
 Is called internally whenever an edge (both directed and undirected) is
 inserted or removed. Do not call this function by hand.
 """
-function update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
+function update_alphabeta_hs!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
 	for x in union(g.g1.adjlist[u], g.g2.adjlist[u])
-		is_adjacent(g, x, v) || continue
+		is_adjacent_hs(g, x, v) || continue
 		(u in g.g1.adjlist[v]) && (u in g.g1.adjlist[x]) && (g.alpha[u] += val)
 		(u in g.g1.adjlist[v]) && (u in g.g2.outgoing[x]) && (g.beta[u] += val)
 		(u in g.g2.outgoing[v]) && (u in g.g1.adjlist[x]) && (g.beta[u] += val)
@@ -239,60 +239,60 @@ function update_alphabeta!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
 end
 
 """
-	is_ps(g::HybridGraph, s::Int64)::Bool
+	is_ps_hs(g::HybridGraph, s::Int64)::Bool
 
 Determine whether s is a potential sink in g.
 
 # Examples
 ```julia-repl
-julia> g = init(3)
+julia> g = init_hs(3)
 ...
-julia> is_ps(g, 1)
+julia> is_ps_hs(g, 1)
 true
-julia> insert_arc!(g, 1, 2)
-julia> is_ps(g, 1)
+julia> insert_arc_hs!(g, 1, 2)
+julia> is_ps_hs(g, 1)
 false
 ```
 """
-function is_ps(g::HybridGraph, s::Int64)::Bool
+function is_ps_hs(g::HybridGraph, s::Int64)::Bool
 	g.g2.deltaplus[s] == 0 &&
 	g.beta[s] == g.g1.deltaplus[s] * g.g2.deltaminus[s] &&
 	g.alpha[s] == binomial(g.g1.deltaplus[s], 2)
 end
 
 """
-	list_ps(g::HybridGraph)::Vector{Int64}
+	list_ps_hs(g::HybridGraph)::Vector{Int64}
 
 List potential sinks in g.
 
 # Examples
 ```julia-repl
-julia> g = init(3)
+julia> g = init_hs(3)
 ...
-julia> list_ps(g)
+julia> list_ps_hs(g)
 3-element Array{Int64,1}:
  1
  2
  3
-julia> insert_arc!(g, 1, 2)
-julia> insert_edge!(g, 2, 3)
-julia> list_ps(g)
+julia> insert_arc_hs!(g, 1, 2)
+julia> insert_edge_hs!(g, 2, 3)
+julia> list_ps_hs(g)
 1-element Array{Int64,1}:
  3
 ```
 """
-function list_ps(g::HybridGraph)::Vector{Int64}
+function list_ps_hs(g::HybridGraph)::Vector{Int64}
 	result = Vector{Int64}()
 
 	for i = 1:length(g.alpha)
-		is_ps(g, i) && push!(result, i)
+		is_ps_hs(g, i) && push!(result, i)
 	end
 
 	result
 end
 
 """
-	pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
+	pop_ps_hs!(g::HybridGraph, s::Int64)::Vector{Int64}
 
 Mark s as deleted and delete all edges (directed and undirected)
 incident to s. Return a list of neighbors of s that became potential
@@ -300,19 +300,19 @@ sinks after the removal.
 
 # Examples
 ```julia-repl
-julia> g = init(3)
+julia> g = init_hs(3)
 ...
-julia> insert_arc!(g, 1, 2)
-julia> insert_edge!(g, 2, 3)
-julia> list_ps(g)
+julia> insert_arc_hs!(g, 1, 2)
+julia> insert_edge_hs!(g, 2, 3)
+julia> list_ps_hs(g)
 1-element Array{Int64,1}:
  3
-julia> pop_ps!(g, 3)
+julia> pop_ps_hs!(g, 3)
 1-element Array{Int64,1}:
  2
 ```
 """
-function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
+function pop_ps_hs!(g::HybridGraph, s::Int64)::Vector{Int64}
 	old_neighbors = union(g.g1.adjlist[s], g.g2.ingoing[s])
 
 	# Delete directed edges first (since s is a sink, there are
@@ -323,33 +323,33 @@ function pop_ps!(g::HybridGraph, s::Int64)::Vector{Int64}
 			(ingoing in g.g2.ingoing[undirected]) && (g.beta[undirected] += -1)
 		end
 
-		remove_arc!(g.g2, ingoing, s) # O(1) because no update of alpha & beta
+		remove_arc_hs!(g.g2, ingoing, s) # O(1) because no update of alpha & beta
 	end
 
 	# Delete undirected edges incident to s.
 	for undirected in g.g1.adjlist[s]
-		remove_edge!(g, s, undirected)
+		remove_edge_hs!(g, s, undirected)
 	end
 
 	result = Vector{Int64}()
 
 	for old_neighbor in old_neighbors
-		is_ps(g, old_neighbor) && push!(result, old_neighbor)
+		is_ps_hs(g, old_neighbor) && push!(result, old_neighbor)
 	end
 
 	result
 end
 
 """
-	print_graph(g::HybridGraph, io::Core.IO = stdout)
+	print_graph_hs(g::HybridGraph, io::Core.IO = stdout)
 
 Print the components of a HybridGraph g.
 
 # Examples
 ```julia-repl
-julia> g = init(1)
+julia> g = init_hs(1)
 ...
-julia> print_graph(g)
+julia> print_graph_hs(g)
 Vertex 1:
         Alpha   = 0     Beta    = 0
         δ+(G1)  = 0     δ-(G1)  = 0     δ+(G2)  = 0     δ-(G2)  = 0
@@ -358,7 +358,7 @@ Vertex 1:
         Out(G1) =       Out(G2) = 
 ```
 """
-function print_graph(g::HybridGraph, io::Core.IO = stdout)
+function print_graph_hs(g::HybridGraph, io::Core.IO = stdout)
 	for i = 1:length(g.alpha)
 		println(io, "Vertex $i:")
 		print(io,   "\tAlpha   = $(g.alpha[i])")

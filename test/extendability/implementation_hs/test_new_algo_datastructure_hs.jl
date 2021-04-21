@@ -1,6 +1,6 @@
-@testset "init" begin
+@testset "init_hs" begin
 	for n in [2, 20, 200]
-		g = init(n)
+		g = init_hs(n)
 		testvec = fill(true, 12)
 		for i = 1:n
 			testvec[1] &= (0 == g.alpha[i])
@@ -20,37 +20,37 @@
 	end
 end
 
-@testset "is_adjacent" begin
-	g = init(3)
-	insert_arc!(g, 1, 2)
-	insert_edge!(g, 2, 3)
-	@test is_adjacent(g, 1, 2)
-	@test is_adjacent(g, 2, 1)
-	@test is_adjacent(g, 2, 3)
-	@test is_adjacent(g, 3, 2)
-	@test !is_adjacent(g, 1, 3)
-	@test !is_adjacent(g, 3, 1)
+@testset "is_adjacent_hs" begin
+	g = init_hs(3)
+	insert_arc_hs!(g, 1, 2)
+	insert_edge_hs!(g, 2, 3)
+	@test is_adjacent_hs(g, 1, 2)
+	@test is_adjacent_hs(g, 2, 1)
+	@test is_adjacent_hs(g, 2, 3)
+	@test is_adjacent_hs(g, 3, 2)
+	@test !is_adjacent_hs(g, 1, 3)
+	@test !is_adjacent_hs(g, 3, 1)
 	
 	for n in [50, 100, 500]
-		g = init(n)
-		insert_arc!(g, floor(Int, n/2), floor(Int, n/2+1))
-		insert_edge!(g, 1, n)
-		@test is_adjacent(g, floor(Int, n/2), floor(Int, n/2+1))
-		@test is_adjacent(g, floor(Int, n/2+1), floor(Int, n/2))
-		@test is_adjacent(g, 1, n)
-		@test is_adjacent(g, n, 1)
+		g = init_hs(n)
+		insert_arc_hs!(g, floor(Int, n/2), floor(Int, n/2+1))
+		insert_edge_hs!(g, 1, n)
+		@test is_adjacent_hs(g, floor(Int, n/2), floor(Int, n/2+1))
+		@test is_adjacent_hs(g, floor(Int, n/2+1), floor(Int, n/2))
+		@test is_adjacent_hs(g, 1, n)
+		@test is_adjacent_hs(g, n, 1)
 		isok = true
 		for i = 2:n-2
 			(i == floor(Int, n/2) || i == floor(Int, n/2+1)) && continue
-			isok &= !is_adjacent(g, i, i+1)
+			isok &= !is_adjacent_hs(g, i, i+1)
 		end
 		@test isok
 	end
 end
 
-@testset "insert_arc!" begin
-	g = init(3)
-	insert_arc!(g, 1, 2)
+@testset "insert_arc_hs!" begin
+	g = init_hs(3)
+	insert_arc_hs!(g, 1, 2)
 	for i = 1:3 # Arcs are inserted into g.g2, thus g.g1 must be unchanged
 		@test 0 == g.alpha[i]
 		@test 0 == g.beta[i]
@@ -77,9 +77,9 @@ end
 	@test 0 == g.g2.deltaminus[3]
 end
 
-@testset "insert_edge!" begin
-	g = init(3)
-	insert_edge!(g, 1, 2)
+@testset "insert_edge_hs!" begin
+	g = init_hs(3)
+	insert_edge_hs!(g, 1, 2)
 	for i = 1:3 # Edges are inserted into g.g1, thus g.g2 must be unchanged
 		@test 0 == g.alpha[i]
 		@test 0 == g.beta[i]
@@ -106,10 +106,10 @@ end
 	@test 0 == g.g1.deltaminus[3]
 end
 
-@testset "remove_arc!" begin
-	g = init(3)
-	insert_arc!(g, 1, 2)
-	remove_arc!(g, 1, 2)
+@testset "remove_arc_hs!" begin
+	g = init_hs(3)
+	insert_arc_hs!(g, 1, 2)
+	remove_arc_hs!(g, 1, 2)
 	for i = 1:3
 		@test 0 == g.alpha[i]
 		@test 0 == g.beta[i]
@@ -126,10 +126,10 @@ end
 	end
 end
 
-@testset "remove_edge!" begin
-	g = init(3)
-	insert_edge!(g, 1, 2)
-	remove_edge!(g, 1, 2)
+@testset "remove_edge_hs!" begin
+	g = init_hs(3)
+	insert_edge_hs!(g, 1, 2)
+	remove_edge_hs!(g, 1, 2)
 	for i = 1:3
 		@test 0 == g.alpha[i]
 		@test 0 == g.beta[i]
@@ -147,37 +147,37 @@ end
 end
 
 @testset "is_ps" begin
-	g = init(3)
-	@test is_ps(g, 1)
-	@test is_ps(g, 2)
-	@test is_ps(g, 3)
-	insert_arc!(g, 1, 2)
-	@test !is_ps(g, 1)
-	@test is_ps(g, 2)
-	@test is_ps(g, 3)
-	insert_edge!(g, 2, 3)
-	@test !is_ps(g, 1)
-	@test !is_ps(g, 2)
-	@test is_ps(g, 3)
+	g = init_hs(3)
+	@test is_ps_hs(g, 1)
+	@test is_ps_hs(g, 2)
+	@test is_ps_hs(g, 3)
+	insert_arc_hs!(g, 1, 2)
+	@test !is_ps_hs(g, 1)
+	@test is_ps_hs(g, 2)
+	@test is_ps_hs(g, 3)
+	insert_edge_hs!(g, 2, 3)
+	@test !is_ps_hs(g, 1)
+	@test !is_ps_hs(g, 2)
+	@test is_ps_hs(g, 3)
 end
 
 @testset "list_ps" begin
-	g = init(3)
-	@test 1 in list_ps(g) && 2 in list_ps(g) && 3 in list_ps(g)
-	insert_arc!(g, 1, 2)
-	@test !(1 in list_ps(g)) && 2 in list_ps(g) && 3 in list_ps(g)
-	insert_edge!(g, 2, 3)
-	@test !(1 in list_ps(g)) && !(2 in list_ps(g)) && 3 in list_ps(g)
+	g = init_hs(3)
+	@test 1 in list_ps_hs(g) && 2 in list_ps_hs(g) && 3 in list_ps_hs(g)
+	insert_arc_hs!(g, 1, 2)
+	@test !(1 in list_ps_hs(g)) && 2 in list_ps_hs(g) && 3 in list_ps_hs(g)
+	insert_edge_hs!(g, 2, 3)
+	@test !(1 in list_ps_hs(g)) && !(2 in list_ps_hs(g)) && 3 in list_ps_hs(g)
 end
 
-@testset "pop_ps!" begin
-	g = init(3)
-	insert_arc!(g, 1, 2)
-	insert_edge!(g, 2, 3)
-	newps = pop_ps!(g, 3)
+@testset "pop_ps_hs!" begin
+	g = init_hs(3)
+	insert_arc_hs!(g, 1, 2)
+	insert_edge_hs!(g, 2, 3)
+	newps = pop_ps_hs!(g, 3)
 	@test 2 in newps && 1 == length(newps)
-	@test !is_adjacent(g, 2, 3) && !is_adjacent(g, 3, 2)
-	newps = pop_ps!(g, 2)
+	@test !is_adjacent_hs(g, 2, 3) && !is_adjacent_hs(g, 3, 2)
+	newps = pop_ps_hs!(g, 2)
 	@test 1 in newps && 1 == length(newps)
-	@test !is_adjacent(g, 1, 2) && !is_adjacent(g, 2, 1)
+	@test !is_adjacent_hs(g, 1, 2) && !is_adjacent_hs(g, 2, 1)
 end

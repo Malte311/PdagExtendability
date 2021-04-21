@@ -1,10 +1,10 @@
 using LightGraphs
 
-include("new_algo_datastructure.jl")
-include("new_algo_optimization.jl")
+include("new_algo_datastructure_hs.jl")
+include("new_algo_optimization_hs.jl")
 
 """
-	fastpdag2dag(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
+	fastpdag2dag_hs(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
 
 Convert a partially directed acyclic graph (PDAG) into a fully
 directed acyclic graph (DAG). If this is not possible, an empty
@@ -27,13 +27,13 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> dag = fastpdag2dag(g)
+julia> dag = fastpdag2dag_hs(g)
 {3, 2} directed simple Int64 graph
 julia> collect(edges(dag))
 2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 2 => 3
-julia> dag = fastpdag2dag(g, true)
+julia> dag = fastpdag2dag_hs(g, true)
 {3, 2} directed simple Int64 graph
 julia> collect(edges(dag))
 2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
@@ -41,16 +41,16 @@ julia> collect(edges(dag))
  Edge 2 => 3
 ```
 """
-function fastpdag2dag(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
+function fastpdag2dag_hs(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
 	# Set up the datastructure.
-	hg = optimize ? optimizedsetup(g) : standardsetup(g)
+	hg = optimize ? optimizedsetup_hs(g) : standardsetup_hs(g)
 
 	# Compute result and return it.
-	extendgraph(g, hg)
+	extendgraph_hs(g, hg)
 end
 
 """
-	standardsetup(g::SimpleDiGraph)::HybridGraph
+	standardsetup_hs(g::SimpleDiGraph)::HybridGraph
 
 Set up the datastructure for the algorithm with time complexity O(Δm).
 
@@ -64,7 +64,7 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> standardsetup(g)
+julia> standardsetup_hs(g)
 HybridGraph(
 	DirectedGraph(
 		Set{Int64}[Set(), Set([3]), Set([2])],
@@ -85,8 +85,8 @@ HybridGraph(
 )
 ```
 """
-function standardsetup(g::SimpleDiGraph)::HybridGraph
-	hg = init(nv(g))
+function standardsetup_hs(g::SimpleDiGraph)::HybridGraph
+	hg = init_hs(nv(g))
 	done = Set{String}()
 
 	for e in edges(g)
@@ -94,10 +94,10 @@ function standardsetup(g::SimpleDiGraph)::HybridGraph
 
 		if isundirected
 			isdone = ("$(e.src)-$(e.dst)" in done)
-			!isdone && insert_edge!(hg, e.src, e.dst)
+			!isdone && insert_edge_hs!(hg, e.src, e.dst)
 			!isdone && push!(done, "$(e.dst)-$(e.src)") # Mark edge as done
 		else
-			insert_arc!(hg, e.src, e.dst)
+			insert_arc_hs!(hg, e.src, e.dst)
 		end
 	end
 
@@ -105,7 +105,7 @@ function standardsetup(g::SimpleDiGraph)::HybridGraph
 end
 
 """
-	optimizedsetup(g::SimpleDiGraph)::HybridGraph
+	optimizedsetup_hs(g::SimpleDiGraph)::HybridGraph
 
 Set up the datastructure for the algorithm with time complexity O(dm).
 
@@ -119,7 +119,7 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> optimizedsetup(g)
+julia> optimizedsetup_hs(g)
 HybridGraph(
 	DirectedGraph(
 		Set{Int64}[Set(), Set([3]), Set([2])],
@@ -140,22 +140,22 @@ HybridGraph(
 )
 ```
 """
-function optimizedsetup(g::SimpleDiGraph)::HybridGraph
-	hg = init(nv(g))
+function optimizedsetup_hs(g::SimpleDiGraph)::HybridGraph
+	hg = init_hs(nv(g))
 	done = Set{String}()
 
-	for v in degeneracy_ordering(g)
+	for v in degeneracy_ordering_hs(g)
 		for adj in all_neighbors(g, v)
 			adj < v || continue # Insert edges to preceding neighbors only
 
 			is_ingoing = has_edge(g, adj, v)
 			is_outgoing = has_edge(g, v, adj)
 			if is_ingoing && is_outgoing # Edge is undirected
-				!("$v-$adj" in done) && insert_edge!(hg, v, adj)
+				!("$v-$adj" in done) && insert_edge_hs!(hg, v, adj)
 				push!(done, "$adj-$v") # Mark edge as done
 			else # Edge is directed
-				is_ingoing && insert_arc!(hg, adj, v)
-				is_outgoing && insert_arc!(hg, v, adj)
+				is_ingoing && insert_arc_hs!(hg, adj, v)
+				is_outgoing && insert_arc_hs!(hg, v, adj)
 			end
 		end
 	end
@@ -164,7 +164,7 @@ function optimizedsetup(g::SimpleDiGraph)::HybridGraph
 end
 
 """
-	extendgraph(g::SimpleDiGraph, hg::HybridGraph)::SimpleDiGraph
+	extendgraph_hs(g::SimpleDiGraph, hg::HybridGraph)::SimpleDiGraph
 
 Compute the extension of graph hg.
 
@@ -178,16 +178,16 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> hg = standardsetup(g)
+julia> hg = standardsetup_hs(g)
 ...
-julia> extendgraph(g, hg)
+julia> extendgraph_hs(g, hg)
 {3, 2} directed simple Int64 graph
 ```
 """
-function extendgraph(g::SimpleDiGraph, hg::HybridGraph)::SimpleDiGraph
+function extendgraph_hs(g::SimpleDiGraph, hg::HybridGraph)::SimpleDiGraph
 	result = copy(g)
 
-	ps = list_ps(hg)
+	ps = list_ps_hs(hg)
 
 	while !isempty(ps)
 		s = pop!(ps)
@@ -197,7 +197,7 @@ function extendgraph(g::SimpleDiGraph, hg::HybridGraph)::SimpleDiGraph
 			rem_edge!(result, s, undirected)
 		end
 
-		newps = pop_ps!(hg, s)
+		newps = pop_ps_hs!(hg, s)
 		isempty(newps) || push!(ps, newps...)
 	end
 
