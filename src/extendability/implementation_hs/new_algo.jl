@@ -93,7 +93,6 @@ function standardsetup(g::SimpleDiGraph)::HybridGraph
 		isundirected = has_edge(g, e.dst, e.src)
 
 		if isundirected
-			key = "$(e.src)-$(e.dst)"
 			!("$(e.src)-$(e.dst)" in done) && insert_edge!(hg, e.src, e.dst)
 			push!(done, "$(e.dst)-$(e.src)") # Mark edge as done
 		else

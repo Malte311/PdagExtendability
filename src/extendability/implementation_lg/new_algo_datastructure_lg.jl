@@ -51,26 +51,6 @@ function init_lg(g::SimpleDiGraph)::Graph
 end
 
 """
-	fast_has_edge(g::SimpleDiGraph{T}, s, d) where T
-
-Check whether g contains an edge from s to d.
-
-# Implementation Notes
-Taken from the LightGraphs implementation but without
-check whether s and d are valid vertices to speed things
-up.
-"""
-function fast_has_edge(g::SimpleDiGraph{T}, s, d) where T
-	@inbounds list = g.fadjlist[s]
-	@inbounds list_backedge = g.badjlist[d]
-	if length(list) > length(list_backedge)
-		d = s
-		list = list_backedge
-	end
-	return insorted(d, list)
-end
-
-"""
 	is_adjacent_lg(graph::Graph, u::Int64, v::Int64)::Bool
 
 Check whether vertices u and v are adjacent in the given graph.
@@ -87,7 +67,7 @@ true
 ```
 """
 function is_adjacent_lg(graph::Graph, u::Int64, v::Int64)::Bool
-	fast_has_edge(graph.g, u, v) || fast_has_edge(graph.g, v, u)
+	has_edge(graph.g, u, v) || has_edge(graph.g, v, u)
 end
 
 """
@@ -105,7 +85,7 @@ true
 ```
 """
 function is_directed_lg(graph::Graph, u::Int64, v::Int64)::Bool
-	!fast_has_edge(graph.g, v, u) && fast_has_edge(graph.g, u, v)
+	!has_edge(graph.g, v, u) && has_edge(graph.g, u, v)
 end
 
 """
@@ -123,7 +103,7 @@ false
 ```
 """
 function is_undirected_lg(graph::Graph, u::Int64, v::Int64)::Bool
-	fast_has_edge(graph.g, u, v) && fast_has_edge(graph.g, v, u)
+	has_edge(graph.g, u, v) && has_edge(graph.g, v, u)
 end
 
 """
