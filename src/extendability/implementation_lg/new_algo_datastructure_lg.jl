@@ -121,8 +121,8 @@ true
 ```
 """
 function insert_arc_lg!(graph::Graph, u::Int64, v::Int64)
-	@inbounds graph.deltaplus_dir[u] += 1
-	@inbounds graph.deltaminus_dir[v] += 1
+	graph.deltaplus_dir[u] += 1
+	graph.deltaminus_dir[v] += 1
 end
 
 """
@@ -140,10 +140,10 @@ true
 ```
 """
 function insert_edge_lg!(graph::Graph, u::Int64, v::Int64)
-	@inbounds graph.deltaplus_undir[u] += 1
-	@inbounds graph.deltaminus_undir[v] += 1
-	@inbounds graph.deltaplus_undir[v] += 1
-	@inbounds graph.deltaminus_undir[u] += 1
+	graph.deltaplus_undir[u] += 1
+	graph.deltaminus_undir[v] += 1
+	graph.deltaplus_undir[v] += 1
+	graph.deltaminus_undir[u] += 1
 end
 
 """
@@ -166,8 +166,8 @@ false
 function remove_arc_lg!(graph::Graph, u::Int64, v::Int64)
 	rem_edge!(graph.g, u, v)
 
-	@inbounds graph.deltaplus_dir[u] -= 1
-	@inbounds graph.deltaminus_dir[v] -= 1
+	graph.deltaplus_dir[u] -= 1
+	graph.deltaminus_dir[v] -= 1
 
 	update_alphabeta_lg!(graph, u, v, -1, true)
 end
@@ -193,10 +193,10 @@ function remove_edge_lg!(graph::Graph, u::Int64, v::Int64)
 	rem_edge!(graph.g, u, v)
 	rem_edge!(graph.g, v, u)
 
-	@inbounds graph.deltaplus_undir[u] -= 1
-	@inbounds graph.deltaminus_undir[v] -= 1
-	@inbounds graph.deltaplus_undir[v] -= 1
-	@inbounds graph.deltaminus_undir[u] -= 1
+	graph.deltaplus_undir[u] -= 1
+	graph.deltaminus_undir[v] -= 1
+	graph.deltaplus_undir[v] -= 1
+	graph.deltaminus_undir[u] -= 1
 
 	update_alphabeta_lg!(graph, u, v, -1, false)
 end
@@ -218,19 +218,22 @@ function update_alphabeta_lg!(g::Graph, u::Int64, v::Int64, val::Int64, is_uv_di
 		is_ux_undir = is_undirected_lg(g, u, x)
 		is_vx_undir = is_undirected_lg(g, v, x)
 
-		!is_uv_dir && is_ux_undir && @inbounds (g.alpha[u] += val)
-		!is_uv_dir && is_directed_lg(g, x, u) && @inbounds (g.beta[u] += val)
+		!is_uv_dir && is_ux_undir && (g.alpha[u] += val)
+		!is_uv_dir && is_directed_lg(g, x, u) && (g.beta[u] += val)
 
-		!is_uv_dir && is_vx_undir && @inbounds (g.alpha[v] += val)
-		is_uv_dir  && is_vx_undir && @inbounds (g.beta[v] += val)
-		!is_uv_dir && is_directed_lg(g, x, v) && @inbounds (g.beta[v] += val)
+		!is_uv_dir && is_vx_undir && (g.alpha[v] += val)
+		is_uv_dir  && is_vx_undir && (g.beta[v] += val)
+		!is_uv_dir && is_directed_lg(g, x, v) && (g.beta[v] += val)
 
-		is_ux_undir && is_vx_undir && @inbounds (g.alpha[x] += val)
-		is_vx_undir && is_directed_lg(g, u, x) && @inbounds (g.beta[x] += val)
-		is_ux_undir && is_directed_lg(g, v, x) && @inbounds (g.beta[x] += val)
+		is_ux_undir && is_vx_undir && (g.alpha[x] += val)
+		is_vx_undir && is_directed_lg(g, u, x) && (g.beta[x] += val)
+		is_ux_undir && is_directed_lg(g, v, x) && (g.beta[x] += val)
 	end
 end
 
+"""
+	TODO
+"""
 function init_auxvectors_lg!(g::Graph)
 	done = Set{String}()
 
@@ -252,16 +255,16 @@ function init_auxvectors_lg!(g::Graph)
 			is_vx_undir = is_undirected_lg(g, v, x)
 			(!("$v-$x" in done) && (is_vx_undir || !("$x-$v" in done))) || continue
 	
-			!is_uv_dir && is_ux_undir && @inbounds (g.alpha[u] += 1)
-			!is_uv_dir && is_directed_lg(g, x, u) && @inbounds (g.beta[u] += 1)
+			!is_uv_dir && is_ux_undir && (g.alpha[u] += 1)
+			!is_uv_dir && is_directed_lg(g, x, u) && (g.beta[u] += 1)
 	
-			!is_uv_dir && is_vx_undir && @inbounds (g.alpha[v] += 1)
-			is_uv_dir  && is_vx_undir && @inbounds (g.beta[v] += 1)
-			!is_uv_dir && is_directed_lg(g, x, v) && @inbounds (g.beta[v] += 1)
+			!is_uv_dir && is_vx_undir && (g.alpha[v] += 1)
+			is_uv_dir  && is_vx_undir && (g.beta[v] += 1)
+			!is_uv_dir && is_directed_lg(g, x, v) && (g.beta[v] += 1)
 	
-			is_ux_undir && is_vx_undir && @inbounds (g.alpha[x] += 1)
-			is_vx_undir && is_directed_lg(g, u, x) && @inbounds (g.beta[x] += 1)
-			is_ux_undir && is_directed_lg(g, v, x) && @inbounds (g.beta[x] += 1)
+			is_ux_undir && is_vx_undir && (g.alpha[x] += 1)
+			is_vx_undir && is_directed_lg(g, u, x) && (g.beta[x] += 1)
+			is_ux_undir && is_directed_lg(g, v, x) && (g.beta[x] += 1)
 		end
 
 		push!(done, "$u-$v")
@@ -286,9 +289,9 @@ false
 ```
 """
 function is_ps_lg(g::Graph, s::Int64)::Bool
-	@inbounds g.deltaplus_dir[s] == 0 &&
-	@inbounds g.beta[s] == g.deltaplus_undir[s] * g.deltaminus_dir[s] &&
-	@inbounds g.alpha[s] == binomial(g.deltaplus_undir[s], 2)
+	g.deltaplus_dir[s] == 0 &&
+	g.beta[s] == g.deltaplus_undir[s] * g.deltaminus_dir[s] &&
+	g.alpha[s] == binomial(g.deltaplus_undir[s], 2)
 end
 
 """
@@ -353,13 +356,13 @@ function pop_ps_lg!(graph::Graph, s::Int64)::Vector{Int64}
 
 		# Since s is a sink, all outneighbors have undirected edges.
 		for undir in outneighbors(graph.g, s)
-			is_undirected_lg(graph, ingoing, undir) && @inbounds (graph.alpha[undir] += -1)
-			is_directed_lg(graph, ingoing, undir) && @inbounds (graph.beta[undir] += -1)
+			is_undirected_lg(graph, ingoing, undir) && (graph.alpha[undir] += -1)
+			is_directed_lg(graph, ingoing, undir) && (graph.beta[undir] += -1)
 		end
 
-		rem_edge!(graph.g, ingoing, s)
-		@inbounds graph.deltaplus_dir[ingoing] -= 1
-		@inbounds graph.deltaminus_dir[s] -= 1
+		rem_edge!(graph.g, ingoing, s) # TODO: Too expensive???
+		graph.deltaplus_dir[ingoing] -= 1
+		graph.deltaminus_dir[s] -= 1
 	end
 
 	# Delete undirected edges incident to s.
