@@ -13,7 +13,7 @@ export fastpdag2dag, standardsetup, optimizedsetup, extendgraph
 
 include("extendability/dor_tarsi_hs/dor_tarsi_algo_hs.jl")
 export setup_hs, isadjacent_hs, insert_edge_hs!, remove_vertex_hs!,
-pdag2dag_hs, sink_hs
+print_graph_hs, pdag2dag_hs, sink_hs
 
 include("extendability/new_algo_lg/new_algo_lg.jl")
 export init_lg, is_adjacent_lg, is_directed_lg, is_undirected_lg,
