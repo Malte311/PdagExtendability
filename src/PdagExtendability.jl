@@ -11,6 +11,10 @@ export degeneracy_ordering, deg_struct, pop_min_deg_vertex!,
 update_deg!
 export fastpdag2dag, standardsetup, optimizedsetup, extendgraph
 
+include("extendability/dor_tarsi_hs/dor_tarsi_algo_hs.jl")
+export setup_hs, isadjacent_hs, insert_edge_hs!, remove_vertex_hs!,
+pdag2dag_hs, sink_hs
+
 include("extendability/new_algo_lg/new_algo_lg.jl")
 export init_lg, is_adjacent_lg, is_directed_lg, is_undirected_lg,
 insert_arc_lg!, insert_edge_lg!, remove_arc_lg!, remove_edge_lg!,

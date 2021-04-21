@@ -19,7 +19,7 @@ function setup_hs(g::SimpleDiGraph)::DtGraph
 
 	for e in edges(g)
 		isundirected = has_edge(g, e.dst, e.src)
-		insert_edge_hs!(graph, e.src, e.dst, isundirected)
+		insert_edge_hs!(graph, e.src, e.dst, !isundirected)
 	end
 
 	graph
@@ -56,4 +56,14 @@ function remove_vertex_hs!(graph::DtGraph, x::Int64)
 	end
 
 	delete!(graph.vertices, x)
+end
+
+
+function print_graph_hs(graph::DtGraph, io::Core.IO = stdout)
+	for i = 1:length(graph.vertices)
+		println(io, "Vertex $i:")
+		println(io, "\tIngoing    = $(join(graph.ingoing[i], ", "))")
+		println(io, "\tOutgoing   = $(join(graph.outgoing[i], ", "))")
+		println(io, "\tUndirected = $(join(graph.undirected[i], ", "))")
+	end
 end

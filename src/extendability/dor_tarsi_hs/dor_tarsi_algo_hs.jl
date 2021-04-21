@@ -8,7 +8,7 @@ function pdag2dag_hs(g::SimpleDiGraph)::SimpleDiGraph
 
 	# If one vertex is left there are no edges to other vertices anymore,
 	# so we can stop (no need to do another iteration for nv(temp) == 1).
-	while temp.current_n > 1
+	while length(temp.vertices) > 1
 		x = sink_hs(temp)
 		x != -1 || return SimpleDiGraph(0)
 
