@@ -360,7 +360,7 @@ function pop_ps_lg!(graph::Graph, s::Int64)::Vector{Int64}
 			is_directed_lg(graph, ingoing, undir) && (graph.beta[undir] += -1)
 		end
 
-		rem_edge!(graph.g, ingoing, s) # TODO: Too expensive???
+		rem_edge!(graph.g, ingoing, s)
 		graph.deltaplus_dir[ingoing] -= 1
 		graph.deltaminus_dir[s] -= 1
 	end
