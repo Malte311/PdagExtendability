@@ -1,5 +1,6 @@
 """
-The datastructure to store a partially directed graph.
+The datastructure to store a partially directed graph, using HashSets
+internally.
 """
 mutable struct DtGraph
 	vertices::Set{Int64}
