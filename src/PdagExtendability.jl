@@ -16,6 +16,9 @@ export fastpdag2dag_hs, standardsetup_hs, optimizedsetup_hs, extendgraph_hs
 include("extendability/implementation_lg/dor_tarsi_algo_lg.jl")
 export pdag2dag_lg, sink_lg
 
+include("extendability/implementation_lg/dor_tarsi_debug_lg.jl")
+export pdag2dag_debug_lg, sink_debug_lg
+
 include("extendability/implementation_lg/new_algo_lg.jl")
 export init_lg, is_adjacent_lg, is_directed_lg, is_undirected_lg,
 insert_arc_lg!, insert_edge_lg!, remove_arc_lg!, remove_edge_lg!,

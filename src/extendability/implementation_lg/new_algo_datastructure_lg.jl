@@ -247,7 +247,7 @@ function init_auxvectors_lg!(g::Graph)
 		is_uv_dir && insert_arc_lg!(g, u, v)
 		!is_uv_dir && insert_edge_lg!(g, u, v)
 
-		for x in all_neighbors(g.g, u)
+		for x in g.g.badjlist[u]
 			is_adjacent_lg(g, x, v) || continue
 
 			is_ux_undir = is_undirected_lg(g, u, x)
