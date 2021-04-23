@@ -4,7 +4,6 @@ using LightGraphs
 	pdag2dag_debug_lg(g::SimpleDiGraph)::SimpleDiGraph
 
 Debug version of [`pdag2dag_lg`](@ref).
-```
 """
 function pdag2dag_debug_lg(g::SimpleDiGraph)::SimpleDiGraph
 	result = copy(g)
