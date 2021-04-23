@@ -28,6 +28,7 @@ function get_times_dict(file::String)::Dict
 	close(io)
 
 	filter!(line -> !contains(line, "@ Main"), log)
+	filter!(line -> !contains(line, "Average iterations"), log)
 	filter!(line -> !contains(line, "Minimum time"), log)
 	filter!(line -> !contains(line, "Maximum time"), log)
 	filter!(line -> !contains(line, "---"), log)
