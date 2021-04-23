@@ -8,7 +8,9 @@ end
 config = JSON.parsefile(ARGS[1])
 
 if config["logtofile"]
-	io = open(joinpath(config["logdir"], config["logfile"]), "a+")
+	logfile = joinpath(config["logdir"], config["logfile"])
+	isfile(logfile) && @warn "Logfile exists and will be overridden."
+	io = open(logfile, "w+")
 	global_logger(SimpleLogger(io))
 end
 
