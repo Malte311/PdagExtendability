@@ -235,40 +235,40 @@ end
 	TODO
 """
 function init_auxvectors_lg!(g::Graph)
-	done = Set{String}()
+	#done = Set{String}()
 
 	for e in edges(g.g)
 		u = e.src
-		v = e.dst
+		# v = e.dst
 
-		!("$u-$v" in done) || continue
+		# !("$u-$v" in done) || continue
 
-		is_uv_dir = !has_edge(g.g, v, u)
-		is_uv_dir && insert_arc_lg!(g, u, v)
-		!is_uv_dir && insert_edge_lg!(g, u, v)
+		# is_uv_dir = !has_edge(g.g, v, u)
+		# is_uv_dir && insert_arc_lg!(g, u, v)
+		# !is_uv_dir && insert_edge_lg!(g, u, v)
 
 		for x in all_neighbors(g.g, u)
-			is_adjacent_lg(g, x, v) || continue
+			# is_adjacent_lg(g, x, v) || continue
 
-			is_ux_undir = is_undirected_lg(g, u, x)
-			(!("$u-$x" in done) && (!is_ux_undir || !("$x-$u" in done))) || continue
-			is_vx_undir = is_undirected_lg(g, v, x)
-			(!("$v-$x" in done) && (is_vx_undir || !("$x-$v" in done))) || continue
+			# is_ux_undir = is_undirected_lg(g, u, x)
+			# (!("$u-$x" in done) && (!is_ux_undir || !("$x-$u" in done))) || continue
+			# is_vx_undir = is_undirected_lg(g, v, x)
+			# (!("$v-$x" in done) && (is_vx_undir || !("$x-$v" in done))) || continue
 	
-			!is_uv_dir && is_ux_undir && (g.alpha[u] += 1)
-			!is_uv_dir && is_directed_lg(g, x, u) && (g.beta[u] += 1)
+			# !is_uv_dir && is_ux_undir && (g.alpha[u] += 1)
+			# !is_uv_dir && is_directed_lg(g, x, u) && (g.beta[u] += 1)
 	
-			!is_uv_dir && is_vx_undir && (g.alpha[v] += 1)
-			is_uv_dir  && is_vx_undir && (g.beta[v] += 1)
-			!is_uv_dir && is_directed_lg(g, x, v) && (g.beta[v] += 1)
+			# !is_uv_dir && is_vx_undir && (g.alpha[v] += 1)
+			# is_uv_dir  && is_vx_undir && (g.beta[v] += 1)
+			# !is_uv_dir && is_directed_lg(g, x, v) && (g.beta[v] += 1)
 	
-			is_ux_undir && is_vx_undir && (g.alpha[x] += 1)
-			is_vx_undir && is_directed_lg(g, u, x) && (g.beta[x] += 1)
-			is_ux_undir && is_directed_lg(g, v, x) && (g.beta[x] += 1)
+			# is_ux_undir && is_vx_undir && (g.alpha[x] += 1)
+			# is_vx_undir && is_directed_lg(g, u, x) && (g.beta[x] += 1)
+			# is_ux_undir && is_directed_lg(g, v, x) && (g.beta[x] += 1)
 		end
 
-		push!(done, "$u-$v")
-		!is_uv_dir && push!(done, "$v-$u")
+		# push!(done, "$u-$v")
+		# !is_uv_dir && push!(done, "$v-$u")
 	end
 end
 
