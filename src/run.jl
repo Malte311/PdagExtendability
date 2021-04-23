@@ -27,10 +27,8 @@ for (root, dirs, files) in walkdir(config["benchmarkdir"])
 		@info "[$(Dates.format(now(), "HH:MM"))] Running benchmark for '$f'..."
 		pdag = readinputgraph(joinpath(root, f), config["only_undirected"])
 
-		graph = init_lg(pdag)
-
 		bench = @benchmark getfield(Main, algo)(
-			$graph,
+			$pdag,
 			config["algorithm_params"]...
 		) samples=samples evals=evals
 
