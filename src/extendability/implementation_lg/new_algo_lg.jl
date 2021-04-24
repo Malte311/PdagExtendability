@@ -78,15 +78,58 @@ end
 """
 	optimizedsetup_lg(g::SimpleDiGraph)::Graph
 
-TODO
+Set up the datastructure for the algorithm with time complexity O(dm).
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> optimizedsetup_lg(g)
+Graph(
+	{3, 3} directed simple Int64 graph,
+	[0, 0, 0],
+	[0, 0, 0],
+	[1, 0, 0],
+	[0, 1, 1],
+	[0, 1, 0],
+	[0, 1, 1]
+)
+```
 """
 function optimizedsetup_lg(g::SimpleDiGraph)::Graph
 	graph = init_lg(g)
+
+	# TODO
+
 	graph
 end
 
 """
-	TODO
+	extendgraph_lg(graph::Graph)::SimpleDiGraph
+
+Compute the extension of the given graph.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> graph = standardsetup_lg(g)
+...
+julia> extendgraph_lg(graph)
+{3, 2} directed simple Int64 graph
+```
 """
 function extendgraph_lg(graph::Graph)::SimpleDiGraph
 	result = copy(graph.g)

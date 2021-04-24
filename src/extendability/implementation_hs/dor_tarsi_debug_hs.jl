@@ -5,7 +5,8 @@ using LightGraphs
 """
 	pdag2dag_debug_hs(g::SimpleDiGraph)::SimpleDiGraph
 
-Debug version of [`pdag2dag_hs`](@ref).
+Debug version of [`pdag2dag_hs`](@ref). The debug version logs the
+average number of iterations needed to find a sink.
 """
 function pdag2dag_debug_hs(g::SimpleDiGraph)::SimpleDiGraph
 	result = copy(g)
@@ -40,7 +41,9 @@ end
 """
 	sink_debug_hs(graph::DtGraph)::Tuple{Int64, Int64}
 
-Debug version of [`sink_hs`](@ref).
+Debug version of [`sink_hs`](@ref). The debug version counts
+the number of iterations needed to find a sink and computes
+the average number of iterations needed in the whole algorithm. 
 """
 function sink_debug_hs(graph::DtGraph)::Tuple{Int64, Int64}
 	iterations = 0
