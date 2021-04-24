@@ -1,17 +1,20 @@
 @testset "pdag2dag_lg" begin
-	@testset "No changes for DAG inputs" begin
+	@testset "No changes for DAG inputs 1" begin
 		input = SimpleDiGraph(2)
 		add_edge!(input, 1, 2)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 2 && ne(out) == 1 && has_edge(out, 1, 2)
+		@test out == input
+	end
 
+	@testset "No changes for DAG inputs 2" begin
 		input = SimpleDiGraph(3)
 		add_edge!(input, 1, 2)
 		add_edge!(input, 2, 3)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 3 && ne(out) == 2 && has_edge(out, 1, 2) &&
-			has_edge(out, 2, 3)
+		@test out == input
+	end
 
+	@testset "No changes for DAG inputs 3" begin
 		for n in [50, 100, 500]
 			input = SimpleDiGraph(n)
 			for i = 1:n-1
@@ -54,9 +57,7 @@
 		add_edge!(input, 2, 3)
 		add_edge!(input, 4, 3)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 4 && ne(out) == 5 && has_edge(out, 1, 2) &&
-			has_edge(out, 1, 3) && has_edge(out, 2, 3) && has_edge(out, 4, 1) &&
-			has_edge(out, 4, 3)
+		@test is_consistent_extension(out, input)
 	end
 
 	@testset "Meek Rule R4" begin
@@ -70,21 +71,20 @@
 		add_edge!(input, 3, 2)
 		add_edge!(input, 4, 3)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 4 && ne(out) == 5 && has_edge(out, 1, 2) &&
-			has_edge(out, 3, 1) && has_edge(out, 3, 2) && has_edge(out, 4, 1) &&
-			has_edge(out, 4, 3)
+		@test is_consistent_extension(out, input)
 	end
 
-	@testset "More PDAGs with possible extensions" begin
+	@testset "More PDAGs with possible extensions 1" begin
 		input = SimpleDiGraph(4)
 		add_edge!(input, 1, 2)
 		add_edge!(input, 2, 3)
 		add_edge!(input, 3, 2)
 		add_edge!(input, 3, 4)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 4 && ne(out) == 3 && has_edge(out, 1, 2) &&
-			has_edge(out, 2, 3) && has_edge(out, 3, 4)
+		@test is_consistent_extension(out, input)
+	end
 
+	@testset "More PDAGs with possible extensions 2" begin
 		for n in [20, 50, 100]
 			input = SimpleDiGraph(n)
 			for i = 1:n-1
@@ -92,14 +92,11 @@
 				i % 2 == 0 && add_edge!(input, i+1, i)
 			end
 			out = pdag2dag_lg(input)
-			@test nv(out) == n && ne(out) == n-1
-			isok = true
-			for i = 1:n-1
-				isok &= has_edge(out, i, i+1) && !has_edge(out, i+1, i)
-			end
-			@test isok
+			@test is_consistent_extension(out, input)
 		end
+	end
 
+	@testset "More PDAGs with possible extensions 3" begin
 		input = SimpleDiGraph(5)
 		add_edge!(input, 1, 4)
 		add_edge!(input, 4, 1)
@@ -110,10 +107,10 @@
 		add_edge!(input, 2, 3)
 		add_edge!(input, 3, 2)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 4, 1) &&
-			has_edge(out, 5, 4) && has_edge(out, 5, 2) &&
-			has_edge(out, 5, 3) && has_edge(out, 3, 2)
+		@test is_consistent_extension(out, input)
+	end
 
+	@testset "More PDAGs with possible extensions 4" begin
 		input = SimpleDiGraph(5)
 		add_edge!(input, 1, 4)
 		add_edge!(input, 4, 1)
@@ -123,10 +120,10 @@
 		add_edge!(input, 2, 3)
 		add_edge!(input, 3, 2)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 4, 1) &&
-			has_edge(out, 5, 4) && has_edge(out, 5, 2) &&
-			has_edge(out, 5, 3) && has_edge(out, 3, 2)
+		@test is_consistent_extension(out, input)
+	end
 
+	@testset "More PDAGs with possible extensions 5" begin
 		input = SimpleDiGraph(5)
 		add_edge!(input, 1, 4)
 		add_edge!(input, 4, 5)
@@ -136,10 +133,10 @@
 		add_edge!(input, 2, 3)
 		add_edge!(input, 3, 2)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 1, 4) &&
-			has_edge(out, 4, 5) && has_edge(out, 5, 2) &&
-			has_edge(out, 5, 3) && has_edge(out, 3, 2)
+		@test is_consistent_extension(out, input)
+	end
 
+	@testset "More PDAGs with possible extensions 6" begin
 		input = SimpleDiGraph(5)
 		add_edge!(input, 1, 4)
 		add_edge!(input, 4, 1)
@@ -152,12 +149,10 @@
 		add_edge!(input, 2, 3)
 		add_edge!(input, 3, 2)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 5 && ne(out) == 5 && has_edge(out, 4, 1) &&
-			has_edge(out, 5, 4) && has_edge(out, 5, 2) &&
-			has_edge(out, 3, 5) && has_edge(out, 3, 2)
+		@test is_consistent_extension(out, input)
 	end
 
-	@testset "Empty graph if no consistent extension is possible" begin
+	@testset "Empty graph if no consistent extension is possible 1" begin
 		input = SimpleDiGraph(4)
 		add_edge!(input, 1, 2)
 		add_edge!(input, 2, 1)
@@ -168,8 +163,10 @@
 		add_edge!(input, 3, 4)
 		add_edge!(input, 4, 3)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 0 && ne(out) == 0
+		@test out == SimpleDiGraph(0)
+	end
 
+	@testset "Empty graph if no consistent extension is possible 2" begin
 		input = SimpleDiGraph(4)
 		add_edge!(input, 1, 4)
 		add_edge!(input, 2, 1)
@@ -179,8 +176,10 @@
 		add_edge!(input, 3, 4)
 		add_edge!(input, 4, 3)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 0 && ne(out) == 0
+		@test out == SimpleDiGraph(0)
+	end
 
+	@testset "Empty graph if no consistent extension is possible 3" begin
 		for n in [50, 100, 500]
 			input = SimpleDiGraph(n)
 			for i = 1:n-1
@@ -190,9 +189,11 @@
 			add_edge!(input, 1, n)
 			add_edge!(input, n, 1)
 			output = pdag2dag_lg(input)
-			@test nv(output) == 0 && ne(output) == 0
+			@test output == SimpleDiGraph(0)
 		end
+	end
 
+	@testset "Empty graph if no consistent extension is possible 4" begin
 		input = SimpleDiGraph(5)
 		add_edge!(input, 1, 2)
 		add_edge!(input, 2, 1)
@@ -204,7 +205,7 @@
 		add_edge!(input, 2, 3)
 		add_edge!(input, 3, 2)
 		out = pdag2dag_lg(input)
-		@test nv(out) == 0 && ne(out) == 0
+		@test out == SimpleDiGraph(0)
 	end
 end
 
