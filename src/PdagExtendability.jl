@@ -31,7 +31,8 @@ export fastpdag2dag_lg, standardsetup_lg, optimizedsetup_lg,
 vertex_ordering_lg, extendgraph_lg
 
 include("utils/utils.jl")
-export nanosec2millisec
+export is_consistent_extension, isdag, skeleton, vstructures,
+nanosec2millisec
 
 include("utils/logparser.jl")
 export get_times_dict, dict_to_csv, print_dict

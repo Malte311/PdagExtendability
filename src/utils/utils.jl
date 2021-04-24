@@ -5,7 +5,7 @@ using LightGraphs
 Check whether g1 is a consistent extension of g2.
 """
 function is_consistent_extension(g1::SimpleDiGraph, g2::SimpleDiGraph)::Bool
-	!is_cyclic(g1) && isdag(g1) && nv(g1) == nv(g2) &&
+	isdag(g1) && nv(g1) == nv(g2) &&
 	vstructures(g1) == vstructures(g2) && skeleton(g1) == skeleton(g2)
 end
 
@@ -15,7 +15,7 @@ function isdag(g::SimpleDiGraph)::Bool
 		!has_edge(g, e.dst, e.src) || return false
 	end
 
-	true
+	!is_cyclic(g)
 end
 
 
@@ -24,10 +24,10 @@ function skeleton(g::SimpleDiGraph)::Vector{Tuple{Int64, Int64}}
 	for e in edges(g)
 		u = e.src
 		v = e.dst
-		push!(result, u <= v ? u : v, u <= v ? v : u)
+		push!(result, (u <= v ? u : v, u <= v ? v : u))
 	end
-	unique!(x -> "$(x[1])-$(x[2])", result)
-	sort!(result, by = (a, b) -> a[1] < b[1])
+	unique!(result)
+	sort!(result)
 	result
 end
 
