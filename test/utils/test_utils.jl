@@ -151,7 +151,97 @@ end
 end
 
 @testset "vstructures" begin
-	
+	@testset "No vstructures for isolated nodes" begin
+		for n in [3, 300, 500]
+			g = SimpleDiGraph(n)
+			@test isempty(vstructures(g))
+		end
+	end
+
+	@testset "Correct vstructures of a DAG 1" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 3, 2)
+		@test vstructures(g) == [(1, 2, 3)]
+	end
+
+	@testset "Correct vstructures of a DAG 2" begin
+		g = SimpleDiGraph(5)
+		add_edge!(g, 1, 5)
+		add_edge!(g, 3, 5)
+		add_edge!(g, 1, 4)
+		add_edge!(g, 3, 4)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 3, 2)
+		@test vstructures(g) == [(1, 2, 3), (1, 4, 3), (1, 5, 3)]
+	end
+
+	@testset "Correct vstructures of a DAG 3" begin
+		g = SimpleDiGraph(5)
+		add_edge!(g, 1, 5)
+		add_edge!(g, 3, 5)
+		add_edge!(g, 1, 4)
+		add_edge!(g, 3, 4)
+		add_edge!(g, 1, 3)
+		@test isempty(vstructures(g))
+	end
+
+	@testset "Correct vstructures of a DAG 4" begin
+		g = SimpleDiGraph(5)
+		add_edge!(g, 2, 5)
+		add_edge!(g, 4, 5)
+		add_edge!(g, 1, 4)
+		add_edge!(g, 3, 4)
+		add_edge!(g, 1, 3)
+		@test vstructures(g) == [(2, 5, 4)]
+	end
+
+	@testset "Correct vstructures of a PDAG 1" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 1, 3)
+		add_edge!(g, 2, 3)
+		@test isempty(vstructures(g))
+	end
+
+	@testset "Correct vstructures of a PDAG 2" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 1, 3)
+		add_edge!(g, 2, 3)
+		@test isempty(vstructures(g))
+	end
+
+	@testset "Correct vstructures of a PDAG 3" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 3, 1)
+		@test isempty(vstructures(g))
+	end
+
+	@testset "Correct vstructures of a PDAG 4" begin
+		g = SimpleDiGraph(4)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 3, 1)
+		add_edge!(g, 2, 4)
+		add_edge!(g, 3, 4)
+		@test vstructures(g) == [(2, 4, 3)]
+	end
+
+	@testset "No vstructures for an undirected graph" begin
+		for n in [10, 50, 100]
+			g = SimpleDiGraph(n)
+			for i = 1:n
+				add_edge!(g, 1, i)
+				add_edge!(g, i, 1)
+			end
+			@test isempty(vstructures(g))
+		end
+	end
 end
 
 @testset "nanosec2millisec" begin

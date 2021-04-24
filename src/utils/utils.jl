@@ -21,31 +21,38 @@ end
 
 function skeleton(g::SimpleDiGraph)::Vector{Tuple{Int64, Int64}}
 	result = Vector{Tuple{Int64, Int64}}()
+
 	for e in edges(g)
 		u = e.src
 		v = e.dst
 		push!(result, (u <= v ? u : v, u <= v ? v : u))
 	end
+
 	unique!(result)
 	sort!(result)
+
 	result
 end
 
 
 function vstructures(g::SimpleDiGraph)::Vector{Tuple{Int64, Int64, Int64}}
 	result = Vector{Tuple{Int64, Int64, Int64}}()
+
 	for u in vertices(g)
 		for v in vertices(g)
-			(u != v && has_edge(g, u, v)) || continue
+			(u != v && has_edge(g, u, v) && !has_edge(g, v, u)) || continue
 			for w in vertices(g)
-				(u != w && v != w && has_edge(g, w, v)) || continue
+				(u != w && v != w && has_edge(g, w, v) && !has_edge(g, v, w)) || continue
 				if !has_edge(g, u, w) && !has_edge(g, w, u)
 					push!(result, (u <= w ? u : w, v, u <= w ? w : u))
 				end
 			end
 		end
 	end
-	sort!(result, by = (a, b) -> a[1] < b[1]) # TODO sort by w if u is equal
+
+	unique!(result)
+	sort!(result)
+
 	result
 end
 
