@@ -167,8 +167,8 @@ false
 ```
 """
 function remove_arc_hs!(g::HybridGraph, u::Int64, v::Int64)
-	remove_arc_hs!(g.g2, u, v)
 	update_alphabeta_hs!(g, u, v, -1)
+	remove_arc_hs!(g.g2, u, v)
 end
 
 """
@@ -207,9 +207,10 @@ false
 ```
 """
 function remove_edge_hs!(g::HybridGraph, u::Int64, v::Int64)
+	update_alphabeta_hs!(g, u, v, -1)
+
 	remove_arc_hs!(g.g1, u, v)
 	remove_arc_hs!(g.g1, v, u)
-	update_alphabeta_hs!(g, u, v, -1)
 end
 
 """

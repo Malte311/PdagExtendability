@@ -164,12 +164,12 @@ false
 ```
 """
 function remove_arc_lg!(graph::Graph, u::Int64, v::Int64)
-	rem_edge!(graph.g, u, v)
-
 	graph.deltaplus_dir[u] -= 1
 	graph.deltaminus_dir[v] -= 1
 
 	update_alphabeta_lg!(graph, u, v, -1, true)
+
+	rem_edge!(graph.g, u, v)
 end
 
 """
@@ -190,15 +190,15 @@ false
 ```
 """
 function remove_edge_lg!(graph::Graph, u::Int64, v::Int64)
-	rem_edge!(graph.g, u, v)
-	rem_edge!(graph.g, v, u)
-
 	graph.deltaplus_undir[u] -= 1
 	graph.deltaminus_undir[v] -= 1
 	graph.deltaplus_undir[v] -= 1
 	graph.deltaminus_undir[u] -= 1
 
 	update_alphabeta_lg!(graph, u, v, -1, false)
+
+	rem_edge!(graph.g, u, v)
+	rem_edge!(graph.g, v, u)
 end
 
 """
