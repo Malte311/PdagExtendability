@@ -37,9 +37,7 @@ julia> collect(edges(dag))
 function fastpdag2dag_lg(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
 	graph = optimize ? optimizedsetup_lg(g) : standardsetup_lg(g)
 
-	ordering = vertex_ordering_lg(graph)
-
-	extendgraph_lg(g, ordering)
+	extendgraph_lg(graph)
 end
 
 """
@@ -90,38 +88,24 @@ end
 """
 	TODO
 """
-function vertex_ordering_lg(graph::Graph)::Vector{Int64}
-	result = Vector{Int64}(undef, nv(graph.g))
-	index = 1
+function extendgraph_lg(graph::Graph)::SimpleDiGraph
+	result = copy(graph.g)
 
 	ps = Set{Int64}(list_ps_lg(graph))
 
 	while !isempty(ps)
 		s = pop!(ps)
 
-		result[index] = s
-		index += 1
+		# Direct all adjacent edges towards x
+		for neighbor in outneighbors(graph.g, s)
+			rem_edge!(result, s, neighbor)
+		end
 
 		newps = pop_ps_lg!(graph, s)
 		isempty(newps) || push!(ps, newps...)
 	end
 
-	isempty(edges(graph.g)) || return []
-
-	result
-end
-
-
-function extendgraph_lg(g::SimpleDiGraph, ordering::Vector{Int64})::SimpleDiGraph
-	!isempty(ordering) || return SimpleDiGraph(0)
-
-	result = copy(g)
-
-	for s in ordering
-		oldlength = length(result.fadjlist[s])
-		filter!(u -> !has_edge(result, u, s), result.fadjlist[s])
-		result.ne -= (oldlength - length(result.fadjlist[s]))
-	end
+	isempty(edges(graph.g)) || return SimpleDiGraph(0)
 
 	result
 end
