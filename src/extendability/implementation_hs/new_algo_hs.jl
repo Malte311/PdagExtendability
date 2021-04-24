@@ -187,7 +187,7 @@ julia> extendgraph_hs(g, hg)
 function extendgraph_hs(g::SimpleDiGraph, hg::HybridGraph)::SimpleDiGraph
 	result = copy(g)
 
-	ps = list_ps_hs(hg)
+	ps = Set{Int64}(list_ps_hs(hg))
 
 	while !isempty(ps)
 		s = pop!(ps)
