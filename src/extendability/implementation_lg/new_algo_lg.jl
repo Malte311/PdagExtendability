@@ -3,13 +3,18 @@ using LightGraphs
 include("new_algo_datastructure_lg.jl")
 
 """
-	fastpdag2dag_lg(g::SimpleDiGraph)::SimpleDiGraph
+	fastpdag2dag_lg(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
 
 Convert a partially directed acyclic graph (PDAG) into a fully
 directed acyclic graph (DAG). If this is not possible, an empty
 graph is returned.
 
 Undirected edges are represented as two directed edges.
+
+If the parameter optimize is omitted or set to false, the algorithm runs in
+time O(Δm) with Δ being the maximum degree of g and m the number of edges in
+g. Setting optimize to true will yield an algorithm in time O(dm), where d
+is the degeneracy of the skeleton.
 
 # Examples
 ```julia-repl
@@ -29,10 +34,12 @@ julia> collect(edges(dag))
  Edge 2 => 3
 ```
 """
-function fastpdag2dag_lg(g::SimpleDiGraph)::SimpleDiGraph
-	graph = standardsetup_lg(g)
+function fastpdag2dag_lg(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
+	graph = optimize ? optimizedsetup_lg(g) : standardsetup_lg(g)
 
-	extendgraph_lg(g, graph)
+	ordering = vertex_ordering_lg(graph)
+
+	extendgraph_lg(g, ordering)
 end
 
 """
@@ -64,57 +71,57 @@ Graph(
 """
 function standardsetup_lg(g::SimpleDiGraph)::Graph
 	graph = init_lg(g)
+
 	init_auxvectors_lg!(graph)
 
 	graph
 end
 
 """
-	extendgraph_lg(g::SimpleDiGraph, graph::Graph)::SimpleDiGraph
+	optimizedsetup_lg(g::SimpleDiGraph)::Graph
 
-Extend a given graph represented by the datastructure.
-
-# Examples
-```julia-repl
-julia> g = SimpleDiGraph(3)
-{3, 0} directed simple Int64 graph
-julia> add_edge!(g, 1, 2)
-true
-julia> add_edge!(g, 2, 3)
-true
-julia> add_edge!(g, 3, 2)
-true
-julia> graph = standardsetup_lg(g)
-Graph(
-	{3, 3} directed simple Int64 graph,
-	[0, 0, 0],
-	[0, 0, 0],
-	[1, 0, 0],
-	[0, 1, 1],
-	[0, 1, 0],
-	[0, 1, 1]
-)
-julia> extendgraph_lg(g, graph)
-{3, 2} directed simple Int64 graph
-```
+TODO
 """
-function extendgraph_lg(g::SimpleDiGraph, graph::Graph)::SimpleDiGraph
-	result = copy(g)
+function optimizedsetup_lg(g::SimpleDiGraph)::Graph
+	graph = init_lg(g)
+	graph
+end
 
-	ps = list_ps_lg(graph)
+"""
+	TODO
+"""
+function vertex_ordering_lg(graph::Graph)::Vector{Int64}
+	result = Vector{Int64}(undef, nv(graph.g))
+	index = 1
+
+	ps = Set{Int64}(list_ps_lg(graph))
 
 	while !isempty(ps)
 		s = pop!(ps)
 
-		for undirected in outneighbors(graph.g, s)
-			rem_edge!(result, s, undirected)
-		end
+		result[index] = s
+		index += 1
 
 		newps = pop_ps_lg!(graph, s)
 		isempty(newps) || push!(ps, newps...)
 	end
 
-	isempty(edges(graph.g)) || return SimpleDiGraph(0)
+	isempty(edges(graph.g)) || return []
+
+	result
+end
+
+
+function extendgraph_lg(g::SimpleDiGraph, ordering::Vector{Int64})::SimpleDiGraph
+	!isempty(ordering) || return SimpleDiGraph(0)
+
+	result = copy(g)
+
+	for s in ordering
+		oldlength = length(result.fadjlist[s])
+		filter!(u -> !has_edge(result, u, s), result.fadjlist[s])
+		result.ne -= (oldlength - length(result.fadjlist[s]))
+	end
 
 	result
 end
