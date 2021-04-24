@@ -1,5 +1,201 @@
 @testset "is_consistent_extension" begin
-	
+	@testset "A DAG is a consistent extension of itself 1" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 1, 3)
+		@test is_consistent_extension(g, g)
+	end
+
+	@testset "A DAG is a consistent extension of itself 2" begin
+		for n in [10, 100, 500]
+			g = SimpleDiGraph(n)
+			for i = 1:n-1
+				add_edge!(g, i, i+1)
+			end
+			@test is_consistent_extension(g, g)
+		end
+	end
+
+	@testset "Recognize consistent extension of a PDAG 1" begin
+		input = SimpleDiGraph(3)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		extension = SimpleDiGraph(3)
+		add_edge!(extension, 1, 2)
+		add_edge!(extension, 2, 3)
+		@test is_consistent_extension(extension, input)
+	end
+
+	@testset "Recognize consistent extension of a PDAG 2" begin
+		input = SimpleDiGraph(3)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 2, 3)
+		extension = SimpleDiGraph(3)
+		add_edge!(extension, 1, 2)
+		add_edge!(extension, 2, 3)
+		add_edge!(extension, 1, 3)
+		@test is_consistent_extension(extension, input)
+	end
+
+	@testset "Recognize consistent extension of a PDAG 3" begin
+		input = SimpleDiGraph(4)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 4, 3)
+		extension = SimpleDiGraph(4)
+		add_edge!(extension, 1, 3)
+		add_edge!(extension, 2, 3)
+		add_edge!(extension, 4, 3)
+		add_edge!(extension, 2, 1)
+		add_edge!(extension, 1, 4)
+		@test is_consistent_extension(extension, input)
+	end
+
+	@testset "Recognize consistent extension of a PDAG 4" begin
+		input = SimpleDiGraph(4)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 4, 3)
+		extension = SimpleDiGraph(4)
+		add_edge!(extension, 1, 3)
+		add_edge!(extension, 2, 3)
+		add_edge!(extension, 4, 3)
+		add_edge!(extension, 1, 2)
+		add_edge!(extension, 1, 4)
+		@test is_consistent_extension(extension, input)
+	end
+
+	@testset "Recognize consistent extension of a PDAG 5" begin
+		input = SimpleDiGraph(4)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 4, 3)
+		extension = SimpleDiGraph(4)
+		add_edge!(extension, 1, 3)
+		add_edge!(extension, 2, 3)
+		add_edge!(extension, 4, 3)
+		add_edge!(extension, 1, 2)
+		add_edge!(extension, 4, 1)
+		@test is_consistent_extension(extension, input)
+	end
+
+	@testset "Reject wrong extension of a PDAG 1" begin
+		input = SimpleDiGraph(3)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 2, 3)
+		extension = SimpleDiGraph(3)
+		add_edge!(extension, 1, 2)
+		add_edge!(extension, 2, 3)
+		add_edge!(extension, 3, 1)
+		@test !is_consistent_extension(extension, input)
+	end
+
+	@testset "Reject wrong extension of a PDAG 2" begin
+		input = SimpleDiGraph(4)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 4, 3)
+		extension = SimpleDiGraph(4)
+		add_edge!(extension, 1, 3)
+		add_edge!(extension, 2, 3)
+		add_edge!(extension, 4, 3)
+		add_edge!(extension, 2, 1)
+		add_edge!(extension, 4, 1)
+		@test !is_consistent_extension(extension, input)
+	end
+
+	@testset "Reject wrong extension of a PDAG 3" begin
+		input = SimpleDiGraph(4)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 4, 3)
+		extension = SimpleDiGraph(4)
+		add_edge!(extension, 3, 1)
+		add_edge!(extension, 2, 3)
+		add_edge!(extension, 4, 3)
+		add_edge!(extension, 2, 1)
+		add_edge!(extension, 1, 4)
+		@test !is_consistent_extension(extension, input)
+	end
+
+	@testset "Recognize consistent extension of an undirected graph 1" begin
+		input = SimpleDiGraph(3)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		extension = SimpleDiGraph(3)
+		add_edge!(extension, 1, 2)
+		add_edge!(extension, 1, 3)
+		@test is_consistent_extension(extension, input)
+	end
+
+	@testset "Recognize consistent extension of an undirected graph 2" begin
+		input = SimpleDiGraph(3)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		extension = SimpleDiGraph(3)
+		add_edge!(extension, 2, 1)
+		add_edge!(extension, 1, 3)
+		@test is_consistent_extension(extension, input)
+	end
+
+	@testset "Recognize consistent extension of an undirected graph 3" begin
+		input = SimpleDiGraph(3)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		extension = SimpleDiGraph(3)
+		add_edge!(extension, 1, 2)
+		add_edge!(extension, 3, 1)
+		@test is_consistent_extension(extension, input)
+	end
+
+	@testset "Reject wrong extension of an undirected graph 1" begin
+		input = SimpleDiGraph(3)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		extension = SimpleDiGraph(3)
+		add_edge!(extension, 2, 1)
+		add_edge!(extension, 3, 1)
+		@test !is_consistent_extension(extension, input)
+	end
 end
 
 @testset "isdag" begin
