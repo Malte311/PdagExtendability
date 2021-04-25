@@ -104,7 +104,7 @@ Graph(
 ```
 """
 function optimizedsetup_lg(g::SimpleDiGraph)::Graph
-	graph = init_lg(g)
+	graph = init_lg(g, true)
 	done = Set{String}()
 
 	for v in degeneracy_ordering_lg(g)
@@ -115,11 +115,11 @@ function optimizedsetup_lg(g::SimpleDiGraph)::Graph
 			is_outgoing = has_edge(g, v, adj)
 			if is_ingoing && is_outgoing # Edge is undirected
 				isdone = ("$v-$adj" in done)
-				!isdone && insert_edge_lg!(graph, v, adj)
+				!isdone && insert_edge_lg!(graph, v, adj, true)
 				!isdone && push!(done, "$adj-$v") # Mark edge as done
 			else # Edge is directed
-				is_ingoing && insert_arc_lg!(graph, adj, v)
-				is_outgoing && insert_arc_lg!(graph, v, adj)
+				is_ingoing && insert_arc_lg!(graph, adj, v, true)
+				is_outgoing && insert_arc_lg!(graph, v, adj, true)
 			end
 		end
 	end

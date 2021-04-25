@@ -17,10 +17,12 @@ mutable struct Graph
 end
 
 """
-	init_lg(g::SimpleDiGraph)::Graph
+	init_lg(g::SimpleDiGraph, emptygraph::Bool = false)::Graph
 
 Allocate memory for the HybridGraph datastructure
-representing a graph with n vertices.
+representing a graph with n vertices. The datastructure holds a
+copy of the input graph g. This can be disabled by setting
+emptygraph to true.
 
 # Examples
 ```julia-repl
@@ -36,11 +38,11 @@ Graph(
 )
 ```
 """
-function init_lg(g::SimpleDiGraph)::Graph
+function init_lg(g::SimpleDiGraph, emptygraph::Bool = false)::Graph
 	n = nv(g)
 
 	Graph(
-		copy(g),
+		emptygraph ? SimpleDiGraph(n) : copy(g),
 		fill(0, n),
 		fill(0, n),
 		fill(0, n),
@@ -107,9 +109,11 @@ function is_undirected_lg(graph::Graph, u::Int64, v::Int64)::Bool
 end
 
 """
-	insert_arc_lg!(graph::Graph, u::Int64, v::Int64)
+	insert_arc_lg!(graph::Graph, u::Int64, v::Int64, update::Bool = false)
 
-Insert an arc (a directed edge) from u to v into the given graph.
+Insert an arc (a directed edge) from u to v into the given graph. If
+update is set to true, the edge is inserted into graph.g and the values
+for alpha and beta are updated as well.
 
 # Examples
 ```julia-repl
@@ -120,15 +124,20 @@ julia> is_adjacent_lg(g, 1, 2)
 true
 ```
 """
-function insert_arc_lg!(graph::Graph, u::Int64, v::Int64)
+function insert_arc_lg!(graph::Graph, u::Int64, v::Int64, update::Bool = false)
 	graph.deltaplus_dir[u] += 1
 	graph.deltaminus_dir[v] += 1
+
+	update && add_edge!(graph.g, u, v)
+	update && update_alphabeta_lg!(graph, u, v, +1, true)
 end
 
 """
-	insert_edge_lg!(graph::Graph, u::Int64, v::Int64)
+	insert_edge_lg!(graph::Graph, u::Int64, v::Int64, update::Bool = false)
 
-Insert an undirected edge between u and v into the given graph.
+Insert an undirected edge between u and v into the given graph. If
+update is set to true, the edge is inserted into graph.g and the values
+for alpha and beta are updated as well.
 
 # Examples
 ```julia-repl
@@ -139,11 +148,15 @@ julia> is_adjacent_lg(g, 2, 3)
 true
 ```
 """
-function insert_edge_lg!(graph::Graph, u::Int64, v::Int64)
+function insert_edge_lg!(graph::Graph, u::Int64, v::Int64, update::Bool = false)
 	graph.deltaplus_undir[u] += 1
 	graph.deltaminus_undir[v] += 1
 	graph.deltaplus_undir[v] += 1
 	graph.deltaminus_undir[u] += 1
+
+	update && add_edge!(graph.g, u, v)
+	update && add_edge!(graph.g, v, u)
+	update && update_alphabeta_lg!(graph, u, v, +1, false)
 end
 
 """
