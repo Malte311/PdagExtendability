@@ -1,6 +1,7 @@
 using LightGraphs
 
 include("new_algo_datastructure_lg.jl")
+include("new_algo_optimization_lg.jl")
 
 """
 	fastpdag2dag_lg(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph
@@ -104,8 +105,24 @@ Graph(
 """
 function optimizedsetup_lg(g::SimpleDiGraph)::Graph
 	graph = init_lg(g)
+	done = Set{String}()
 
-	# TODO
+	for v in degeneracy_ordering_lg(g)
+		for adj in all_neighbors(g, v)
+			adj < v || continue # Insert edges to preceding neighbors only
+
+			is_ingoing = has_edge(g, adj, v)
+			is_outgoing = has_edge(g, v, adj)
+			if is_ingoing && is_outgoing # Edge is undirected
+				isdone = ("$v-$adj" in done)
+				!isdone && insert_edge_lg!(graph, v, adj)
+				!isdone && push!(done, "$adj-$v") # Mark edge as done
+			else # Edge is directed
+				is_ingoing && insert_arc_lg!(graph, adj, v)
+				is_outgoing && insert_arc_lg!(graph, v, adj)
+			end
+		end
+	end
 
 	graph
 end

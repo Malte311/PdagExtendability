@@ -79,7 +79,7 @@ julia> deg_struct_hs(g)
 """
 function deg_struct_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
 	n = nv(g)
-	aux_array = fill(0, n)
+	aux_array = Vector{Int64}(undef, n)
 	deg_str = [Set{Int64}() for _ in 1:n]
 
 	for v = 1:n

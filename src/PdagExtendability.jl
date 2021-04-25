@@ -27,6 +27,8 @@ export init_lg, is_adjacent_lg, is_directed_lg, is_undirected_lg,
 insert_arc_lg!, insert_edge_lg!, remove_arc_lg!, remove_edge_lg!,
 update_alphabeta_lg!, init_auxvectors_lg!, is_ps_lg, list_ps_lg,
 pop_ps_lg!, print_graph_lg
+export degeneracy_ordering_lg, deg_struct_lg, pop_min_deg_vertex_lg!,
+update_deg_lg!
 export fastpdag2dag_lg, standardsetup_lg, optimizedsetup_lg,
 extendgraph_lg
 
