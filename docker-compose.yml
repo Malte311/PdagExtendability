@@ -13,6 +13,7 @@ services:
     volumes:
       - ./benchmarks/:/home/user/benchmarks/
       - ./configs/:/home/user/configs/
+      - ./docs/:/home/user/docs/
       - ./logs/:/home/user/logs/
       - ./src/:/home/user/src/
       - ./test/:/home/user/test/
