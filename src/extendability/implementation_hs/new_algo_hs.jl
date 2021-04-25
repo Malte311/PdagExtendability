@@ -151,8 +151,9 @@ function optimizedsetup_hs(g::SimpleDiGraph)::HybridGraph
 			is_ingoing = has_edge(g, adj, v)
 			is_outgoing = has_edge(g, v, adj)
 			if is_ingoing && is_outgoing # Edge is undirected
-				!("$v-$adj" in done) && insert_edge_hs!(hg, v, adj)
-				push!(done, "$adj-$v") # Mark edge as done
+				isdone = ("$v-$adj" in done)
+				!isdone && insert_edge_hs!(hg, v, adj)
+				!isdone && push!(done, "$adj-$v") # Mark edge as done
 			else # Edge is directed
 				is_ingoing && insert_arc_hs!(hg, adj, v)
 				is_outgoing && insert_arc_hs!(hg, v, adj)
