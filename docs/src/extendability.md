@@ -1,4 +1,4 @@
-# Extendability
+# [Extendability](@id extendability_header)
 
 ## Implementation using HashSets
 
