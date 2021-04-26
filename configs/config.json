@@ -1,5 +1,5 @@
 {
-	"algorithm": "pdag2dag",
+	"algorithm": "pdag2dag_hs",
 	"algorithm_log_id": "1",
 	"algorithm_params": [],
 	"benchmarkdir": "../benchmarks/",
