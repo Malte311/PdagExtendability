@@ -33,7 +33,8 @@ julia> g = init_hs(3)
 HybridGraph(
 	DirectedGraph(
 		Set{Int64}[Set(), Set(), Set()],
-		[0, 0, 0], [0, 0, 0],
+		[0, 0, 0],
+		[0, 0, 0],
 		Set{Int64}[Set(), Set(), Set()],
 		Set{Int64}[Set(), Set(), Set()]
 	),

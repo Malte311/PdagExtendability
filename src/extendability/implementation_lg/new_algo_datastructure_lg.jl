@@ -245,7 +245,24 @@ function update_alphabeta_lg!(g::Graph, u::Int64, v::Int64, val::Int64, is_uv_di
 end
 
 """
-	TODO
+	init_auxvectors_lg!(g::Graph)
+
+Initialize the auxilliary vectors for the given graph g.
+
+# Examples
+```julia-repl
+julia> g = init_lg(SimpleDiGraph(3))
+Graph(
+	{3, 0} directed simple Int64 graph,
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0]
+)
+julia> init_auxvectors_lg!(g)
+```
 """
 function init_auxvectors_lg!(g::Graph)
 	done = Set{String}()
