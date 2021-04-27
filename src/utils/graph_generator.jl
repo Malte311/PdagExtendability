@@ -1,5 +1,19 @@
 using LightGraphs
 
+"""
+	barbellgraph(n::Int64; filepath::String = "")::SimpleDiGraph
+
+Create a barbell graph with n vertices. Note that n has to be equal and
+at n must be greater or equal than six.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> barbellgraph(6)
+{6, 14} directed simple Int64 graph
+```
+"""
 function barbellgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	n >= 6 && n % 2 == 0 || error("Invalid value: n has to be equal and >= 6.")
 
@@ -31,6 +45,19 @@ function barbellgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g
 end
 
+"""
+	bintreegraph(n::Int64; filepath::String = "")::SimpleDiGraph
+
+Create a binary tree with n vertices.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> bintreegraph(10)
+{10, 12} directed simple Int64 graph
+```
+"""
 function bintreegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g = SimpleDiGraph(n)
 
@@ -47,6 +74,19 @@ function bintreegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g
 end
 
+"""
+	centipedegraph(n::Int64; filepath::String = "")::SimpleDiGraph
+
+Create a centipede graph with n vertices. Note that n has to be equal.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> centipedegraph(24)
+{24, 22} directed simple Int64 graph
+```
+"""
 function centipedegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	n % 2 == 0 || error("Invalid value: n has to be equal.")
 
@@ -65,6 +105,19 @@ function centipedegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g
 end
 
+"""
+	completegraph(n::Int64; filepath::String = "")::SimpleDiGraph
+
+Create a complete graph with n vertices.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> completegraph(12)
+{12, 132} directed simple Int64 graph
+```
+"""
 function completegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g = SimpleDiGraph(n)
 
@@ -81,7 +134,19 @@ function completegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g
 end
 
+"""
+	completebipartitegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 
+Create a complete bipartite graph with n vertices.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> completebipartitegraph(20)
+{20, 200} directed simple Int64 graph
+```
+"""
 function completebipartitegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g = SimpleDiGraph(n)
 
@@ -97,7 +162,19 @@ function completebipartitegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g
 end
 
+"""
+	cyclegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 
+Create a cycle with n vertices.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> cyclegraph(12)
+{12, 24} directed simple Int64 graph
+```
+"""
 function cyclegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g = SimpleDiGraph(n)
 
@@ -114,7 +191,19 @@ function cyclegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g
 end
 
+"""
+	friendshipgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 
+Create a friendship graph with n+1 vertices. Note that n has to be equal.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> friendshipgraph(8)
+{9, 24} directed simple Int64 graph
+```
+"""
 function friendshipgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	n % 2 == 0 || error("Invalid value: n has to be equal.")
 
@@ -135,7 +224,19 @@ function friendshipgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g
 end
 
+"""
+pathgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 
+Create a path with n vertices.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> pathgraph(10)
+{10, 18} directed simple Int64 graph
+```
+"""
 function pathgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g = SimpleDiGraph(n)
 
@@ -150,10 +251,17 @@ function pathgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 end
 
 """
+	stargraph(n::Int64; filepath::String = "")::SimpleDiGraph
 
-TODO
+Create a star graph with n+1 vertices.
 
-stargraph(100000, filepath = "../benchmarks/star/star-n=100000.txt")
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> stargraph(4)
+{5, 8} directed simple Int64 graph
+```
 """
 function stargraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g = SimpleDiGraph(n+1)
@@ -169,11 +277,17 @@ function stargraph(n::Int64; filepath::String = "")::SimpleDiGraph
 end
 
 """
-TODO
+	sunletgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 
-n is inner n, total 2n
+Create a sunlet graph with 2n vertices.
 
-sunletgraph(100000, filepath = "../benchmarks/dummy/sunlet-n=100000.txt")
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> sunletgraph(2)
+{4, 6} directed simple Int64 graph
+```
 """
 function sunletgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g = SimpleDiGraph(2*n)
@@ -196,6 +310,19 @@ function sunletgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g
 end
 
+"""
+	save2file(g::SimpleDiGraph, file::String; is_only_undir::Bool = true)
+
+`Save a graph g to a given file. Set is_only_undir to `false` if the graph
+`contains directed edges.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> save2file(g, "../benchmarks/dummy/graph.txt")
+```
+"""
 function save2file(g::SimpleDiGraph, file::String; is_only_undir::Bool = true)
 	open(file, "w+") do io
 		write(io, graph2str(g, is_only_undir = is_only_undir))
@@ -203,7 +330,18 @@ function save2file(g::SimpleDiGraph, file::String; is_only_undir::Bool = true)
 end
 
 """
-TODO
+	graph2str(g::SimpleDiGraph; is_only_undir::Bool = false)::String
+
+Convert a graph g to the corresponding string representation. Set
+is_only_undir to `false` if the graph contains directed edges.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> graph2str(g)
+"3 0\n"
+```
 """
 function graph2str(g::SimpleDiGraph; is_only_undir::Bool = false)::String
 	nedges = is_only_undir ? convert(Int, ne(g) / 2) : ne(g)
@@ -221,6 +359,18 @@ function graph2str(g::SimpleDiGraph; is_only_undir::Bool = false)::String
 	g_str[1:end-1] # Remove last \n
 end
 
+"""
+	generateall(n::Int64, dir::String)
+
+Generate all available graphs with n vertices and write them to files
+in the given directory. The files will be created on demand, i.e.,
+providing an empty directory is sufficient.
+
+# Examples
+```julia-repl
+julia> generateall(512, "../benchmarks/dummy/newdir/")
+```
+"""
 function generateall(n::Int64, dir::String)
 	barbellgraph(n, filepath = joinpath(dir, "barbell-n=$n.txt"))
 	bintreegraph(n, filepath = joinpath(dir, "bintree-n=$n.txt"))

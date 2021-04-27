@@ -18,11 +18,12 @@ Pages = [
 ]
 ```
 
-## Helper Functions
+## Graph Related Functions
 
 ```@autodocs
 Modules = [PdagExtendability]
 Pages = [
+	"utils/graph_generator.jl",
 	"utils/readinput.jl",
 	"utils/utils.jl"
 ]

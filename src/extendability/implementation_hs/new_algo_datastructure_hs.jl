@@ -227,6 +227,8 @@ function update_alphabeta_hs!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
 	u_neighbors = length(g.g1.adjlist[u]) + length(g.g2.adjlist[u])
 	v_neighbors = length(g.g1.adjlist[v]) + length(g.g2.adjlist[v])
 
+	# Swap u and v in case v has less neighbors than u in order to
+	# iterate over the smaller adjacency list.
 	tmp = u
 	u = u_neighbors <= v_neighbors ? u : v
 	v = u_neighbors <= v_neighbors ? v : tmp
