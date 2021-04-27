@@ -31,15 +31,15 @@ function barbellgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g
 end
 
-function binstreegraph(n::Int64; filepath::String = "")::SimpleDiGraph
+function bintreegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	g = SimpleDiGraph(n)
 
 	for i = 1:convert(Int, floor(log2(n)))
-		2*i <= n && add_edge!(i, 2*i)
-		2*i <= n && add_edge!(2*i, i)
+		2*i <= n && add_edge!(g, i, 2*i)
+		2*i <= n && add_edge!(g, 2*i, i)
 
-		2*i+1 <= n && add_edge!(i, 2*i+1)
-		2*i+1 <= n && add_edge!(2*i+1, i)
+		2*i+1 <= n && add_edge!(g, i, 2*i+1)
+		2*i+1 <= n && add_edge!(g, 2*i+1, i)
 	end
 
 	filepath != "" && save2file(g, filepath)
@@ -87,8 +87,8 @@ function completebipartitegraph(n::Int64; filepath::String = "")::SimpleDiGraph
 
 	for i = 1:2:n
 		for j = 2:2:n
-			add_edge(g, i, j)
-			add_edge(g, j, i)
+			add_edge!(g, i, j)
+			add_edge!(g, j, i)
 		end
 	end
 
