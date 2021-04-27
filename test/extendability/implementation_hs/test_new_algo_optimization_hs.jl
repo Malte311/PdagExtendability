@@ -2,7 +2,7 @@
 	g = SimpleDiGraph(3)
 	add_edge!(g, 1, 2)
 	add_edge!(g, 2, 1)
-	deg_order = degeneracy_ordering_hs(g)
+	(deg_order, _) = degeneracy_ordering_hs(g)
 	@test [1, 2, 3] == deg_order || [2, 1, 3] == deg_order
 end
 

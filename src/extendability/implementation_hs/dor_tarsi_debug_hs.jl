@@ -57,6 +57,7 @@ function sink_debug_hs(graph::DtGraph)::Tuple{Int64, Int64}
 		# must be adjacent to all vertices adjacent to x.
 		for neighbor in graph.undirected[vertex]
 			for other in union(graph.ingoing[vertex], graph.undirected[vertex])
+				iterations += 1
 				neighbor != other || continue
 				isadjacent_hs(graph, neighbor, other) || @goto outer
 			end

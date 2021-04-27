@@ -144,9 +144,12 @@ function optimizedsetup_hs(g::SimpleDiGraph)::HybridGraph
 	hg = init_hs(nv(g))
 	done = Set{String}()
 
-	for v in degeneracy_ordering_hs(g)
+	(ordering, index) = degeneracy_ordering_hs(g)
+
+	for v in ordering
 		for adj in all_neighbors(g, v)
-			adj < v || continue # Insert edges to preceding neighbors only
+			# Insert edges to preceding neighbors only
+			index[adj] < index[v] || continue
 
 			is_ingoing = has_edge(g, adj, v)
 			is_outgoing = has_edge(g, v, adj)
