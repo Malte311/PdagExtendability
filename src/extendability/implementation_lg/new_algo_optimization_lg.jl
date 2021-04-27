@@ -1,7 +1,7 @@
 using LightGraphs
 
 """
-	degeneracy_ordering_lg(g::SimpleDiGraph)::Vector{Int64}
+	degeneracy_ordering_lg(g::SimpleDiGraph)::Tuple{Vector{Int64}, Dict{Int64, Int64}}
 
 Compute a degeneracy ordering for the skeleton of the graph g.
 
@@ -21,16 +21,14 @@ true
 julia> add_edge!(g, 3, 2)
 true
 julia> degeneracy_ordering_lg(g)
-3-element Array{Int64,1}:
-	1
-	2
-	3
+([1, 2, 3], Dict(2 => 2, 3 => 3, 1 => 1))
 ```
 """
-function degeneracy_ordering_lg(g::SimpleDiGraph)::Vector{Int64}
+function degeneracy_ordering_lg(g::SimpleDiGraph)::Tuple{Vector{Int64}, Dict{Int64, Int64}}
 	j = nv(g)
 	h = copy(g)
 	result = Vector{Int64}(undef, j)
+	dict = Dict()
 
 	# Compute initial degrees for each vertex, updated in each iteration
 	(aux_array, deg_str) = deg_struct_lg(g)
@@ -45,10 +43,11 @@ function degeneracy_ordering_lg(g::SimpleDiGraph)::Vector{Int64}
 		end
 
 		result[j] = v
+		dict[v] = j
 		j -= 1
 	end
 
-	result
+	(result, dict)
 end
 
 """

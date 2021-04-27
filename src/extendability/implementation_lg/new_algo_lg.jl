@@ -107,9 +107,11 @@ function optimizedsetup_lg(g::SimpleDiGraph)::Graph
 	graph = init_lg(g, true)
 	done = Set{String}()
 
-	for v in degeneracy_ordering_lg(g)
+	(ordering, index) = degeneracy_ordering_lg(g)
+
+	for v in ordering
 		for adj in all_neighbors(g, v)
-			adj < v || continue # Insert edges to preceding neighbors only
+			index[adj] < index[v] || continue # Insert edges to preceding neighbors only
 
 			is_ingoing = has_edge(g, adj, v)
 			is_outgoing = has_edge(g, v, adj)

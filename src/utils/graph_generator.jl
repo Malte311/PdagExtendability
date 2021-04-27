@@ -220,3 +220,15 @@ function graph2str(g::SimpleDiGraph; is_only_undir::Bool = false)::String
 
 	g_str[1:end-1] # Remove last \n
 end
+
+function generateall(n::Int64, dir::String)
+	barbellgraph(n, filepath = joinpath(dir, "barbell-n=$n.txt"))
+	bintreegraph(n, filepath = joinpath(dir, "bintree-n=$n.txt"))
+	centipedegraph(n, filepath = joinpath(dir, "centipede-n=$n.txt"))
+	completegraph(n, filepath = joinpath(dir, "complete-n=$n.txt"))
+	completebipartitegraph(n, filepath = joinpath(dir, "completebipartite-n=$n.txt"))
+	cyclegraph(n, filepath = joinpath(dir, "cycle-n=$n.txt"))
+	friendshipgraph(n, filepath = joinpath(dir, "friendship-n=$n.txt"))
+	pathgraph(n, filepath = joinpath(dir, "path-n=$n.txt"))
+	sunletgraph(n, filepath = joinpath(dir, "sunlet-n=$n.txt"))
+end
