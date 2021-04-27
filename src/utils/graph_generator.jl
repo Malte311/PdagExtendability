@@ -1,5 +1,120 @@
 using LightGraphs
 
+function barbellgraph(n::Int64; filepath::String = "")::SimpleDiGraph
+	n >= 6 && n % 2 == 0 || error("Invalid value: n has to be equal and >= 6.")
+
+	g = SimpleDiGraph(n)
+
+	mid = convert(Int, n/2)
+
+	for i = 1:mid
+		for j = 1:mid
+			i != j || continue
+			add_edge!(g, i, j)
+			add_edge!(g, j, i)
+		end
+	end
+
+	for i = mid+1:n
+		for j = mid+1:n
+			i != j || continue
+			add_edge!(g, i, j)
+			add_edge!(g, j, i)
+		end
+	end
+
+	add_edge!(g, 1, n)
+	add_edge!(g, n, 1)
+
+	filepath != "" && save2file(g, filepath)
+
+	g
+end
+
+function binstreegraph(n::Int64; filepath::String = "")::SimpleDiGraph
+	g = SimpleDiGraph(n)
+
+	for i = 1:convert(Int, floor(log2(n)))
+		2*i <= n && add_edge!(i, 2*i)
+		2*i <= n && add_edge!(2*i, i)
+
+		2*i+1 <= n && add_edge!(i, 2*i+1)
+		2*i+1 <= n && add_edge!(2*i+1, i)
+	end
+
+	filepath != "" && save2file(g, filepath)
+
+	g
+end
+
+function centipedegraph(n::Int64; filepath::String = "")::SimpleDiGraph
+	n % 2 == 0 || error("Invalid value: n has to be equal.")
+
+	g = SimpleDiGraph(n)
+
+	for i = 1:2:convert(Int, n/2)
+		add_edge!(g, i, 2*i)
+		add_edge!(g, 2*i, i)
+
+		add_edge!(g, i, i+1)
+		add_edge!(g, i+1, i)
+	end
+
+	filepath != "" && save2file(g, filepath)
+
+	g
+end
+
+function completegraph(n::Int64; filepath::String = "")::SimpleDiGraph
+	g = SimpleDiGraph(n)
+
+	for u = 1:n
+		for v = 1:n
+			u != v || continue
+			add_edge!(g, u, v)
+			add_edge!(g, v, u)
+		end
+	end
+
+	filepath != "" && save2file(g, filepath)
+
+	g
+end
+
+
+function completebipartitegraph(n::Int64; filepath::String = "")::SimpleDiGraph
+	g = SimpleDiGraph(n)
+
+	for i = 1:2:n
+		for j = 2:2:n
+			add_edge(g, i, j)
+			add_edge(g, j, i)
+		end
+	end
+
+	filepath != "" && save2file(g, filepath)
+
+	g
+end
+
+
+function cyclegraph(n::Int64; filepath::String = "")::SimpleDiGraph
+	g = SimpleDiGraph(n)
+
+	for i = 1:n-1
+		add_edge!(g, i, i+1)
+		add_edge!(g, i+1, i)
+	end
+
+	n != 1 && add_edge!(g, n, 1)
+	n != 1 && add_edge!(g, 1, n)
+
+	filepath != "" && save2file(g, filepath)
+
+	g
+end
+
+
 function friendshipgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	n % 2 == 0 || error("Invalid value: n has to be equal.")
 
@@ -11,6 +126,20 @@ function friendshipgraph(n::Int64; filepath::String = "")::SimpleDiGraph
 	end
 
 	for i = 2:2:n
+		add_edge!(g, i, i+1)
+		add_edge!(g, i+1, i)
+	end
+
+	filepath != "" && save2file(g, filepath)
+
+	g
+end
+
+
+function pathgraph(n::Int64; filepath::String = "")::SimpleDiGraph
+	g = SimpleDiGraph(n)
+
+	for i = 1:n-1
 		add_edge!(g, i, i+1)
 		add_edge!(g, i+1, i)
 	end
@@ -89,5 +218,5 @@ function graph2str(g::SimpleDiGraph; is_only_undir::Bool = false)::String
 		end
 	end
 
-	g_str[1:end-1]
+	g_str[1:end-1] # Remove last \n
 end
