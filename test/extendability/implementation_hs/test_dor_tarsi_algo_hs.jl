@@ -152,6 +152,30 @@
 		@test is_consistent_extension(out, input)
 	end
 
+	@testset "More PDAGs with possible extensions 7" begin
+		for n in [5, 50, 100]
+			input = bintreegraph(n)
+			output = pdag2dag_hs(input)
+			@test is_consistent_extension(output, input)
+		end
+	end
+
+	@testset "More PDAGs with possible extensions 8" begin
+		for n in [5, 50, 100]
+			input = pathgraph(n)
+			output = pdag2dag_hs(input)
+			@test is_consistent_extension(output, input)
+		end
+	end
+
+	@testset "More PDAGs with possible extensions 9" begin
+		for n in [5, 50, 100]
+			input = stargraph(n)
+			output = pdag2dag_hs(input)
+			@test is_consistent_extension(output, input)
+		end
+	end
+
 	@testset "Empty graph if no consistent extension is possible 1" begin
 		input = SimpleDiGraph(4)
 		add_edge!(input, 1, 2)
@@ -206,5 +230,13 @@
 		add_edge!(input, 3, 2)
 		out = pdag2dag_hs(input)
 		@test out == SimpleDiGraph(0)
+	end
+
+	@testset "Empty graph if no consistent extension is possible 5" begin
+		for n in [5, 50, 100]
+			input = cyclegraph(n)
+			output = pdag2dag_hs(input)
+			@test output == SimpleDiGraph(0)
+		end
 	end
 end
