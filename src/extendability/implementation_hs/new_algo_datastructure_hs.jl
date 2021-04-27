@@ -224,6 +224,13 @@ Is called internally whenever an edge (both directed and undirected) is
 inserted or removed. Do not call this function by hand.
 """
 function update_alphabeta_hs!(g::HybridGraph, u::Int64, v::Int64, val::Int64)
+	u_neighbors = length(g.g1.adjlist[u]) + length(g.g2.adjlist[u])
+	v_neighbors = length(g.g1.adjlist[v]) + length(g.g2.adjlist[v])
+
+	tmp = u
+	u = u_neighbors <= v_neighbors ? u : v
+	v = u_neighbors <= v_neighbors ? v : tmp
+
 	for x in union(g.g1.adjlist[u], g.g2.adjlist[u])
 		is_adjacent_hs(g, x, v) || continue
 		(u in g.g1.adjlist[v]) && (u in g.g1.adjlist[x]) && (g.alpha[u] += val)

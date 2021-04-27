@@ -230,5 +230,6 @@ function generateall(n::Int64, dir::String)
 	cyclegraph(n, filepath = joinpath(dir, "cycle-n=$n.txt"))
 	friendshipgraph(n, filepath = joinpath(dir, "friendship-n=$n.txt"))
 	pathgraph(n, filepath = joinpath(dir, "path-n=$n.txt"))
+	stargraph(n, filepath = joinpath(dir, "star-n=$n.txt"))
 	sunletgraph(n, filepath = joinpath(dir, "sunlet-n=$n.txt"))
 end
