@@ -240,3 +240,21 @@
 		end
 	end
 end
+
+@testset "sink_hs" begin
+	@testset "No sink found if no sink exists" begin
+		for n in [50, 500, 1000]
+			ds = setup_hs(cyclegraph(n))
+			@test sink_hs(ds) == -1
+		end
+	end
+
+	@testset "Find the correct sink" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		ds = setup_hs(g)
+		@test sink_hs(ds) == 3
+	end
+end

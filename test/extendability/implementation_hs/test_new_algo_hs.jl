@@ -401,3 +401,12 @@ end
 		@test g.beta == [0, 0, 2, 0]
 	end
 end
+
+@testset "extendgraph_hs" begin
+	input = SimpleDiGraph(3)
+	add_edge!(input, 1, 2)
+	add_edge!(input, 2, 3)
+	add_edge!(input, 3, 2)
+	setup = standardsetup_hs(input)
+	@test is_consistent_extension(extendgraph_hs(input, setup), input)
+end
