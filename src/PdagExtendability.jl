@@ -1,5 +1,8 @@
 module PdagExtendability
 
+include("extendability/implementation_hs/alt_algo_hs.jl")
+export altpdag2dag_hs
+
 include("extendability/implementation_hs/dor_tarsi_algo_hs.jl")
 export setup_hs, isadjacent_hs, insert_edge_hs!, remove_vertex_hs!,
 print_graph_hs

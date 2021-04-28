@@ -1,6 +1,6 @@
 using LightGraphs
 
-include("dor_tarsi_algo_datastructure_hs.jl")
+@isdefined(setup_hs) || include("dor_tarsi_algo_datastructure_hs.jl")
 
 """
 	pdag2dag_hs(g::SimpleDiGraph)::SimpleDiGraph
