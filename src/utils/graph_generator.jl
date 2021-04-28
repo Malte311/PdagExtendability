@@ -356,7 +356,7 @@ function graph2str(g::SimpleDiGraph; is_only_undir::Bool = false)::String
 		end
 	end
 
-	g_str[1:end-1] # Remove last \n
+	g_str
 end
 
 """
