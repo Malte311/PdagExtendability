@@ -9,7 +9,8 @@ Mainly, the three following problems are considered.
 
 !!! note
 
-	Please note that this framework is part of a master's thesis.
+	Please note that this framework is part of a master's thesis and
+	thus is not professionally maintained.
 
 ## Features
 
