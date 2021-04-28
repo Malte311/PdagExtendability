@@ -240,3 +240,57 @@
 		end
 	end
 end
+
+@testset "list_sinks_hs" begin
+	@testset "Only one sink" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		setup = setup_hs(g)
+		@test [3] == list_sinks_hs(setup)
+	end
+
+	@testset "First and last node of a path are sinks" begin
+		for n in [33, 666, 999]
+			setup = setup_hs(pathgraph(n))
+			@test ([1, n] == list_sinks_hs(setup) ||
+				[n, 1] == list_sinks_hs(setup))
+		end
+	end
+
+	@testset "Graph with no sinks" begin
+		for n in [33, 666, 999]
+			setup = setup_hs(cyclegraph(n))
+			@test [] == list_sinks_hs(setup)
+		end
+	end
+end
+
+@testset "is_sink_hs" begin
+	@testset "Only one sink" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		setup = setup_hs(g)
+		@test is_sink_hs(setup, 3) && !is_sink_hs(setup, 2) &&
+			!is_sink_hs(setup, 1)
+	end
+
+	@testset "First and last node of a path are sinks" begin
+		for n in [33, 666, 999]
+			setup = setup_hs(pathgraph(n))
+			@test is_sink_hs(setup, 1) && is_sink_hs(setup, n)
+			@test !is_sink_hs(setup, 2) && !is_sink_hs(setup, 7)
+		end
+	end
+
+	@testset "Graph with no sinks" begin
+		for n in [33, 666, 999]
+			setup = setup_hs(cyclegraph(n))
+			@test !is_sink_hs(setup, 1) && !is_sink_hs(setup, 15) &&
+				!is_sink_hs(setup, 30) && !is_sink_hs(setup, n)
+		end
+	end
+end

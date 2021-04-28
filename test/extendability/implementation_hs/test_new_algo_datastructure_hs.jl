@@ -146,7 +146,7 @@ end
 	end
 end
 
-@testset "is_ps" begin
+@testset "is_ps_hs" begin
 	g = init_hs(3)
 	@test is_ps_hs(g, 1)
 	@test is_ps_hs(g, 2)
@@ -161,7 +161,7 @@ end
 	@test is_ps_hs(g, 3)
 end
 
-@testset "list_ps" begin
+@testset "list_ps_hs" begin
 	g = init_hs(3)
 	@test 1 in list_ps_hs(g) && 2 in list_ps_hs(g) && 3 in list_ps_hs(g)
 	insert_arc_hs!(g, 1, 2)
