@@ -1,6 +1,6 @@
 module PdagExtendability
 
-include("extendability/implementation_hs/alt_algo_hs.jl")
+include("extendability/implementation_hs/dor_tarsi_alt_algo_hs.jl")
 export altpdag2dag_hs
 
 include("extendability/implementation_hs/dor_tarsi_algo_hs.jl")
