@@ -243,3 +243,36 @@
 		end
 	end
 end
+
+@testset "standardsetup_lg" begin
+	input = SimpleDiGraph(3)
+	add_edge!(input, 1, 2)
+	add_edge!(input, 2, 3)
+	add_edge!(input, 3, 2)
+	graph = standardsetup_lg(input)
+	@test nv(graph.g) == 3 && ne(graph.g) == 3
+	@test graph.alpha == [0, 0, 0] && graph.beta == [0, 0, 0]
+	@test graph.deltaplus_dir == [1, 0, 0] && graph.deltaplus_undir == [0, 1, 1]
+	@test graph.deltaminus_dir == [0, 1, 0] && graph.deltaminus_undir == [0, 1, 1]
+end
+
+@testset "optimizedsetup_lg" begin
+	input = SimpleDiGraph(3)
+	add_edge!(input, 1, 2)
+	add_edge!(input, 2, 3)
+	add_edge!(input, 3, 2)
+	graph = optimizedsetup_lg(input)
+	@test nv(graph.g) == 3 && ne(graph.g) == 3
+	@test graph.alpha == [0, 0, 0] && graph.beta == [0, 0, 0]
+	@test graph.deltaplus_dir == [1, 0, 0] && graph.deltaplus_undir == [0, 1, 1]
+	@test graph.deltaminus_dir == [0, 1, 0] && graph.deltaminus_undir == [0, 1, 1]
+end
+
+@testset "extendgraph_lg" begin
+	input = SimpleDiGraph(3)
+	add_edge!(input, 1, 2)
+	add_edge!(input, 2, 3)
+	add_edge!(input, 3, 2)
+	setup = standardsetup_lg(input)
+	@test is_consistent_extension(extendgraph_lg(setup), input)
+end
