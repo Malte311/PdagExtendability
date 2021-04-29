@@ -19,34 +19,48 @@ dictionary has the following structure:
 ```julia-repl
 julia> get_times_dict("../logs/log.txt")
 Dict{String,Dict{Any,Any}} with 1 entry:
-  "pdag2dag_lg()" => Dict{Any,Any}("example.txt"=>Dict("median"=>2426.5,"mean"=>2594.65))
+  "pdag2dag_lg()-1" => Dict{Any,Any}("example.txt"=>Dict("median"=>2426.5,"mean"=>2594.65))
 ```
 """
 function get_times_dict(file::String)::Dict
 	io = open(file, "r")
-	log = readlines(io)
+	lines = readlines(io)
 	close(io)
 
-	filter!(line -> !contains(line, "@ Main"), log)
-	filter!(line -> !contains(line, "Average iterations"), log)
-	filter!(line -> !contains(line, "Minimum time"), log)
-	filter!(line -> !contains(line, "Maximum time"), log)
-	filter!(line -> !contains(line, "---"), log)
-
-	algo = log[1][findfirst("'", log[1])[1]+1:findlast("'", log[1])[1]-1]
-	times = Dict()
-
-	# Start at index 2 because the name of the algorithm is stored at index 1.
-	for i = 2:3:length(log)
-		title = log[i][findfirst("'", log[i])[1]+1:findlast("'", log[i])[1]-1]
-
-		times[title] = Dict(
-			"median" => parse(Float64, log[i+1][findfirst(r"\d", log[i+1])[1]:end]),
-			"mean" => parse(Float64, log[i+2][findfirst(r"\d", log[i+2])[1]:end])
-		)
+	logs = Vector{Vector{String}}()
+	startindex = 1
+	for i = 1:length(lines)
+		occursin("---", lines[i]) || continue
+		push!(logs, lines[startindex:i])
+		startindex = i+1
 	end
 
-	Dict(algo => times)
+	result = Dict()
+
+	for log in logs
+		filter!(line -> !contains(line, "@ Main"), log)
+		filter!(line -> !contains(line, "Average iterations"), log)
+		filter!(line -> !contains(line, "Minimum time"), log)
+		filter!(line -> !contains(line, "Maximum time"), log)
+		filter!(line -> !contains(line, "---"), log)
+
+		algo = log[1][findfirst("'", log[1])[1]+1:findlast("'", log[1])[1]-1]
+		times = Dict()
+
+		# Start at index 2 because the name of the algorithm is stored at index 1.
+		for i = 2:3:length(log)
+			title = log[i][findfirst("'", log[i])[1]+1:findlast("'", log[i])[1]-1]
+
+			times[title] = Dict(
+				"median" => parse(Float64, log[i+1][findfirst(r"\d", log[i+1])[1]:end]),
+				"mean" => parse(Float64, log[i+2][findfirst(r"\d", log[i+2])[1]:end])
+			)
+		end
+
+		result[algo] = times
+	end
+
+	result
 end
 
 """
@@ -63,19 +77,22 @@ string in that given file.
 ```julia-repl
 julia> dict = get_times_dict("../logs/log.txt")
 Dict{String,Dict{Any,Any}} with 1 entry:
-  "pdag2dag_lg()" => Dict{Any,Any}("example.txt"=>Dict("median"=>2426.5,"mean"=>2594.65))
+  "pdag2dag_lg()-1" => Dict{Any,Any}("example.txt"=>Dict("median"=>2426.5,"mean"=>2594.65))
 julia> dict_to_csv(dict)
-  "Algorithm;Instance;Time\npdag2dag_lg();example.txt;2426.5\n"
+  "Algorithm;Instance;Time\npdag2dag_lg()-1;example.txt;2426.5\n"
 ```
 """
 function dict_to_csv(dict::Dict; use_median::Bool = true, file::String = "")::String
 	csv_str = "Algorithm;Instance;Time\n"
 	val = use_median ? "median" : "mean"
-	algo = algo2label(collect(keys(dict))[1])
 
-	for (key, value) in dict[collect(keys(dict))[1]]
-		key = replace(key, r"(.txt|.gr)" => "")
-		csv_str = string(csv_str, algo, ";", key, ";", value[val], "\n")
+	for (algo, times) in dict
+		algo = algo2label(algo)
+
+		for (key, value) in times
+			key = replace(key, r"(.txt|.gr)" => "")
+			csv_str = string(csv_str, algo, ";", key, ";", value[val], "\n")
+		end
 	end
 
 	if file != ""

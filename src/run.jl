@@ -44,7 +44,6 @@ for algorithm in config["algorithm"]
 			@info "Median time (ms):  $(nanosec2millisec(median(bench.times)))"
 			@info "Mean time (ms):    $(nanosec2millisec(mean(bench.times)))"
 			@info "Maximum time (ms): $(nanosec2millisec(maximum(bench.times)))"
-			@info "--------------------------------------------------"
 
 			config["logtofile"] && flush(io)
 
