@@ -17,38 +17,47 @@ end
 samples = config["num_samples"]
 evals = config["num_evals"]
 
-algo = Symbol(config["algorithm"])
+for algorithm in config["algorithm"]
+	global algo = Symbol(algorithm[1:findfirst("(", algorithm)[1]-1])
+	params = split(
+		algorithm[findfirst("(", algorithm)[1]+1:findfirst(")", algorithm)[1]-1],
+		", "
+	)
+	filter!(s -> s != "", params)
+	params = isempty(params) ? Vector() : map(s -> parse(Bool, s), params)
 
-alg_str = string(config["algorithm"], "(", config["algorithm_params"]..., ")")
-@info "Running algorithm '$alg_str-$(config["algorithm_log_id"])'"
+	@info "Running algorithm '$algorithm-$(config["algorithm_log_id"])'"
 
-for (root, dirs, files) in walkdir(config["benchmarkdir"])
-	for f in files
-		!occursin(".DS_Store", f) || continue
+	for (root, dirs, files) in walkdir(config["benchmarkdir"])
+		for f in files
+			!occursin(".DS_Store", f) || continue
 
-		@info "[$(Dates.format(now(), "HH:MM"))] Running benchmark for '$f'..."
-		pdag = readinputgraph(joinpath(root, f), config["only_undirected"])
+			@info "[$(Dates.format(now(), "HH:MM"))] Running benchmark for '$f'..."
+			pdag = readinputgraph(joinpath(root, f), config["only_undirected"])
 
-		bench = @benchmark getfield(Main, algo)(
-			$pdag,
-			config["algorithm_params"]...
-		) samples=samples evals=evals
+			bench = @benchmark getfield(Main, algo)(
+				$pdag,
+				$params...
+			) samples=samples evals=evals
 
-		@info "Minimum time (ms): $(nanosec2millisec(minimum(bench.times)))"
-		@info "Median time (ms):  $(nanosec2millisec(median(bench.times)))"
-		@info "Mean time (ms):    $(nanosec2millisec(mean(bench.times)))"
-		@info "Maximum time (ms): $(nanosec2millisec(maximum(bench.times)))"
-		@info "--------------------------------------------------"
+			@info "Minimum time (ms): $(nanosec2millisec(minimum(bench.times)))"
+			@info "Median time (ms):  $(nanosec2millisec(median(bench.times)))"
+			@info "Mean time (ms):    $(nanosec2millisec(mean(bench.times)))"
+			@info "Maximum time (ms): $(nanosec2millisec(maximum(bench.times)))"
+			@info "--------------------------------------------------"
 
-		config["logtofile"] && flush(io)
+			config["logtofile"] && flush(io)
 
-		config["visualize"] || continue
+			config["visualize"] || continue
 
-		dag = getfield(Main, algo)(pdag)
+			dag = getfield(Main, algo)(pdag, params...)
 
-		plotsvg(pdag, string(config["logdir"], "in-", replace(f, ".txt" => ".svg")))
-		plotsvg(dag, string(config["logdir"], "out-", replace(f, ".txt" => ".svg")))
+			plotsvg(pdag, string(config["logdir"], "in-", replace(f, ".txt" => ".svg")))
+			plotsvg(dag, string(config["logdir"], "out-", replace(f, ".txt" => ".svg")))
+		end
 	end
+
+	@info "---"
 end
 
 config["logtofile"] && close(io)

@@ -1,7 +1,10 @@
 {
-	"algorithm": "pdag2dag_hs",
+	"algorithm": [
+		"pdag2dag_hs()",
+		"fastpdag2dag_hs(false)",
+		"fastpdag2dag_hs(true)"
+	],
 	"algorithm_log_id": "1",
-	"algorithm_params": [],
 	"benchmarkdir": "../benchmarks/",
 	"create_csv": false,
 	"logdir": "../logs/",

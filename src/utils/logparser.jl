@@ -71,9 +71,10 @@ julia> dict_to_csv(dict)
 function dict_to_csv(dict::Dict; use_median::Bool = true, file::String = "")::String
 	csv_str = "Algorithm;Instance;Time\n"
 	val = use_median ? "median" : "mean"
-	algo = collect(keys(dict))[1]
+	algo = algo2label(collect(keys(dict))[1])
 
 	for (key, value) in dict[collect(keys(dict))[1]]
+		key = replace(key, r"(.txt|.gr)" => "")
 		csv_str = string(csv_str, algo, ";", key, ";", value[val], "\n")
 	end
 
@@ -110,4 +111,35 @@ julia> julia> print_dict(dict)
 """
 function print_dict(dict::Dict, io::Core.IO = stdout)
 	println(io, json(dict, 4))
+end
+
+"""
+	algo2label(algo::String)::String
+
+Map the function name of the used algorithm to a label for the plot.
+
+# Examples
+```julia-repl
+julia> algo2label("pdag2dag_hs()-1")
+Dor Tarsi HS - 1
+```
+"""
+function algo2label(algo::String)::String
+	mapping = Dict(
+		"pdag2dag_hs"            => "Dor Tarsi HS",
+		"altpdag2dag_hs"         => "Dor Tarsi HS - Alternative",
+		"fastpdag2dag_hs(false)" => "New Algo HS - O(V*E)",
+		"fastpdag2dag_hs(true)"  => "New Algo HS - O(dm)",
+		"pdag2dag_lg"            => "Dor Tarsi LG",
+		"fastpdag2dag_lg(false)" => "New Algo LG - O(V*E)",
+		"fastpdag2dag_lg(true)"  => "New Algo LG - O(dm)"
+	)
+
+	id = split(algo, "-")[2]
+
+	for (key, val) in mapping
+		occursin(key, algo) && return isempty(id) ? val : string(val, " - ", id)
+	end
+
+	algo
 end
