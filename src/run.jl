@@ -1,4 +1,4 @@
-using BenchmarkTools, Dates, JSON, Logging, PdagExtendability
+using BenchmarkTools, Dates, JSON, LightGraphs, Logging, PdagExtendability
 
 if length(ARGS) != 1 || !isfile(ARGS[1])
 	@error "Run the script via 'julia run.jl <path/to/config.json>'."
@@ -17,6 +17,8 @@ end
 samples = config["num_samples"]
 evals = config["num_evals"]
 
+not_extendable = Dict()
+
 for algorithm in config["algorithm"]
 	global algo = Symbol(algorithm[1:findfirst("(", algorithm)[1]-1])
 	params = split(
@@ -26,6 +28,8 @@ for algorithm in config["algorithm"]
 	filter!(s -> s != "", params)
 	params = isempty(params) ? Vector() : map(s -> parse(Bool, s), params)
 
+	emptygraphs = Vector()
+
 	@info "Running algorithm '$algorithm-$(config["algorithm_log_id"])'"
 
 	for (root, dirs, files) in walkdir(config["benchmarkdir"])
@@ -34,11 +38,21 @@ for algorithm in config["algorithm"]
 
 			@info "[$(Dates.format(now(), "HH:MM"))] Running benchmark for '$f'..."
 			pdag = readinputgraph(joinpath(root, f), config["only_undirected"])
+			dag = getfield(Main, algo)(pdag, params...)
 
 			bench = @benchmark getfield(Main, algo)(
 				$pdag,
 				$params...
 			) samples=samples evals=evals
+
+			if dag == SimpleDiGraph(0)
+				push!(emptygraphs, f)
+			elseif !is_consistent_extension(dag, pdag)
+				file = string(config["logdir"], "err-", replace(f, ".txt" => ".svg"))
+				plotsvg(dag, file)
+				@error "Output is no consistent extension! A plot can be found at $file."
+				exit()
+			end
 
 			@info "Minimum time (ms): $(nanosec2millisec(minimum(bench.times)))"
 			@info "Median time (ms):  $(nanosec2millisec(median(bench.times)))"
@@ -49,14 +63,23 @@ for algorithm in config["algorithm"]
 
 			config["visualize"] || continue
 
-			dag = getfield(Main, algo)(pdag, params...)
-
 			plotsvg(pdag, string(config["logdir"], "in-", replace(f, ".txt" => ".svg")))
 			plotsvg(dag, string(config["logdir"], "out-", replace(f, ".txt" => ".svg")))
 		end
 	end
 
+	not_extendable[algo] = emptygraphs
+
 	@info "---"
+end
+
+@info "Not extendable inputs: $not_extendable"
+
+for (key, val) in not_extendable
+	if val != collect(values(not_extendable))[1]
+		@error "Algorithms found different non-extendable graphs."
+		exit()
+	end
 end
 
 config["logtofile"] && close(io)
