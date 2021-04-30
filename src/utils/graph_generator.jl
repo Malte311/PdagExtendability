@@ -373,7 +373,9 @@ julia> generateall(512, "../benchmarks/dummy/newdir/")
 function generateall(n::Int64, dir::String)
 	(n % 2 == 0 && n >= 3) || error("n has to be equal and greater than 2.")
 
-	ne = convert(Int, floor(n/2)) # For graphs with number of edges
+	n1 = convert(Int, ceil(n/2))
+	n2 = convert(Int, floor(n/2))
+	deg = convert(Int, floor(n/4))
 
 	barabasialbertgraph(n, 5, filepath = joinpath(dir, "barabasi_albert-n=$n-k=5.txt"))
 	barbellgraph(n, filepath = joinpath(dir, "barbell-n=$n.txt"))
@@ -383,9 +385,15 @@ function generateall(n::Int64, dir::String)
 	completebipartitegraph(n, filepath = joinpath(dir, "completebipartite-n=$n.txt"))
 	cyclegraph(n, filepath = joinpath(dir, "cycle-n=$n.txt"))
 	dorogovtsevmendesgraph(n, filepath = joinpath(dir, "dorogovtsev_mendes-n=$n.txt"))
-	erdosrenyigraph(n, ne, filepath = joinpath(dir, "erdos_renyi-n=$n-ne=$ne.txt"))
+	erdosrenyigraph(n, n2, filepath = joinpath(dir, "erdos_renyi-n=$n-ne=$n2.txt"))
 	friendshipgraph(n+1, filepath = joinpath(dir, "friendship-n=$(n+1).txt"))
 	pathgraph(n, filepath = joinpath(dir, "path-n=$n.txt"))
 	stargraph(n, filepath = joinpath(dir, "star-n=$n.txt"))
 	sunletgraph(n, filepath = joinpath(dir, "sunlet-n=$n.txt"))
+
+	save2file(circular_ladder_graph(n), joinpath(dir, "circular_ladder-n=$n.txt"))
+	save2file(ladder_graph(n), joinpath(dir, "ladder-n=$n.txt"))
+	save2file(lollipop_graph(n1, n2), joinpath(dir, "lollipop-n=$n.txt"))
+	save2file(watts_strogatz(n, 5, 0.2), joinpath(dir, "watts_strogatz-n=$n-k=5-beta=02.txt"))
+	save2file(wheel_graph(n), joinpath(dir, "wheel-n=$n.txt"))
 end
