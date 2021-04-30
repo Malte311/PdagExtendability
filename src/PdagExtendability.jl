@@ -38,8 +38,8 @@ extendgraph_lg
 include("utils/graph_generator.jl")
 export barabasialbertgraph, barbellgraph, bintreegraph, centipedegraph,
 completegraph, completebipartitegraph, cyclegraph, dorogovtsevmendesgraph,
-erdosrenyigraph, friendshipgraph, pathgraph,
-stargraph, sunletgraph, graph2digraph, save2file, graph2str, generateall
+erdosrenyigraph, friendshipgraph, pathgraph, stargraph, sunletgraph,
+graph2digraph, save2file, graph2str, generateall
 
 include("utils/utils.jl")
 export is_consistent_extension, isdag, skeleton, vstructures,
