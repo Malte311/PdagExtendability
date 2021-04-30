@@ -9,7 +9,8 @@ If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-TODO
+julia> barbellgraph(6)
+{6, 7} undirected simple Int64 graph
 ```
 """
 function barbellgraph(n::Int64; filepath::String = "")::SimpleGraph
@@ -29,7 +30,8 @@ If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-TODO
+julia> bintreegraph(7)
+{7, 6} undirected simple Int64 graph
 ```
 """
 function bintreegraph(n::Int64; filepath::String = "")::SimpleGraph
@@ -51,7 +53,8 @@ If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-TODO
+julia> centipedegraph(8)
+{8, 7} undirected simple Int64 graph
 ```
 """
 function centipedegraph(n::Int64; filepath::String = "")::SimpleGraph
@@ -75,7 +78,8 @@ If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-TODO
+julia> completegraph(4)
+{4, 6} undirected simple Int64 graph
 ```
 """
 function completegraph(n::Int64; filepath::String = "")::SimpleGraph
@@ -93,7 +97,8 @@ If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-TODO
+julia> completebipartitegraph(6)
+{6, 9} undirected simple Int64 graph
 ```
 """
 function completebipartitegraph(n::Int64; filepath::String = "")::SimpleGraph
@@ -114,7 +119,8 @@ If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-TODO
+julia> cyclegraph(8)
+{8, 8} undirected simple Int64 graph
 ```
 """
 function cyclegraph(n::Int64; filepath::String = "")::SimpleGraph
@@ -133,7 +139,8 @@ If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-TODO
+julia> friendshipgraph(7)
+{7, 9} undirected simple Int64 graph
 ```
 """
 function friendshipgraph(n::Int64; filepath::String = "")::SimpleGraph
@@ -158,7 +165,8 @@ If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-TODO
+julia> pathgraph(10)
+{10, 9} undirected simple Int64 graph
 ```
 """
 function pathgraph(n::Int64; filepath::String = "")::SimpleGraph
@@ -176,7 +184,8 @@ If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-TODO
+julia> stargraph(11)
+{11, 10} undirected simple Int64 graph
 ```
 """
 function stargraph(n::Int64; filepath::String = "")::SimpleGraph
@@ -194,7 +203,8 @@ If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-TODO
+julia> sunletgraph(8)
+{8, 8} undirected simple Int64 graph
 ```
 """
 function sunletgraph(n::Int64; filepath::String = "")::SimpleGraph
@@ -212,6 +222,24 @@ function sunletgraph(n::Int64; filepath::String = "")::SimpleGraph
 	g
 end
 
+"""
+	graph2digraph(g::SimpleGraph)::SimpleDiGraph
+
+Convert an undirected graph (SimpleGraph) into a directed
+graph (SimpleDiGraph).
+
+# Examples
+```julia-repl
+julia> g = SimpleGraph(3)
+{3, 0} undirected simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> collect(edges(graph2digraph(g)))
+2-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 2
+ Edge 2 => 1
+```
+"""
 function graph2digraph(g::SimpleGraph)::SimpleDiGraph
 	result = SimpleDiGraph(nv(g))
 	for e in edges(g)
@@ -224,8 +252,8 @@ end
 """
 	save2file(g, file::String; is_only_undir::Bool = true)
 
-`Save a graph g to a given file. Set is_only_undir to `false` if the graph
-`contains directed edges.
+Save a graph g to a given file. Set `is_only_undir` to `false` if the graph
+contains directed edges.
 
 # Examples
 ```julia-repl
@@ -243,8 +271,8 @@ end
 """
 	graph2str(g; is_only_undir::Bool = false)::String
 
-Convert a graph g to the corresponding string representation. Set
-is_only_undir to `false` if the graph contains directed edges.
+Convert a graph `g` to the corresponding string representation. Set
+`is_only_undir` to `false` if the graph contains directed edges.
 
 # Examples
 ```julia-repl
@@ -275,7 +303,7 @@ end
 """
 	generateall(n::Int64, dir::String)
 
-Generate all available graphs with n vertices and write them to files
+Generate all available graphs with `n` vertices and write them to files
 in the given directory. The files will be created on demand, i.e.,
 providing an empty directory is sufficient.
 
@@ -296,9 +324,5 @@ function generateall(n::Int64, dir::String)
 	friendshipgraph(n+1, filepath = joinpath(dir, "friendship-n=$(n+1).txt"))
 	pathgraph(n, filepath = joinpath(dir, "path-n=$n.txt"))
 	stargraph(n, filepath = joinpath(dir, "star-n=$n.txt"))
-	sunletgraph(convert(Int, n/2), filepath = joinpath(dir, "sunlet-n=$n.txt"))
+	sunletgraph(n, filepath = joinpath(dir, "sunlet-n=$n.txt"))
 end
-
-# save2file(barabasi_albert(512, 3, is_directed = true, seed = 123), joinpath("../benchmarks/dummy/debug", "barabasi_albert-n=512-k=3.txt"), is_only_undir = false)
-# save2file(barabasi_albert(512, 5, is_directed = true, seed = 123), joinpath("../benchmarks/dummy/debug", "barabasi_albert-n=512-k=5.txt"), is_only_undir = false)
-# save2file(barabasi_albert(512, 10, is_directed = true, seed = 123), joinpath("../benchmarks/dummy/debug", "barabasi_albert-n=512-k=10.txt"), is_only_undir = false)

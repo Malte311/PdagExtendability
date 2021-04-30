@@ -83,6 +83,17 @@ end
 	end
 end
 
+@testset "graph2digraph" begin
+	g = SimpleGraph(3)
+	add_edge!(g, 1, 2)
+	gdir = graph2digraph(g)
+	@test ne(gdir) == 2 && has_edge(gdir, 1, 2) && has_edge(gdir, 2, 1)
+	add_edge!(g, 2, 3)
+	gdir = graph2digraph(g)
+	@test ne(gdir) == 4 && has_edge(gdir, 1, 2) && has_edge(gdir, 2, 1) &&
+		has_edge(gdir, 2, 3) && has_edge(gdir, 3, 2)
+end
+
 @testset "graph2str" begin
 	@testset "Graph with no edges" begin
 		for n in [3, 50, 500, 1000]
