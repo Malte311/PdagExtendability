@@ -154,7 +154,7 @@
 
 	@testset "More PDAGs with possible extensions 7" begin
 		for n in [5, 50, 100]
-			input = bintreegraph(n)
+			input = graph2digraph(bintreegraph(n))
 			output = pdag2dag_hs(input)
 			@test is_consistent_extension(output, input)
 		end
@@ -234,7 +234,7 @@
 
 	@testset "Empty graph if no consistent extension is possible 5" begin
 		for n in [5, 50, 100]
-			input = cyclegraph(n)
+			input = graph2digraph(cyclegraph(n))
 			output = pdag2dag_hs(input)
 			@test output == SimpleDiGraph(0)
 		end
@@ -244,7 +244,7 @@ end
 @testset "sink_hs" begin
 	@testset "No sink found if no sink exists" begin
 		for n in [50, 500, 1000]
-			ds = setup_hs(cyclegraph(n))
+			ds = setup_hs(graph2digraph(cyclegraph(n)))
 			@test sink_hs(ds) == -1
 		end
 	end

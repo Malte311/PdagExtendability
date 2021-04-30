@@ -38,7 +38,7 @@ extendgraph_lg
 include("utils/graph_generator.jl")
 export barbellgraph, bintreegraph, centipedegraph, completegraph,
 completebipartitegraph, cyclegraph, friendshipgraph, pathgraph,
-stargraph, sunletgraph, save2file, graph2str, generateall
+stargraph, sunletgraph, graph2digraph, save2file, graph2str, generateall
 
 include("utils/utils.jl")
 export is_consistent_extension, isdag, skeleton, vstructures,

@@ -1,3 +1,57 @@
+@testset "barbellgraph" begin
+	for n in [2, 4, 10, 20, 25, 33, 50, 55, 67, 89, 100, 512]
+		g = barbellgraph(n)
+		ne1 = convert(Int, floor(n/2)*(floor(n/2)-1)/2)
+		ne2 = convert(Int, ceil(n/2)*(ceil(n/2)-1)/2)
+		@test nv(g) == n && ne(g) == ne1 + ne2 + 1
+	end
+end
+
+@testset "bintreegraph" begin
+	for n in [1, 2, 3, 4, 5, 7, 8, 16, 32, 33, 64, 89, 128, 256, 512, 1024, 2048]
+		g = bintreegraph(n)
+		@test nv(g) == n && ne(g) == n-1
+	end
+end
+
+@testset "centipedegraph" begin
+	for n in [2, 4, 8, 12, 14, 16, 32, 50, 64, 80, 128, 256, 512]
+		g = centipedegraph(n)
+		@test nv(g) == n && ne(g) == n-1
+	end
+end
+
+@testset "completegraph" begin
+	for n in [2, 4, 10, 20, 25, 33, 50, 55, 67, 89, 100, 512]
+		g = completegraph(n)
+		@test nv(g) == n && ne(g) == n*(n-1)/2
+	end
+end
+
+@testset "completebipartitegraph" begin
+	for n in [2, 4, 10, 20, 25, 33, 50, 55, 67, 89, 100, 512]
+		g = completebipartitegraph(n)
+		n1 = convert(Int, floor(n/2))
+		n2 = convert(Int, ceil(n/2))
+		@test nv(g) == n && ne(g) == n1*n2
+	end
+end
+
+@testset "cyclegraph" begin
+	for n in [4, 10, 20, 25, 33, 50, 55, 67, 89, 100, 512]
+		g = cyclegraph(n)
+		@test is_cyclic(g)
+		@test nv(g) == n && ne(g) == n
+	end
+end
+
+@testset "friendshipgraph" begin
+	for n in [5, 11, 21, 25, 33, 51, 55, 67, 89, 101, 511]
+		g = friendshipgraph(n)
+		@test nv(g) == n && ne(g) == 3*(n-1)/2
+	end
+end
+
 @testset "graph2str" begin
 	@testset "Graph with no edges" begin
 		for n in [3, 50, 500, 1000]

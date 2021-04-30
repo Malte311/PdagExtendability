@@ -182,7 +182,7 @@
 	@testset "More PDAGs with possible extensions 7" begin
 		for optimize in [true, false]
 			for n in [5, 50, 100]
-				input = bintreegraph(n)
+				input = graph2digraph(bintreegraph(n))
 				output = fastpdag2dag_hs(input, optimize)
 				@test is_consistent_extension(output, input)
 			end
@@ -276,7 +276,7 @@
 	@testset "Empty graph if no consistent extension is possible 5" begin
 		for optimize in [true, false]
 			for n in [5, 50, 100]
-				input = cyclegraph(n)
+				input = graph2digraph(cyclegraph(n))
 				output = fastpdag2dag_hs(input, optimize)
 				@test output == SimpleDiGraph(0)
 			end
