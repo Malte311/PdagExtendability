@@ -150,88 +150,65 @@ function friendshipgraph(n::Int64; filepath::String = "")::SimpleGraph
 end
 
 """
-pathgraph(n::Int64; filepath::String = "")::SimpleDiGraph
+pathgraph(n::Int64; filepath::String = "")::SimpleGraph
 
-Create a path with n vertices.
+Create a path with `n` vertices.
 
 If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-julia> pathgraph(10)
-{10, 18} directed simple Int64 graph
+TODO
 ```
 """
-function pathgraph(n::Int64; filepath::String = "")::SimpleDiGraph
-	g = SimpleDiGraph(n)
-
-	for i = 1:n-1
-		add_edge!(g, i, i+1)
-		add_edge!(g, i+1, i)
-	end
-
+function pathgraph(n::Int64; filepath::String = "")::SimpleGraph
+	g = path_graph(n)
 	filepath != "" && save2file(g, filepath)
-
 	g
 end
 
 """
-	stargraph(n::Int64; filepath::String = "")::SimpleDiGraph
+	stargraph(n::Int64; filepath::String = "")::SimpleGraph
 
-Create a star graph with n+1 vertices.
+Create a star graph with `n` vertices.
 
 If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-julia> stargraph(4)
-{5, 8} directed simple Int64 graph
+TODO
 ```
 """
-function stargraph(n::Int64; filepath::String = "")::SimpleDiGraph
-	g = SimpleDiGraph(n+1)
-
-	for i = 2:n+1
-		add_edge!(g, 1, i)
-		add_edge!(g, i, 1)
-	end
-
+function stargraph(n::Int64; filepath::String = "")::SimpleGraph
+	g = star_graph(n)
 	filepath != "" && save2file(g, filepath)
-
 	g
 end
 
 """
-	sunletgraph(n::Int64; filepath::String = "")::SimpleDiGraph
+	sunletgraph(n::Int64; filepath::String = "")::SimpleGraph
 
-Create a sunlet graph with 2n vertices.
+Create a sunlet graph with `n` vertices. Note that `n` has to be equal.
 
 If a filepath is provided, the graph will also be written to that file.
 
 # Examples
 ```julia-repl
-julia> sunletgraph(2)
-{4, 6} directed simple Int64 graph
+TODO
 ```
 """
-function sunletgraph(n::Int64; filepath::String = "")::SimpleDiGraph
-	g = SimpleDiGraph(2*n)
-
-	add_edge!(g, n, 1)
-	add_edge!(g, 1, n)
-
-	for i = 1:n-1
+function sunletgraph(n::Int64; filepath::String = "")::SimpleGraph
+	n % 2 == 0 || error("Invalid value: n has to be equal.")
+	g = SimpleGraph(n)
+	mid = convert(Int, n/2)
+	for i = 1:mid-1
 		add_edge!(g, i, i+1)
-		add_edge!(g, i+1, i)
 	end
-
-	for i = 1:n
-		add_edge!(g, i, i+n)
-		add_edge!(g, i+n, i)
+	mid != 1 && add_edge!(g, 1, mid)
+	for i = 1:mid
+		add_edge!(g, i, i+mid)
 	end
-
 	filepath != "" && save2file(g, filepath)
-
 	g
 end
 
@@ -308,15 +285,17 @@ julia> generateall(512, "../benchmarks/dummy/newdir/")
 ```
 """
 function generateall(n::Int64, dir::String)
+	(n % 2 == 0 && n >= 3) || error("n has to be equal and greater than 2.")
+
 	barbellgraph(n, filepath = joinpath(dir, "barbell-n=$n.txt"))
 	bintreegraph(n, filepath = joinpath(dir, "bintree-n=$n.txt"))
 	centipedegraph(n, filepath = joinpath(dir, "centipede-n=$n.txt"))
 	completegraph(n, filepath = joinpath(dir, "complete-n=$n.txt"))
 	completebipartitegraph(n, filepath = joinpath(dir, "completebipartite-n=$n.txt"))
 	cyclegraph(n, filepath = joinpath(dir, "cycle-n=$n.txt"))
-	friendshipgraph(n, filepath = joinpath(dir, "friendship-n=$n.txt"))
+	friendshipgraph(n+1, filepath = joinpath(dir, "friendship-n=$(n+1).txt"))
 	pathgraph(n, filepath = joinpath(dir, "path-n=$n.txt"))
-	stargraph(n-1, filepath = joinpath(dir, "star-n=$n.txt"))
+	stargraph(n, filepath = joinpath(dir, "star-n=$n.txt"))
 	sunletgraph(convert(Int, n/2), filepath = joinpath(dir, "sunlet-n=$n.txt"))
 end
 

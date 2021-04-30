@@ -162,7 +162,7 @@
 
 	@testset "More PDAGs with possible extensions 8" begin
 		for n in [5, 50, 100]
-			input = pathgraph(n)
+			input = graph2digraph(pathgraph(n))
 			output = altpdag2dag_hs(input)
 			@test is_consistent_extension(output, input)
 		end
@@ -170,7 +170,7 @@
 
 	@testset "More PDAGs with possible extensions 9" begin
 		for n in [5, 50, 100]
-			input = stargraph(n)
+			input = graph2digraph(stargraph(n))
 			output = altpdag2dag_hs(input)
 			@test is_consistent_extension(output, input)
 		end
@@ -253,7 +253,7 @@ end
 
 	@testset "First and last node of a path are sinks" begin
 		for n in [33, 666, 999]
-			setup = setup_hs(pathgraph(n))
+			setup = setup_hs(graph2digraph(pathgraph(n)))
 			@test ([1, n] == list_sinks_hs(setup) ||
 				[n, 1] == list_sinks_hs(setup))
 		end
@@ -280,7 +280,7 @@ end
 
 	@testset "First and last node of a path are sinks" begin
 		for n in [33, 666, 999]
-			setup = setup_hs(pathgraph(n))
+			setup = setup_hs(graph2digraph(pathgraph(n)))
 			@test is_sink_hs(setup, 1) && is_sink_hs(setup, n)
 			@test !is_sink_hs(setup, 2) && !is_sink_hs(setup, 7)
 		end

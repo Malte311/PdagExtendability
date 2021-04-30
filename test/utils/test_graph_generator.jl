@@ -52,6 +52,37 @@ end
 	end
 end
 
+@testset "pathgraph" begin
+	for n in [5, 11, 21, 25, 33, 51, 55, 67, 89, 101, 511]
+		g = pathgraph(n)
+		@test nv(g) == n && ne(g) == n-1
+	end
+end
+
+@testset "stargraph" begin
+	for n in [5, 11, 21, 25, 33, 51, 55, 67, 89, 101, 511]
+		g = stargraph(n)
+		@test nv(g) == n && ne(g) == n-1
+		check = true
+		for i = 2:n
+			has_edge(g, 1, i) || (check = false)
+		end
+		@test check
+	end
+end
+
+@testset "sunletgraph" begin
+	for n in [2, 4]
+		g = sunletgraph(n)
+		@test nv(g) == n && ne(g) == n-1
+	end
+
+	for n in [6, 8, 12, 22, 26, 32, 52, 56, 68, 90, 100, 512]
+		g = sunletgraph(n)
+		@test nv(g) == n && ne(g) == n
+	end
+end
+
 @testset "graph2str" begin
 	@testset "Graph with no edges" begin
 		for n in [3, 50, 500, 1000]

@@ -162,7 +162,7 @@
 
 	@testset "More PDAGs with possible extensions 8" begin
 		for n in [5, 50, 100]
-			input = pathgraph(n)
+			input = graph2digraph(pathgraph(n))
 			output = pdag2dag_hs(input)
 			@test is_consistent_extension(output, input)
 		end
@@ -170,7 +170,7 @@
 
 	@testset "More PDAGs with possible extensions 9" begin
 		for n in [5, 50, 100]
-			input = stargraph(n)
+			input = graph2digraph(stargraph(n))
 			output = pdag2dag_hs(input)
 			@test is_consistent_extension(output, input)
 		end
