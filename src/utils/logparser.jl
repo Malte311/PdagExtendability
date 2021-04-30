@@ -43,6 +43,7 @@ function get_times_dict(file::String)::Dict
 		filter!(line -> !contains(line, "Minimum time"), log)
 		filter!(line -> !contains(line, "Maximum time"), log)
 		filter!(line -> !contains(line, "---"), log)
+		filter!(line -> !contains(line, "Extendable inputs"), log)
 		filter!(line -> !contains(line, "Not extendable inputs"), log)
 
 		algo = log[1][findfirst("'", log[1])[1]+1:findlast("'", log[1])[1]-1]

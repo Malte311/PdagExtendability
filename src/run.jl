@@ -17,6 +17,7 @@ end
 samples = config["num_samples"]
 evals = config["num_evals"]
 
+extendable = Vector()
 not_extendable = Dict()
 
 for algorithm in config["algorithm"]
@@ -52,6 +53,8 @@ for algorithm in config["algorithm"]
 				plotsvg(dag, file)
 				@error "Output is no consistent extension! A plot can be found at $file."
 				exit()
+			else
+				push!(extendable, f)
 			end
 
 			@info "Minimum time (ms): $(nanosec2millisec(minimum(bench.times)))"
@@ -73,6 +76,7 @@ for algorithm in config["algorithm"]
 	@info "---"
 end
 
+@info "Extendable inputs: $extendable"
 @info "Not extendable inputs: $not_extendable"
 
 for (key, val) in not_extendable
