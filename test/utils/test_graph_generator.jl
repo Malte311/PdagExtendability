@@ -1,3 +1,14 @@
+@testset "barabasialbertgraph" begin
+	for n in [10, 20, 25]
+		for k in [3, 5, 7]
+			for seed in [1, 100, 555]
+				@test barabasialbertgraph(n, k, seed = seed) ==
+					barabasialbertgraph(n, k, seed = seed)
+			end
+		end
+	end
+end
+
 @testset "barbellgraph" begin
 	for n in [2, 4, 10, 20, 25, 33, 50, 55, 67, 89, 100, 512]
 		g = barbellgraph(n)
@@ -42,6 +53,26 @@ end
 		g = cyclegraph(n)
 		@test is_cyclic(g)
 		@test nv(g) == n && ne(g) == n
+	end
+end
+
+@testset "dorogovtsevmendesgraph" begin
+	for n in [4, 10, 20, 25]
+		for seed in [1, 100, 555]
+			@test dorogovtsevmendesgraph(n, seed = seed) ==
+				dorogovtsevmendesgraph(n, seed = seed)
+		end
+	end
+end
+
+@testset "erdosrenyigraph" begin
+	for n in [10, 20, 25]
+		for ne in [10, 20, 30]
+			for seed in [1, 100, 555]
+				@test erdosrenyigraph(n, ne, seed = seed) ==
+					erdosrenyigraph(n, ne, seed = seed)
+			end
+		end
 	end
 end
 

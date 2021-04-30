@@ -1,6 +1,25 @@
 using LightGraphs
 
 """
+	barabasialbertgraph(n::Int64, k::Int64; seed::Int64 = 123, filepath::String = "")::SimpleGraph
+
+Create a Barabási–Albert model random graph with `n` vertices.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> barabasialbertgraph(50, 3)
+{50, 141} undirected simple Int64 graph
+```
+"""
+function barabasialbertgraph(n::Int64, k::Int64; seed::Int64 = 123, filepath::String = "")::SimpleGraph
+	g = barabasi_albert(n, k, seed = seed)
+	filepath != "" && save2file(g, filepath)
+	g
+end
+
+"""
 	barbellgraph(n::Int64; filepath::String = "")::SimpleGraph
 
 Create a barbell graph with `n` vertices.
@@ -126,6 +145,45 @@ julia> cyclegraph(8)
 function cyclegraph(n::Int64; filepath::String = "")::SimpleGraph
 	n >= 3 || error("Invalid value: n must be greater than or equal to 3.")
 	g = cycle_graph(n)
+	filepath != "" && save2file(g, filepath)
+	g
+end
+
+"""
+	dorogovtsevmendesgraph(n::Int64; seed::Int64 = 123, filepath::String = "")::SimpleGraph
+
+Create a Dorogovtsev-Mendes graph with `n` vertices.
+Note that `n` has to be greater or equal to 3. The generated graphs are
+always planar.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+TODO
+```
+"""
+function dorogovtsevmendesgraph(n::Int64; seed::Int64 = 123, filepath::String = "")::SimpleGraph
+	n >= 3 || error("Invalid value: n must be greater than or equal to 3.")
+	g = dorogovtsev_mendes(n, seed = seed)
+	filepath != "" && save2file(g, filepath)
+	g
+end
+
+"""
+	erdosrenyigraph(n::Int64, ne::Int64; seed::Int64 = 123, filepath::String = "")::SimpleGraph
+
+Create an Erdős–Rényi random graph with `n` vertices and `ne` edges.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+TODO
+```
+"""
+function erdosrenyigraph(n::Int64, ne::Int64; seed::Int64 = 123, filepath::String = "")::SimpleGraph
+	g = erdos_renyi(n, ne, seed = seed)
 	filepath != "" && save2file(g, filepath)
 	g
 end
@@ -315,12 +373,17 @@ julia> generateall(512, "../benchmarks/dummy/newdir/")
 function generateall(n::Int64, dir::String)
 	(n % 2 == 0 && n >= 3) || error("n has to be equal and greater than 2.")
 
+	ne = convert(Int, floor(n/2)) # For graphs with number of edges
+
+	barabasialbertgraph(n, 5, filepath = joinpath(dir, "barabasi_albert-n=$n-k=5.txt"))
 	barbellgraph(n, filepath = joinpath(dir, "barbell-n=$n.txt"))
 	bintreegraph(n, filepath = joinpath(dir, "bintree-n=$n.txt"))
 	centipedegraph(n, filepath = joinpath(dir, "centipede-n=$n.txt"))
 	completegraph(n, filepath = joinpath(dir, "complete-n=$n.txt"))
 	completebipartitegraph(n, filepath = joinpath(dir, "completebipartite-n=$n.txt"))
 	cyclegraph(n, filepath = joinpath(dir, "cycle-n=$n.txt"))
+	dorogovtsevmendesgraph(n, filepath = joinpath(dir, "dorogovtsev_mendes-n=$n.txt"))
+	erdosrenyigraph(n, ne, filepath = joinpath(dir, "erdos_renyi-n=$n-ne=$ne.txt"))
 	friendshipgraph(n+1, filepath = joinpath(dir, "friendship-n=$(n+1).txt"))
 	pathgraph(n, filepath = joinpath(dir, "path-n=$n.txt"))
 	stargraph(n, filepath = joinpath(dir, "star-n=$n.txt"))

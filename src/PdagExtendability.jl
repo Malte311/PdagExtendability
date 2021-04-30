@@ -36,8 +36,9 @@ export fastpdag2dag_lg, standardsetup_lg, optimizedsetup_lg,
 extendgraph_lg
 
 include("utils/graph_generator.jl")
-export barbellgraph, bintreegraph, centipedegraph, completegraph,
-completebipartitegraph, cyclegraph, friendshipgraph, pathgraph,
+export barabasialbertgraph, barbellgraph, bintreegraph, centipedegraph,
+completegraph, completebipartitegraph, cyclegraph, dorogovtsevmendesgraph,
+erdosrenyigraph, friendshipgraph, pathgraph,
 stargraph, sunletgraph, graph2digraph, save2file, graph2str, generateall
 
 include("utils/utils.jl")
