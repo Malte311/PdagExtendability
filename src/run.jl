@@ -71,7 +71,7 @@ for algorithm in config["algorithm"]
 		end
 	end
 
-	not_extendable[algo] = emptygraphs
+	not_extendable[algorithm] = emptygraphs
 
 	@info "---"
 end
