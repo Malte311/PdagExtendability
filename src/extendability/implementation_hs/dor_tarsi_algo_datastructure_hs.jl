@@ -4,16 +4,21 @@ internally.
 """
 mutable struct DtGraph
 	numvertices::Int64
-	vertices::Vector{Set{Int64}}
+	vertices::Set{Int64}
+	degrees::Vector{Set{Int64}}
 	ingoing::Vector{Set{Int64}}
 	outgoing::Vector{Set{Int64}}
 	undirected::Vector{Set{Int64}}
 end
 
 """
-	setup_hs(g::SimpleDiGraph)::DtGraph
+	setup_hs(g::SimpleDiGraph, useheuristic::Bool = false)::DtGraph
 
 Initialize the datastructure from a given graph g.
+
+The parameter `useheuristic` indicates whether to maintain a
+priority queue with vertices' degrees which is used to prefer
+vertices with low degrees over ones with higher degrees.
 
 # Examples
 ```julia-repl
@@ -23,19 +28,21 @@ julia> add_edge!(g, 1, 2)
 true
 julia> setup_hs(g)
 DtGraph(
-	Set([2, 3, 1]),
+	3,
+	Set{Int64}[Set([3]), Set([2, 1]), Set()],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
 )
 ```
 """
-function setup_hs(g::SimpleDiGraph)::DtGraph
+function setup_hs(g::SimpleDiGraph, useheuristic::Bool = false)::DtGraph
 	n = nv(g)
 
 	graph = DtGraph(
 		n,
-		[Set{Int64}() for _ in 1:n],
+		useheuristic ? Set{Int64}() : Set{Int64}([i for i in 1:n]),
+		useheuristic ? [Set{Int64}() for _ in 1:n] : [],
 		[Set{Int64}() for _ in 1:n],
 		[Set{Int64}() for _ in 1:n],
 		[Set{Int64}() for _ in 1:n]
@@ -46,9 +53,11 @@ function setup_hs(g::SimpleDiGraph)::DtGraph
 		insert_edge_hs!(graph, e.src, e.dst, !isundirected)
 	end
 
-	for v = 1:n
-		degree = degree_hs(graph, v)
-		push!(graph.vertices[degree+1], v)
+	if useheuristic
+		for v = 1:n
+			degree = degree_hs(graph, v)
+			push!(graph.degrees[degree+1], v)
+		end
 	end
 
 	graph
@@ -67,7 +76,8 @@ julia> add_edge!(g, 1, 2)
 true
 julia> dtgraph = setup_hs(g)
 DtGraph(
-	Set([2, 3, 1]),
+	3,
+	Set{Int64}[Set([3]), Set([2, 1]), Set()],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
@@ -93,7 +103,8 @@ julia> add_edge!(g, 1, 2)
 true
 julia> dtgraph = setup_hs(g)
 DtGraph(
-	Set([2, 3, 1]),
+	3,
+	Set{Int64}[Set([3]), Set([2, 1]), Set()],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
@@ -120,7 +131,8 @@ julia> add_edge!(g, 1, 2)
 true
 julia> dtgraph = setup_hs(g)
 DtGraph(
-	Set([2, 3, 1]),
+	3,
+	Set{Int64}[Set([3]), Set([2, 1]), Set()],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
@@ -141,12 +153,15 @@ function insert_edge_hs!(graph::DtGraph, u::Int64, v::Int64, isdir::Bool)
 end
 
 """
-	remove_vertex_hs!(graph::DtGraph, x::Int64)
+	remove_vertex_hs!(graph::DtGraph, x::Int64, useheuristic::Bool = false)
 
 Remove vertex x from the given graph. Note that this only
 removes x from sets of other nodes and the sets of x itself
 are left unchanged, so do not use index x anymore after the
 removal.
+
+The parameter `useheuristic` indicates whether to update the
+priority queue with vertices' degrees.
 
 # Examples
 ```julia-repl
@@ -156,7 +171,8 @@ julia> add_edge!(g, 1, 2)
 true
 julia> dtgraph = setup_hs(g)
 DtGraph(
-	Set([2, 3, 1]),
+	3,
+	Set{Int64}[Set([3]), Set([2, 1]), Set()],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
@@ -164,18 +180,21 @@ DtGraph(
 julia> remove_vertex_hs!(dtgraph, 2)
 julia> dtgraph
 DtGraph(
-	Set([3, 1]),
+	2,
+	Set{Int64}[Set([3, 1]), Set(), Set()],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set(), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
 )
 ```
 """
-function remove_vertex_hs!(graph::DtGraph, x::Int64)
-	for neighbor in union(graph.ingoing[x], graph.outgoing[x], graph.undirected[x])
-		deg = degree_hs(graph, neighbor)
-		delete!(graph.vertices[deg+1], neighbor)
-		push!(graph.vertices[deg], neighbor)
+function remove_vertex_hs!(graph::DtGraph, x::Int64, useheuristic::Bool = false)
+	if useheuristic
+		for neighbor in union(graph.ingoing[x], graph.outgoing[x], graph.undirected[x])
+			deg = degree_hs(graph, neighbor)
+			delete!(graph.degrees[deg+1], neighbor)
+			push!(graph.degrees[deg], neighbor)
+		end
 	end
 
 	for ingoing in graph.ingoing[x]
@@ -190,7 +209,11 @@ function remove_vertex_hs!(graph::DtGraph, x::Int64)
 		delete!(graph.undirected[undirected], x)
 	end
 
-	delete!(graph.vertices[degree_hs(graph, x)+1], x)
+	if useheuristic
+		delete!(graph.degrees[degree_hs(graph, x)+1], x)
+	else
+		delete!(graph.vertices, x)
+	end
 
 	graph.numvertices -= 1
 end
@@ -208,7 +231,8 @@ julia> add_edge!(g, 1, 2)
 true
 julia> dtgraph = setup_hs(g)
 DtGraph(
-	Set([2, 3, 1]),
+	3,
+	Set{Int64}[Set([3]), Set([2, 1]), Set()],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]

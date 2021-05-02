@@ -140,13 +140,16 @@ Map the function name of the used algorithm to a label for the plot.
 # Examples
 ```julia-repl
 julia> algo2label("pdag2dag_hs()-1")
-Dor Tarsi HS - 1
+Dor Tarsi HS - Standard - 1
 ```
 """
 function algo2label(algo::String)::String
 	mapping = Dict(
-		"pdag2dag_hs"            => "Dor Tarsi HS",
+		"pdag2dag_hs()"          => "Dor Tarsi HS - Standard",
+		"pdag2dag_hs(false)"     => "Dor Tarsi HS - Standard",
+		"pdag2dag_hs(true)"      => "Dor Tarsi HS - Heuristic",
 		"altpdag2dag_hs"         => "Dor Tarsi HS - Alternative",
+		"fastpdag2dag_hs()"      => "New Algo HS - O(V*E)",
 		"fastpdag2dag_hs(false)" => "New Algo HS - O(V*E)",
 		"fastpdag2dag_hs(true)"  => "New Algo HS - O(dm)",
 		"pdag2dag_lg"            => "Dor Tarsi LG",
