@@ -57,6 +57,40 @@ end
 	@test !isadjacent_hs(ds, 3, 2)
 end
 
+@testset "degree_hs" begin
+	@testset "Small graph" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		ds = setup_hs(g)
+		@test degree_hs(ds, 1) == 1 && degree_hs(ds, 2) == 2 &&
+			degree_hs(ds, 3) == 1
+	end
+
+	@testset "Cycle graph" begin
+		for n in [10, 20, 50, 100]
+			ds = setup_hs(graph2digraph(cyclegraph(n)))
+			check = true
+			for i = 1:n
+				degree_hs(ds, i) == 2 || (check = false)
+			end
+			@test check
+		end
+	end
+
+	@testset "Path graph" begin
+		for n in [10, 20, 50, 100]
+			ds = setup_hs(graph2digraph(pathgraph(n)))
+			check = true
+			for i = 2:n-1
+				degree_hs(ds, i) == 2 || (check = false)
+			end
+			@test check && degree_hs(ds, 1) == 1 && degree_hs(ds, n) == 1
+		end
+	end
+end
+
 @testset "insert_edge_hs!" begin
 	@testset "Insert directed edge" begin
 		g = SimpleDiGraph(3)

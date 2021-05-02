@@ -4,8 +4,8 @@ include("extendability/implementation_hs/dor_tarsi_alt_algo_hs.jl")
 export altpdag2dag_hs, list_sinks_hs, is_sink_hs
 
 include("extendability/implementation_hs/dor_tarsi_algo_hs.jl")
-export setup_hs, isadjacent_hs, insert_edge_hs!, remove_vertex_hs!,
-print_graph_hs
+export setup_hs, isadjacent_hs, degree_hs, insert_edge_hs!,
+remove_vertex_hs!, print_graph_hs
 export pdag2dag_hs, sink_hs
 
 include("extendability/implementation_hs/dor_tarsi_debug_hs.jl")

@@ -3,7 +3,8 @@ The datastructure to store a partially directed graph, using HashSets
 internally.
 """
 mutable struct DtGraph
-	vertices::Set{Int64}
+	numvertices::Int64
+	vertices::Vector{Set{Int64}}
 	ingoing::Vector{Set{Int64}}
 	outgoing::Vector{Set{Int64}}
 	undirected::Vector{Set{Int64}}
@@ -33,7 +34,8 @@ function setup_hs(g::SimpleDiGraph)::DtGraph
 	n = nv(g)
 
 	graph = DtGraph(
-		Set{Int64}([i for i in 1:n]),
+		n,
+		[Set{Int64}() for _ in 1:n],
 		[Set{Int64}() for _ in 1:n],
 		[Set{Int64}() for _ in 1:n],
 		[Set{Int64}() for _ in 1:n]
@@ -42,6 +44,11 @@ function setup_hs(g::SimpleDiGraph)::DtGraph
 	for e in edges(g)
 		isundirected = has_edge(g, e.dst, e.src)
 		insert_edge_hs!(graph, e.src, e.dst, !isundirected)
+	end
+
+	for v = 1:n
+		degree = degree_hs(graph, v)
+		push!(graph.vertices[degree+1], v)
 	end
 
 	graph
@@ -71,6 +78,32 @@ true
 """
 function isadjacent_hs(graph::DtGraph, u::Int64, v::Int64)::Bool
 	v in graph.ingoing[u] || v in graph.outgoing[u] || v in graph.undirected[u]
+end
+
+"""
+	degree_hs(graph::DtGraph, u::Int64)::Int64
+
+Compute the degree of vertix `u` in the given graph.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> dtgraph = setup_hs(g)
+DtGraph(
+	Set([2, 3, 1]),
+	Set{Int64}[Set(), Set([1]), Set()],
+	Set{Int64}[Set([2]), Set(), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia> degree_hs(dtgraph, 1)
+1
+```
+"""
+function degree_hs(graph::DtGraph, u::Int64)::Int64
+	length(graph.ingoing[u]) + length(graph.outgoing[u]) + length(graph.undirected[u])
 end
 
 """
@@ -139,6 +172,12 @@ DtGraph(
 ```
 """
 function remove_vertex_hs!(graph::DtGraph, x::Int64)
+	for neighbor in union(graph.ingoing[x], graph.outgoing[x], graph.undirected[x])
+		deg = degree_hs(graph, neighbor)
+		delete!(graph.vertices[deg+1], neighbor)
+		push!(graph.vertices[deg], neighbor)
+	end
+
 	for ingoing in graph.ingoing[x]
 		delete!(graph.outgoing[ingoing], x)
 	end
@@ -151,7 +190,9 @@ function remove_vertex_hs!(graph::DtGraph, x::Int64)
 		delete!(graph.undirected[undirected], x)
 	end
 
-	delete!(graph.vertices, x)
+	delete!(graph.vertices[degree_hs(graph, x)+1], x)
+
+	graph.numvertices -= 1
 end
 
 """

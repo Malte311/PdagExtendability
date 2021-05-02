@@ -40,7 +40,8 @@ function pdag2dag_hs(g::SimpleDiGraph)::SimpleDiGraph
 
 	# If one vertex is left there are no edges to other vertices anymore,
 	# so we can stop (no need to do another iteration for nv(temp) == 1).
-	while length(temp.vertices) > 1
+
+	while length(temp.numvertices) > 1
 		x = sink_hs(temp)
 		x != -1 || return SimpleDiGraph(0)
 
@@ -77,21 +78,23 @@ julia> x = sink_hs(g)
 ```
 """
 function sink_hs(graph::DtGraph)::Int64
-	for vertex in graph.vertices
-		isempty(graph.outgoing[vertex]) || continue
-
-		# All vertices connected to x via an undirected edge
-		# must be adjacent to all vertices adjacent to x.
-		for neighbor in graph.undirected[vertex]
-			for other in union(graph.ingoing[vertex], graph.undirected[vertex])
-				neighbor != other || continue
-				isadjacent_hs(graph, neighbor, other) || @goto outer
+	for index = 1:length(graph.vertices)
+		for vertex in graph.vertices[index]
+			isempty(graph.outgoing[vertex]) || continue
+	
+			# All vertices connected to x via an undirected edge
+			# must be adjacent to all vertices adjacent to x.
+			for neighbor in graph.undirected[vertex]
+				for other in union(graph.ingoing[vertex], graph.undirected[vertex])
+					neighbor != other || continue
+					isadjacent_hs(graph, neighbor, other) || @goto outer
+				end
 			end
+	
+			return vertex
+	
+			@label outer
 		end
-
-		return vertex
-
-		@label outer
 	end
 
 	-1
