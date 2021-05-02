@@ -40,7 +40,7 @@ julia> collect(edges(dag))
 """
 function pdag2dag_hs(g::SimpleDiGraph, useheuristic::Bool = false)::SimpleDiGraph
 	result = copy(g)
-	temp = setup_hs(g)
+	temp = setup_hs(g, useheuristic)
 
 	# If one vertex is left there are no edges to other vertices anymore,
 	# so we can stop (no need to do another iteration for nv(temp) == 1).

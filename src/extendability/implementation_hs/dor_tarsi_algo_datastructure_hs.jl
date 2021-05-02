@@ -29,6 +29,16 @@ true
 julia> setup_hs(g)
 DtGraph(
 	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set()],
+	Set{Int64}[Set([2]), Set(), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia> setup_hs(g, true)
+DtGraph(
+	3,
+	Set{Int64}(),
 	Set{Int64}[Set([3]), Set([2, 1]), Set()],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
@@ -77,7 +87,8 @@ true
 julia> dtgraph = setup_hs(g)
 DtGraph(
 	3,
-	Set{Int64}[Set([3]), Set([2, 1]), Set()],
+	Set([2, 3, 1]),
+	Set{Int64}[],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
@@ -104,7 +115,8 @@ true
 julia> dtgraph = setup_hs(g)
 DtGraph(
 	3,
-	Set{Int64}[Set([3]), Set([2, 1]), Set()],
+	Set([2, 3, 1]),
+	Set{Int64}[],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
@@ -132,7 +144,8 @@ true
 julia> dtgraph = setup_hs(g)
 DtGraph(
 	3,
-	Set{Int64}[Set([3]), Set([2, 1]), Set()],
+	Set([2, 3, 1]),
+	Set{Int64}[],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
@@ -172,7 +185,8 @@ true
 julia> dtgraph = setup_hs(g)
 DtGraph(
 	3,
-	Set{Int64}[Set([3]), Set([2, 1]), Set()],
+	Set([2, 3, 1]),
+	Set{Int64}[],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
@@ -181,7 +195,8 @@ julia> remove_vertex_hs!(dtgraph, 2)
 julia> dtgraph
 DtGraph(
 	2,
-	Set{Int64}[Set([3, 1]), Set(), Set()],
+	Set([3, 1]),
+	Set{Int64}[],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set(), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
@@ -232,7 +247,8 @@ true
 julia> dtgraph = setup_hs(g)
 DtGraph(
 	3,
-	Set{Int64}[Set([3]), Set([2, 1]), Set()],
+	Set([2, 3, 1]),
+	Set{Int64}[],
 	Set{Int64}[Set(), Set([1]), Set()],
 	Set{Int64}[Set([2]), Set(), Set()],
 	Set{Int64}[Set(), Set(), Set()]
@@ -253,7 +269,7 @@ Vertex 3:
 ```
 """
 function print_graph_hs(graph::DtGraph, io::Core.IO = stdout)
-	for i = 1:length(graph.vertices)
+	for i = 1:graph.numvertices
 		println(io, "Vertex $i:")
 		println(io, "\tIngoing    = $(join(graph.ingoing[i], ", "))")
 		println(io, "\tOutgoing   = $(join(graph.outgoing[i], ", "))")
