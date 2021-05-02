@@ -145,22 +145,22 @@ Dor Tarsi HS - Standard - 1
 """
 function algo2label(algo::String)::String
 	mapping = Dict(
-		"pdag2dag_hs()"          => "Dor Tarsi HS - Standard",
-		"pdag2dag_hs(false)"     => "Dor Tarsi HS - Standard",
-		"pdag2dag_hs(true)"      => "Dor Tarsi HS - Heuristic",
-		"altpdag2dag_hs"         => "Dor Tarsi HS - Alternative",
-		"fastpdag2dag_hs()"      => "New Algo HS - O(V*E)",
+		"altpdag2dag_hs()"       => "Dor Tarsi HS - Alternative",
 		"fastpdag2dag_hs(false)" => "New Algo HS - O(V*E)",
 		"fastpdag2dag_hs(true)"  => "New Algo HS - O(dm)",
-		"pdag2dag_lg"            => "Dor Tarsi LG",
+		"fastpdag2dag_hs()"      => "New Algo HS - O(V*E)",
+		"pdag2dag_hs(false)"     => "Dor Tarsi HS - Standard",
+		"pdag2dag_hs(true)"      => "Dor Tarsi HS - Heuristic",
+		"pdag2dag_hs()"          => "Dor Tarsi HS - Standard",
 		"fastpdag2dag_lg(false)" => "New Algo LG - O(V*E)",
-		"fastpdag2dag_lg(true)"  => "New Algo LG - O(dm)"
+		"fastpdag2dag_lg(true)"  => "New Algo LG - O(dm)",
+		"pdag2dag_lg()"          => "Dor Tarsi LG"
 	)
 
 	id = split(algo, "-")[2]
 
 	for (key, val) in mapping
-		occursin(key, algo) && return isempty(id) ? val : string(val, " - ", id)
+		startswith(algo, key) && return isempty(id) ? val : string(val, " - ", id)
 	end
 
 	algo
