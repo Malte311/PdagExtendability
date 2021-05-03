@@ -1,6 +1,7 @@
 {
 	"algorithm": [
-		"pdag2dag_hs()",
+		"pdag2dag_hs(false)",
+		"pdag2dag_hs(true)",
 		"fastpdag2dag_hs(false)",
 		"fastpdag2dag_hs(true)"
 	],
