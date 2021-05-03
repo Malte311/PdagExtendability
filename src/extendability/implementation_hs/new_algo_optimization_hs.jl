@@ -1,5 +1,7 @@
 using LightGraphs
 
+@isdefined(setup_hs) || include("dor_tarsi_algo_datastructure_hs.jl")
+
 """
 	degeneracy_ordering_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Dict{Int64, Int64}}
 
@@ -28,20 +30,32 @@ julia> degeneracy_ordering_hs(g)
 """
 function degeneracy_ordering_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Dict{Int64, Int64}}
 	j = nv(g)
-	h = copy(g)
+	h = setup_hs(g)
 	result = Vector{Int64}(undef, j)
 	dict = Dict()
 
 	# Compute initial degrees for each vertex, updated in each iteration
-	(aux_array, deg_str) = deg_struct_hs(g)
+	(aux_array, deg_str) = deg_struct_hs(h)
 
 	while j > 0
 		v = pop_min_deg_vertex_hs!(deg_str)
 
-		for adj in Set(all_neighbors(h, v))
+		for adj in h.undirected[v]
 			update_deg_hs!(adj, aux_array, deg_str)
-			has_edge(h, adj, v) && rem_edge!(h, adj, v)
-			has_edge(h, v, adj) && rem_edge!(h, v, adj)
+			delete!(h.undirected[adj], v)
+			delete!(h.undirected[v], adj)
+		end
+
+		for adj in h.ingoing[v]
+			update_deg_hs!(adj, aux_array, deg_str)
+			delete!(h.outgoing[adj], v)
+			delete!(h.ingoing[v], adj)
+		end
+
+		for adj in h.outgoing[v]
+			update_deg_hs!(adj, aux_array, deg_str)
+			delete!(h.ingoing[adj], v)
+			delete!(h.outgoing[v], adj)
 		end
 
 		result[j] = v
@@ -53,7 +67,7 @@ function degeneracy_ordering_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Dict{Int
 end
 
 """
-	deg_struct_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
+	deg_struct_hs(g::DtGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
 
 Compute the degree structure for the graph g. Return a tuple consisting of an
 array holding the degree for each vertex in g and an array where each index
@@ -74,17 +88,17 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> deg_struct_hs(g)
+julia> deg_struct_hs(setup_hs(g))
 ([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])
 ```
 """
-function deg_struct_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
-	n = nv(g)
+function deg_struct_hs(g::DtGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}
+	n = g.numvertices
 	aux_array = Vector{Int64}(undef, n)
 	deg_str = [Set{Int64}() for _ in 1:n]
 
 	for v = 1:n
-		deg = length(Set(all_neighbors(g, v)))
+		deg = degree_hs(g, v)
 		aux_array[v] = deg
 		push!(deg_str[deg+1], v)
 	end

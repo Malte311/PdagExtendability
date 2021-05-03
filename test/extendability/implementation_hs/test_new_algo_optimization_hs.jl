@@ -11,12 +11,12 @@ end
 	add_edge!(g, 1, 2)
 	add_edge!(g, 2, 3)
 	add_edge!(g, 3, 2)
-	(aux_array, deg_str) = deg_struct_hs(g)
+	(aux_array, deg_str) = deg_struct_hs(setup_hs(g))
 	@test 1 == aux_array[1] && 2 == aux_array[2] && 1 == aux_array[3]
 	@test 1 in deg_str[2] && 2 in deg_str[3] && 3 in deg_str[2]
 
 	g = SimpleDiGraph(3)
-	(aux_array, deg_str) = deg_struct_hs(g)
+	(aux_array, deg_str) = deg_struct_hs(setup_hs(g))
 	@test 0 == aux_array[1] && 0 == aux_array[2] && 0 == aux_array[3]
 	@test 3 == length(deg_str[1]) && isempty(deg_str[2]) &&
 	isempty(deg_str[3])
@@ -28,7 +28,7 @@ end
 	add_edge!(g, 2, 4)
 	add_edge!(g, 2, 5)
 	add_edge!(g, 3, 4)
-	(aux_array, deg_str) = deg_struct_hs(g)
+	(aux_array, deg_str) = deg_struct_hs(setup_hs(g))
 	@test 1 == aux_array[1] && 4 == aux_array[2] && 2 == aux_array[3] &&
 		2 == aux_array[4] && 1 == aux_array[5]
 	@test 1 in deg_str[2] && 2 in deg_str[5] && 3 in deg_str[3] &&
@@ -38,7 +38,7 @@ end
 @testset "pop_min_deg_vertex_hs!" begin
 	g = SimpleDiGraph(3)
 	add_edge!(g, 1, 2)
-	(_, deg_str) = deg_struct_hs(g)
+	(_, deg_str) = deg_struct_hs(setup_hs(g))
 	@test 3 == pop_min_deg_vertex_hs!(deg_str)
 
 	g = SimpleDiGraph(4)
@@ -46,7 +46,7 @@ end
 	add_edge!(g, 1, 3)
 	add_edge!(g, 1, 4)
 	add_edge!(g, 2, 3)
-	(_, deg_str) = deg_struct_hs(g)
+	(_, deg_str) = deg_struct_hs(setup_hs(g))
 	@test 4 == pop_min_deg_vertex_hs!(deg_str)
 end
 
@@ -55,7 +55,7 @@ end
 	add_edge!(g, 1, 2)
 	add_edge!(g, 2, 3)
 	add_edge!(g, 3, 2)
-	(aux_array, deg_str) = deg_struct_hs(g)
+	(aux_array, deg_str) = deg_struct_hs(setup_hs(g))
 	@test 1 == aux_array[1] && 2 == aux_array[2] && 1 == aux_array[3]
 	@test 1 in deg_str[2] && 2 in deg_str[3] && 3 in deg_str[2]
 	update_deg_hs!(3, aux_array, deg_str)
