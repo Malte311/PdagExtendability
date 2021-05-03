@@ -343,7 +343,7 @@ julia> graph2str(g)
 ```
 """
 function graph2str(g; is_only_undir::Bool = false)::String
-	typeof(g) == SimpleGraph && (is_only_undir = false)
+	typeof(g) == SimpleGraph{Int64} && (is_only_undir = false)
 
 	nedges = is_only_undir ? convert(Int, floor(ne(g)/2)) : ne(g)
 	g_str = "$(nv(g)) $nedges\n\n"
