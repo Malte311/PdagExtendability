@@ -93,6 +93,7 @@ if config["create_csv"]
 
 	dict_to_csv(
 		times,
+		use_median = config["use_median"],
 		file = replace(
 			string(config["logdir"], config["logfile"]),
 			".txt" => ".csv"

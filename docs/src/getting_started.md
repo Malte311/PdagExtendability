@@ -34,6 +34,7 @@ the setup. These are the configuration options which are provided:
 - `num_evals`: The number of evaluations per sample.
 - `num_samples`: The number of samples to take.
 - `only_undirected`: Boolean value to specify whether the input graphs contain only undirected edges (`true`) or not (`false`).
+- `use_median`: Boolean value to specify whether to use the median of the measurements. If set to `false`, the mean will be used instead.
 - `visualize`: Boolean value to specify whether the input graph and the output graph should be plotted and saved to a `.svg` file.
 
 It is also possible to run multiple trials simultaneously using different configuration files for each trial.

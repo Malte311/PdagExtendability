@@ -14,5 +14,6 @@
 	"num_evals": 1,
 	"num_samples": 1000,
 	"only_undirected": false,
+	"use_median": true,
 	"visualize": false
 }
