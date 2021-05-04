@@ -3,6 +3,42 @@ using LightGraphs
 @isdefined(DtGraph) || include("dor_tarsi_algo_datastructure_hs.jl")
 
 """
+TODO
+"""
+function undir2dag(g::SimpleDiGraph)::SimpleDiGraph
+	graph = setup_hs(g)
+	(indices, ordering) = mcs(graph)
+
+	ispeo((indices, ordering)) || return SimpleDiGraph(0)
+
+	result = copy(g)
+
+	for v = length(ordering):-1:1
+		for undirected in graph.undirected[v]
+			rem_edge!(result, v, undirected)
+		end
+
+		remove_vertex_hs!(graph, v)
+	end
+
+	result
+end
+
+"""
+	ispeo(ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool
+
+Check whether `ordering` is a perfect elimination order.
+That is, for each vertex v, v and all neighbors coming after v form a
+clique.
+
+# Examples
+TODO
+"""
+function ispeo(ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool
+	true
+end
+
+"""
 	mcs(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 
 Compute a vertex ordering using maximum cardinality search.
