@@ -13,9 +13,11 @@ function undir2dag(g::SimpleDiGraph)::SimpleDiGraph
 
 	result = copy(g)
 
-	for v = length(ordering):-1:1
-		for undirected in graph.undirected[v]
-			rem_edge!(result, v, undirected)
+	for i = length(ordering):-1:1
+		v = ordering[i]
+
+		for w in graph.undirected[v]
+			rem_edge!(result, v, w)
 		end
 
 		remove_vertex_hs!(graph, v)
@@ -59,19 +61,19 @@ function mcs(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 	alphainvers = Vector{Int64}(undef, n)
 
 	set = [Set{Int64}() for _ in 1:n+1]
-	size = ones(Int64, n)
+	size = Vector{Int64}(undef, n)
 
 	for i = 1:n
+		size[i] = 1
 		push!(set[1], i)
 	end
 
-	i = n
 	j = 1
-	while i >= 1
+	for i = 1:n
 		v = pop!(set[j])
 		alpha[v] = i
 		alphainvers[i] = v
-		size[v] -= 1
+		size[v] = 0
 
 		for w in g.undirected[v] # algorithm only for undirected graphs
 			size[w] >= 1 || continue
@@ -80,7 +82,6 @@ function mcs(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 			push!(set[size[w]], w)
 		end
 
-		i -= 1
 		j += 1
 
 		while j >= 1 && isempty(set[j])
