@@ -89,6 +89,123 @@
 		@test is_consistent_extension(output, input)
 	end
 
+	@testset "Finds a consistent extension for chordal graphs 6" begin
+		input = SimpleGraph(8)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 1, 6)
+		add_edge!(input, 1, 7)
+		add_edge!(input, 3, 6)
+		add_edge!(input, 3, 7)
+		add_edge!(input, 4, 8)
+		add_edge!(input, 6, 7)
+		input = graph2digraph(input)
+		output = undir2dag(input)
+		@test is_consistent_extension(output, input)
+	end
+
+	@testset "Finds a consistent extension for chordal graphs 7" begin
+		input = SimpleGraph(8)
+		add_edge!(input, 1, 7)
+		add_edge!(input, 3, 6)
+		input = graph2digraph(input)
+		output = undir2dag(input)
+		@test is_consistent_extension(output, input)
+	end
+
+	@testset "Finds a consistent extension for chordal graphs 8" begin
+		input = SimpleGraph(8)
+		add_edge!(input, 1, 6)
+		add_edge!(input, 1, 7)
+		add_edge!(input, 3, 4)
+		add_edge!(input, 3, 5)
+		add_edge!(input, 3, 8)
+		add_edge!(input, 4, 5)
+		add_edge!(input, 4, 8)
+		add_edge!(input, 5, 8)
+		add_edge!(input, 6, 7)
+		input = graph2digraph(input)
+		output = undir2dag(input)
+		@test is_consistent_extension(output, input)
+	end
+
+	@testset "Finds a consistent extension for chordal graphs 9" begin
+		input = SimpleGraph(8)
+		add_edge!(input, 1, 8)
+		add_edge!(input, 1, 5)
+		add_edge!(input, 1, 6)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 4)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 5)
+		add_edge!(input, 3, 4)
+		add_edge!(input, 5, 8)
+		add_edge!(input, 5, 6)
+		add_edge!(input, 5, 7)
+		add_edge!(input, 6, 8)
+		input = graph2digraph(input)
+		output = undir2dag(input)
+		@test is_consistent_extension(output, input)
+	end
+
+	@testset "Finds a consistent extension for chordal graphs 10" begin
+		input = SimpleGraph(8)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 3, 4)
+		add_edge!(input, 3, 5)
+		add_edge!(input, 3, 6)
+		add_edge!(input, 3, 7)
+		add_edge!(input, 3, 8)
+		add_edge!(input, 4, 5)
+		add_edge!(input, 5, 6)
+		add_edge!(input, 5, 7)
+		add_edge!(input, 5, 8)
+		add_edge!(input, 6, 7)
+		input = graph2digraph(input)
+		output = undir2dag(input)
+		@test is_consistent_extension(output, input)
+	end
+
+	@testset "Finds a consistent extension for chordal graphs 11" begin
+		input = SimpleGraph(5)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 2, 4)
+		add_edge!(input, 3, 4)
+		add_edge!(input, 4, 5)
+		input = graph2digraph(input)
+		output = undir2dag(input)
+		@test is_consistent_extension(output, input)
+	end
+
+	@testset "Finds a consistent extension for chordal graphs 12" begin
+		input = SimpleGraph(10)
+		for src in [1, 2, 3]
+			for dst in [2, 3, 4, 5, 6, 7, 8, 9, 10]
+				src < dst || continue
+				add_edge!(input, src, dst)
+			end
+		end
+		add_edge!(input, 4, 5)
+		add_edge!(input, 4, 6)
+		add_edge!(input, 5, 6)
+		add_edge!(input, 5, 7)
+		add_edge!(input, 5, 8)
+		add_edge!(input, 5, 9)
+		add_edge!(input, 5, 10)
+		add_edge!(input, 6, 7)
+		add_edge!(input, 6, 8)
+		add_edge!(input, 6, 9)
+		add_edge!(input, 6, 10)
+		add_edge!(input, 8, 9)
+		add_edge!(input, 8, 10)
+		add_edge!(input, 9, 10)
+		input = graph2digraph(input)
+		output = undir2dag(input)
+		@test is_consistent_extension(output, input)
+	end
+
 	@testset "Non-chordal graphs are not extendable 1" begin
 		for n in [4, 5, 10, 50, 100]
 			input = graph2digraph(cyclegraph(n))
