@@ -9,7 +9,7 @@ function undir2dag(g::SimpleDiGraph)::SimpleDiGraph
 	graph = setup_hs(g)
 	(indices, ordering) = mcs(graph)
 
-	ispeo((indices, ordering)) || return SimpleDiGraph(0)
+	ispeo(graph, (indices, ordering)) || return SimpleDiGraph(0)
 
 	result = copy(g)
 
@@ -27,7 +27,7 @@ function undir2dag(g::SimpleDiGraph)::SimpleDiGraph
 end
 
 """
-	ispeo(ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool
+	ispeo(g::DtGraph, ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool
 
 Check whether `ordering` is a perfect elimination order.
 That is, for each vertex v, v and all neighbors coming after v form a
@@ -36,7 +36,28 @@ clique.
 # Examples
 TODO
 """
-function ispeo(ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool
+function ispeo(g::DtGraph, ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool
+	(orderindex, order) = ordering
+
+	f = zeros(Int64, length(order))
+	index = zeros(Int64, length(order))
+
+	for i = length(order):-1:1
+		w = order[i]
+		f[w] = w
+		index[w] = i
+
+		for v in g.undirected[w]
+			orderindex[v] > i || continue
+			index[v] = i
+			f[v] == v && (f[v] = w)
+		end
+
+		for v in g.undirected[w]
+			orderindex[v] > i && index[f[v]] > i && return false
+		end
+	end
+
 	true
 end
 
