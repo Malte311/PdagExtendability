@@ -154,7 +154,8 @@ function algo2label(algo::String)::String
 		"pdag2dag_hs()"          => "Dor Tarsi HS - Standard",
 		"fastpdag2dag_lg(false)" => "New Algo LG - O(V*E)",
 		"fastpdag2dag_lg(true)"  => "New Algo LG - O(dm)",
-		"pdag2dag_lg()"          => "Dor Tarsi LG"
+		"pdag2dag_lg()"          => "Dor Tarsi LG",
+		"undir2dag()"            => "Maximum Cardinality Search"
 	)
 
 	id = split(algo, "-")[2]
