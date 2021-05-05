@@ -216,9 +216,20 @@
 end
 
 @testset "ispeo" begin
-	
-end
+	@testset "Perfect elimination order" begin
+		input = SimpleGraph(5)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 2, 4)
+		add_edge!(input, 3, 4)
+		add_edge!(input, 4, 5)
+		g = setup_hs(graph2digraph(input))
+		@test ispeo(g, mcs(g))
+	end
 
-@testset "mcs" begin
-	
+	@testset "No perfect elimination order" begin
+		for n in [4, 5, 10, 50, 100]
+			g = setup_hs(graph2digraph(cyclegraph(n)))
+			@test !ispeo(g, mcs(g))
+		end
+	end
 end

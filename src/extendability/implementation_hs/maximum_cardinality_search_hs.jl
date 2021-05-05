@@ -3,7 +3,27 @@ using LightGraphs
 @isdefined(DtGraph) || include("dor_tarsi_algo_datastructure_hs.jl")
 
 """
-TODO
+	undir2dag(g::SimpleDiGraph)::SimpleDiGraph
+
+Convert an undirected graph into a fully directed acyclic graph (DAG).
+If this is not possible, an empty graph is returned.
+
+# Examples
+```julia-repl
+julia> g = SimpleGraph(3)
+{3, 0} undirected simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 1, 3)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> collect(edges(undir2dag(graph2digraph(g))))
+3-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 2 => 1
+ Edge 2 => 3
+ Edge 3 => 1
+```
 """
 function undir2dag(g::SimpleDiGraph)::SimpleDiGraph
 	graph = setup_hs(g)
@@ -34,7 +54,19 @@ That is, for each vertex v, v and all neighbors coming after v form a
 clique.
 
 # Examples
-TODO
+```julia-repl
+julia> g = SimpleGraph(3)
+{3, 0} undirected simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 1, 3)
+true
+julia> add_edge!(g, 2, 3)
+julia> dt = setup_hs(graph2digraph(g))
+...
+julia> ispeo(dt, mcs(dt))
+true
+```
 """
 function ispeo(g::DtGraph, ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool
 	(orderindex, order) = ordering
@@ -73,7 +105,19 @@ Test Acyclicity of Hypergraphs, and Selectively Reduce Acyclic Hypergraphs.
 SIAM Journal on Computing, 13(3), 566–579.
 
 # Examples
-TODO
+```julia-repl
+julia> g = SimpleGraph(3)
+{3, 0} undirected simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 1, 3)
+true
+julia> add_edge!(g, 2, 3)
+julia> dt = setup_hs(graph2digraph(g))
+...
+julia> mcs(dt)
+([3, 1, 2], [2, 3, 1])
+```
 """
 function mcs(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 	n = g.numvertices
