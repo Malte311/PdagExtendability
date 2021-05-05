@@ -58,7 +58,7 @@ function mcs(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 	alpha = Vector{Int64}(undef, n)
 	alphainvers = Vector{Int64}(undef, n)
 
-	set = [Set{Int64}() for _ in 1:n]
+	set = [Set{Int64}() for _ in 1:n+1]
 	size = ones(Int64, n)
 
 	for i = 1:n

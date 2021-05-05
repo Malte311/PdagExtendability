@@ -11,6 +11,9 @@ export pdag2dag_hs, sink_hs
 include("extendability/implementation_hs/dor_tarsi_debug_hs.jl")
 export pdag2dag_debug_hs, sink_debug_hs
 
+include("extendability/implementation_hs/maximum_cardinality_search_hs.jl")
+export undir2dag, ispeo, mcs
+
 include("extendability/implementation_hs/new_algo_hs.jl")
 export init_hs, is_adjacent_hs, insert_arc_hs!, insert_edge_hs!,
 remove_arc_hs!, remove_edge_hs!, update_alphabeta_hs!,
