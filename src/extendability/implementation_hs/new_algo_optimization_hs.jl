@@ -3,7 +3,7 @@ using LightGraphs
 @isdefined(setup_hs) || include("dor_tarsi_algo_datastructure_hs.jl")
 
 """
-	degeneracy_ordering_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Dict{Int64, Int64}}
+	degeneracy_ordering_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 
 Compute a degeneracy ordering for the skeleton of the graph g. The second
 component of the tuple holds a mapping for each vertex of the ordering
@@ -25,14 +25,14 @@ true
 julia> add_edge!(g, 3, 2)
 true
 julia> degeneracy_ordering_hs(g)
-([1, 2, 3], Dict(2 => 2, 3 => 3, 1 => 1))
+([1, 2, 3], [1, 2, 3])
 ```
 """
-function degeneracy_ordering_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Dict{Int64, Int64}}
+function degeneracy_ordering_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 	j = nv(g)
 	h = setup_hs(g)
 	result = Vector{Int64}(undef, j)
-	dict = Dict()
+	index = Vector{Int64}(undef, j)
 
 	# Compute initial degrees for each vertex, updated in each iteration
 	(aux_array, deg_str) = deg_struct_hs(h)
@@ -59,11 +59,11 @@ function degeneracy_ordering_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Dict{Int
 		end
 
 		result[j] = v
-		dict[v] = j
+		index[v] = j
 		j -= 1
 	end
 
-	(result, dict)
+	(result, index)
 end
 
 """
