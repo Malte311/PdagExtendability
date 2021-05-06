@@ -32,6 +32,13 @@ end
 	end
 end
 
+@testset "cliquegraph" begin
+	for n in [2, 4, 8, 12, 14, 16, 32, 50, 64, 80, 128, 256, 512]
+		g = cliquegraph(n)
+		@test nv(g) == n && ne(g) == n/2*(n/2-1)/2+n/2
+	end
+end
+
 @testset "completegraph" begin
 	for n in [2, 4, 10, 20, 25, 33, 50, 55, 67, 89, 100, 512]
 		g = completegraph(n)

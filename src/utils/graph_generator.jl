@@ -88,6 +88,23 @@ function centipedegraph(n::Int64; filepath::String = "")::SimpleGraph
 	g
 end
 
+
+function cliquegraph(n::Int64; filepath::String = "")::SimpleGraph
+	n % 2 == 0 || error("Invalid value: n has to be equal.")
+	g = SimpleGraph(n)
+	mid = convert(Int, floor(n/2))
+	for i = mid+1:n # Change to 1:mid for different numbering
+		for j = mid+1:n # Change to 1:mid for different numbering
+			i != j && add_edge!(g, i, j)
+		end
+	end
+	for i = 1:mid
+		add_edge!(g, i, i+mid)
+	end
+	filepath != "" && save2file(g, filepath)
+	g
+end
+
 """
 	completegraph(n::Int64; filepath::String = "")::SimpleGraph
 
@@ -425,3 +442,5 @@ function generateall(n::Int64, dir::String)
 		end
 	end
 end
+
+#cliquegraph(1024, filepath = joinpath("../benchmarks/undirected/clique/n=1024/", "clique-n=1024-3.txt"))
