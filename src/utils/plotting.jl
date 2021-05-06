@@ -1,7 +1,7 @@
 using LightGraphs, GraphPlot, Compose
 
 """
-	plotsvg(g::SimpleDiGraph, file::String)
+	plotsvg(g, file::String)
 
 Draw a graph and save it in a `.svg` file.
 
@@ -15,6 +15,6 @@ julia> plotsvg(g, "plot.svg")
 false
 ```
 """
-function plotsvg(g::SimpleDiGraph, file::String)
+function plotsvg(g, file::String)
 	draw(SVG(file), gplot(g, nodelabel=1:nv(g), layout=shell_layout))
 end
