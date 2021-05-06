@@ -19,8 +19,10 @@ function pdag2dag_debug_hs(g::SimpleDiGraph, useheuristic::Bool = false)::Simple
 	# so we can stop (no need to do another iteration for nv(temp) == 1).
 	while temp.numvertices > 1
 		runs += 1
-		(x, iter) = sink_debug_hs(temp, useheuristic)
+		(x, iter, vertex_order) = sink_debug_hs(temp, useheuristic)
 		iterations += iter
+
+		@info "Checked sinks in iteration $runs: $vertex_order"
 
 		x != -1 || @info "Average iterations per vertex: $(iterations / runs)"
 		x != -1 || return SimpleDiGraph(0)
@@ -39,34 +41,37 @@ function pdag2dag_debug_hs(g::SimpleDiGraph, useheuristic::Bool = false)::Simple
 end
 
 """
-	sink_debug_hs(graph::DtGraph, useheuristic::Bool = false)::Tuple{Int64, Int64}
+	sink_debug_hs(graph::DtGraph, useheuristic::Bool = false)::Tuple{Int64, Int64, Vector{Int64}}
 
 Debug version of [`sink_hs`](@ref). The debug version counts
 the number of iterations needed to find a sink and computes
 the average number of iterations needed in the whole algorithm. 
 """
-function sink_debug_hs(graph::DtGraph, useheuristic::Bool = false)::Tuple{Int64, Int64}
+function sink_debug_hs(graph::DtGraph, useheuristic::Bool = false)::Tuple{Int64, Int64, Vector{Int64}}
 	iterations = 0
+	vertex_order = Vector{Int64}()
 
 	if useheuristic
 		for index = 1:length(graph.degrees)
 			for vertex in graph.degrees[index]
 				iterations += 1
+				push!(vertex_order, vertex)
 				(issink, iter) = is_sink_debug_hs(graph, vertex)
 				iterations += iter
-				issink && return (vertex, iterations)
+				issink && return (vertex, iterations, vertex_order)
 			end
 		end
 	else
 		for vertex in graph.vertices
 			iterations += 1
+			push!(vertex_order, vertex)
 			(issink, iter) = is_sink_debug_hs(graph, vertex)
 			iterations += iter
-			issink && return (vertex, iterations)
+			issink && return (vertex, iterations, vertex_order)
 		end
 	end
 
-	(-1, iterations)
+	(-1, iterations, vertex_order)
 end
 
 """
