@@ -89,37 +89,32 @@ function centipedegraph(n::Int64; filepath::String = "")::SimpleGraph
 end
 
 """
-TODO
+	cliquegraph(n::Int64; filepath::String = "")::SimpleGraph
+
+Create a clique graph with `n` vertices. The graph contains a
+clique of size `n/2`, where each vertex of that clique has one
+additional neighbor which is not connected to any other vertex.
+Note that `n` has to be equal.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> cliquegraph(8)
+{8, 10} undirected simple Int64 graph
+```
 """
 function cliquegraph(n::Int64; filepath::String = "")::SimpleGraph
 	n % 2 == 0 || error("Invalid value: n has to be equal.")
 	g = SimpleGraph(n)
 	mid = convert(Int, floor(n/2))
-	vertices = Set{Int64}([i for i = 1:n])
-	countOuter = 1
-	for i in vertices
-		countInner = 1
-		for j in vertices
+	for i = mid+1:n
+		for j = mid+1:n
 			i != j && add_edge!(g, i, j)
-			i != j && (countInner += 1)
-			i != j && (countInner < mid || break)
 		end
-		countOuter += 1
-		countOuter < mid || break
-	end
-	count = 1
-	first = Vector(undef, mid)
-	last = Vector(undef, mid)
-	for i in vertices
-		if count <= mid
-			first[count] = i
-		else
-			last[count-mid] = i
-		end
-		count += 1
 	end
 	for i = 1:mid
-		add_edge!(g, first[i], last[i])
+		add_edge!(g, i, i+mid)
 	end
 	filepath != "" && save2file(g, filepath)
 	g
