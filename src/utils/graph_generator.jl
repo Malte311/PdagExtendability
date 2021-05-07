@@ -204,6 +204,33 @@ function dorogovtsevmendesgraph(n::Int64; seed = 123, filepath = "")::SimpleGrap
 end
 
 """
+	doublestargraph(n::Int64; filepath = "")::SimpleGraph
+
+Create a graph with `n` vertices, consisting of two connected stars.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> doublestargraph(8)
+{8, 7} undirected simple Int64 graph
+```
+"""
+function doublestargraph(n::Int64; filepath = "")::SimpleGraph
+	g = SimpleGraph(n)
+	mid = convert(Int, floor(n/2))
+	for i = 2:mid
+		add_edge!(g, 1, i)
+	end
+	for i = mid+2:n
+		add_edge!(g, mid+1, i)
+	end
+	add_edge!(g, 1, mid+1)
+	filepath != "" && save2file(g, filepath)
+	g
+end
+
+"""
 	erdosrenyigraph(n::Int64, ne::Int64; seed = 123, filepath = "")::SimpleGraph
 
 Create an Erdős–Rényi random graph with `n` vertices and `ne` edges.

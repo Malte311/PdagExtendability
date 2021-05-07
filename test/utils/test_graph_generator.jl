@@ -72,6 +72,13 @@ end
 	end
 end
 
+@testset "doublestargraph" begin
+	for n in [4, 10, 20, 25, 33, 50, 55, 67, 89, 100, 512]
+		g = doublestargraph(n)
+		@test nv(g) == n && ne(g) == n-1
+	end
+end
+
 @testset "erdosrenyigraph" begin
 	for n in [10, 20, 25]
 		for ne in [10, 20, 30]
