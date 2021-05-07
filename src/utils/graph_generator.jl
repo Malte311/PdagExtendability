@@ -521,8 +521,3 @@ function generateall(n::Int64, dir::String)
 		end
 	end
 end
-
-# include("readinput.jl")
-
-# g = readinputgraph("../benchmarks/undirected/chordal/n=1024/peo-n=1024-2.txt", true)
-# save2file(graph2pdag(g, 0.9), "../benchmarks/pdirected/fromchordal/peo-n=1024-2/peo-n=1024-2-09-1.txt", is_only_undir = false)
