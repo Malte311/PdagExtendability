@@ -369,6 +369,43 @@ function graph2digraph(g::SimpleGraph)::SimpleDiGraph
 end
 
 """
+	graph2pdag(g::SimpleDiGraph, prob::Float64)::SimpleDiGraph
+
+Convert an undirected graph (encoded as a `SimpleDiGraph`) into a
+partially directed graph by randomly deleting edges from `g`. Each
+edge is directed with probability `prob`.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 1)
+true
+julia> add_edge!(g, 1, 3)
+true
+julia> add_edge!(g, 3, 1)
+true
+julia> collect(edges(graph2pdag(g, 0.5)))
+3-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 2
+ Edge 2 => 1
+ Edge 3 => 1
+```
+"""
+function graph2pdag(g::SimpleDiGraph, prob::Float64)::SimpleDiGraph
+	result = copy(g)
+	done = Set{String}()
+	for e in edges(g)
+		isdone = ("$(e.src)-$(e.dst)" in done)
+		!isdone && push!(done, "$(e.dst)-$(e.src)")
+		!isdone && rand() < prob && rem_edge!(result, e.src, e.dst)
+	end
+	result
+end
+
+"""
 	save2file(g, file::String; is_only_undir::Bool = true)
 
 Save a graph g to a given file. Set `is_only_undir` to `false` if the graph
@@ -484,3 +521,8 @@ function generateall(n::Int64, dir::String)
 		end
 	end
 end
+
+# include("readinput.jl")
+
+# g = readinputgraph("../benchmarks/undirected/chordal/n=1024/peo-n=1024-2.txt", true)
+# save2file(graph2pdag(g, 0.9), "../benchmarks/pdirected/fromchordal/peo-n=1024-2/peo-n=1024-2-09-1.txt", is_only_undir = false)
