@@ -41,7 +41,7 @@ extendgraph_lg
 include("utils/graph_generator.jl")
 export barbellgraph, bintreegraph, centipedegraph, cliquegraph,
 completegraph, cyclegraph, doublestargraph, friendshipgraph,
-pathgraph, stargraph, graph2pdag
+lollipopgraph, pathgraph, stargraph, graph2pdag
 
 include("utils/utils.jl")
 export is_consistent_extension, isdag, skeleton, vstructures,
