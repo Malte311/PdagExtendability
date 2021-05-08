@@ -138,6 +138,84 @@ function vstructures(g::SimpleDiGraph)::Vector{Tuple{Int64, Int64, Int64}}
 end
 
 """
+	graph2digraph(g::SimpleGraph)::SimpleDiGraph
+
+Convert an undirected graph (SimpleGraph) into a directed
+graph (SimpleDiGraph).
+
+# Examples
+```julia-repl
+julia> g = SimpleGraph(3)
+{3, 0} undirected simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> collect(edges(graph2digraph(g)))
+2-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 2
+ Edge 2 => 1
+```
+"""
+function graph2digraph(g::SimpleGraph)::SimpleDiGraph
+	result = SimpleDiGraph(nv(g))
+	for e in edges(g)
+		add_edge!(result, e.src, e.dst)
+		add_edge!(result, e.dst, e.src)
+	end
+	result
+end
+
+"""
+	save2file(g, file::String; is_only_undir::Bool = true)
+
+Save a graph g to a given file. Set `is_only_undir` to `false` if the graph
+contains directed edges.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> save2file(g, "../benchmarks/dummy/graph.txt")
+```
+"""
+function save2file(g, file::String; is_only_undir::Bool = true)
+	open(file, "w+") do io
+		write(io, graph2str(g, is_only_undir = is_only_undir))
+	end
+end
+
+"""
+	graph2str(g; is_only_undir::Bool = false)::String
+
+Convert a graph `g` to the corresponding string representation. Set
+`is_only_undir` to `false` if the graph contains directed edges.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> graph2str(g)
+"3 0\n"
+```
+"""
+function graph2str(g; is_only_undir::Bool = false)::String
+	typeof(g) == SimpleGraph{Int64} && (is_only_undir = false)
+
+	nedges = is_only_undir ? convert(Int, floor(ne(g)/2)) : ne(g)
+	g_str = "$(nv(g)) $nedges\n\n"
+
+	done = Set{String}()
+
+	for e in edges(g)
+		if !is_only_undir || !("$(e.src)-$(e.dst)" in done)
+			g_str = string(g_str, "$(e.src) $(e.dst)\n")
+			is_only_undir && push!(done, "$(e.dst)-$(e.src)")
+		end
+	end
+
+	g_str
+end
+
+"""
 	nanosec2sec(time::Float64)::Float64
 
 Convert a number in nanoseconds to milliseconds.

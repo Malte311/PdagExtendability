@@ -39,15 +39,13 @@ export fastpdag2dag_lg, standardsetup_lg, optimizedsetup_lg,
 extendgraph_lg
 
 include("utils/graph_generator.jl")
-export barabasialbertgraph, barbellgraph, bintreegraph, centipedegraph,
-cliquegraph, completegraph, completebipartitegraph, cyclegraph,
-dorogovtsevmendesgraph, doublestargraph, erdosrenyigraph, friendshipgraph,
-pathgraph, stargraph, sunletgraph, graph2digraph, graph2pdag,
-save2file, graph2str, generateall
+export barbellgraph, bintreegraph, centipedegraph, cliquegraph,
+completegraph, cyclegraph, doublestargraph, friendshipgraph,
+pathgraph, stargraph, graph2pdag
 
 include("utils/utils.jl")
 export is_consistent_extension, isdag, skeleton, vstructures,
-nanosec2millisec
+graph2digraph, save2file, graph2str, nanosec2millisec
 
 include("utils/logparser.jl")
 export get_times_dict, dict_to_csv, print_dict, algo2label

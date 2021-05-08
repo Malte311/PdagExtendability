@@ -1,14 +1,3 @@
-@testset "barabasialbertgraph" begin
-	for n in [10, 20, 25]
-		for k in [3, 5, 7]
-			for seed in [1, 100, 555]
-				@test barabasialbertgraph(n, k, seed = seed) ==
-					barabasialbertgraph(n, k, seed = seed)
-			end
-		end
-	end
-end
-
 @testset "barbellgraph" begin
 	for n in [2, 4, 10, 20, 25, 33, 50, 55, 67, 89, 100, 512]
 		g = barbellgraph(n)
@@ -46,15 +35,6 @@ end
 	end
 end
 
-@testset "completebipartitegraph" begin
-	for n in [2, 4, 10, 20, 25, 33, 50, 55, 67, 89, 100, 512]
-		g = completebipartitegraph(n)
-		n1 = convert(Int, floor(n/2))
-		n2 = convert(Int, ceil(n/2))
-		@test nv(g) == n && ne(g) == n1*n2
-	end
-end
-
 @testset "cyclegraph" begin
 	for n in [4, 10, 20, 25, 33, 50, 55, 67, 89, 100, 512]
 		g = cyclegraph(n)
@@ -63,30 +43,10 @@ end
 	end
 end
 
-@testset "dorogovtsevmendesgraph" begin
-	for n in [4, 10, 20, 25]
-		for seed in [1, 100, 555]
-			@test dorogovtsevmendesgraph(n, seed = seed) ==
-				dorogovtsevmendesgraph(n, seed = seed)
-		end
-	end
-end
-
 @testset "doublestargraph" begin
 	for n in [4, 10, 20, 25, 33, 50, 55, 67, 89, 100, 512]
 		g = doublestargraph(n)
 		@test nv(g) == n && ne(g) == n-1
-	end
-end
-
-@testset "erdosrenyigraph" begin
-	for n in [10, 20, 25]
-		for ne in [10, 20, 30]
-			for seed in [1, 100, 555]
-				@test erdosrenyigraph(n, ne, seed = seed) ==
-					erdosrenyigraph(n, ne, seed = seed)
-			end
-		end
 	end
 end
 
@@ -113,18 +73,6 @@ end
 			has_edge(g, 1, i) || (check = false)
 		end
 		@test check
-	end
-end
-
-@testset "sunletgraph" begin
-	for n in [2, 4]
-		g = sunletgraph(n)
-		@test nv(g) == n && ne(g) == n-1
-	end
-
-	for n in [6, 8, 12, 22, 26, 32, 52, 56, 68, 90, 100, 512]
-		g = sunletgraph(n)
-		@test nv(g) == n && ne(g) == n
 	end
 end
 
