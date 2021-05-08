@@ -50,21 +50,20 @@ end
 	end
 end
 
+@testset "extbarbellgraph" begin
+	for n in [6, 11, 21, 25, 33, 51, 55, 67, 89, 101, 511]
+		n1 = convert(Int, floor(n/3))
+		n2 = convert(Int, floor(n/3))
+		n3 = n-n1-n2
+		g = extbarbellgraph(n)
+		@test nv(g) == n && ne(g) == binomial(n1, 2)+binomial(n2, 2)+n3+1
+	end
+end
+
 @testset "friendshipgraph" begin
 	for n in [5, 11, 21, 25, 33, 51, 55, 67, 89, 101, 511]
 		g = friendshipgraph(n)
 		@test nv(g) == n && ne(g) == 3*(n-1)/2
-	end
-end
-
-@testset "lollipopgraph" begin
-	for n in [6, 11, 21, 25, 33, 51, 55, 67, 89, 101, 511]
-		n1 = convert(Int, floor(n/2))
-		n2 = convert(Int, ceil(n/2))
-		g = lollipopgraph(n)
-		@test nv(g) == n && ne(g) == binomial(n1, 2)+n2
-		g = lollipopgraph(n, addedge = true)
-		@test nv(g) == n && ne(g) == binomial(n1, 2)+n2+1
 	end
 end
 

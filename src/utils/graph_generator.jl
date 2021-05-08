@@ -171,6 +171,43 @@ function doublestargraph(n::Int64; filepath = "")::SimpleGraph
 end
 
 """
+	extbarbellgraph(n::Int64; filepath::String = "")::SimpleGraph
+
+Create an extended barbell graph with `n` vertices. That is, two cliques
+connected by a path. The cliques and the path are of size `n/3` each.
+
+If a filepath is provided, the graph will also be written to that file.
+
+# Examples
+```julia-repl
+julia> extbarbellgraph(8)
+{8, 7} undirected simple Int64 graph
+```
+"""
+function extbarbellgraph(n::Int64; filepath::String = "")::SimpleGraph
+	n1 = convert(Int, floor(n/3))
+	n2 = convert(Int, floor(n/3))
+	g = SimpleGraph(n)
+	for i = 1:n1
+		for j = 1:n1
+			i < j && add_edge!(g, i, j)
+		end
+	end
+	for i = n1+1:n1+n2
+		for j = n1+1:n1+n2
+			i < j && add_edge!(g, i, j)
+		end
+	end
+	for i = n1+n2+1:n-1
+		add_edge!(g, i, i+1)
+	end
+	add_edge!(g, n1, n1+n2+1)
+	add_edge!(g, n1+n2, n)
+	filepath != "" && save2file(g, filepath)
+	g
+end
+
+"""
 	friendshipgraph(n::Int64; filepath::String = "")::SimpleGraph
 
 Create a friendship graph with `n` vertices. Note that `n` has to be odd.
@@ -191,63 +228,6 @@ function friendshipgraph(n::Int64; filepath::String = "")::SimpleGraph
 	end
 	for i = 2:2:n-1
 		add_edge!(g, i, i+1)
-	end
-	filepath != "" && save2file(g, filepath)
-	g
-end
-
-"""
-	lollipopgraph(n::Int64; addedge = false, filepath = "")::SimpleGraph
-
-Create a lollipop graph with `n` vertices. If `addedge` is set to `true`,
-the graph will contain an additional edge between vertices `n-2` and `n`.
-
-If a filepath is provided, the graph will also be written to that file.
-
-# Examples
-```julia-repl
-julia> collect(edges(lollipopgraph(8)))
-10-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
- Edge 1 => 2
- Edge 1 => 3
- Edge 1 => 4
- Edge 2 => 3
- Edge 2 => 4
- Edge 3 => 4
- Edge 4 => 5
- Edge 5 => 6
- Edge 6 => 7
- Edge 7 => 8
-julia> collect(edges(lollipopgraph(8, addedge=true)))
-11-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
- Edge 1 => 2
- Edge 1 => 3
- Edge 1 => 4
- Edge 2 => 3
- Edge 2 => 4
- Edge 3 => 4
- Edge 4 => 5
- Edge 5 => 6
- Edge 6 => 7
- Edge 6 => 8
- Edge 7 => 8
-```
-"""
-function lollipopgraph(n::Int64; addedge = false, filepath = "")::SimpleGraph
-	n1 = convert(Int, floor(n/2))
-	n2 = convert(Int, ceil(n/2))
-	g = addedge ? SimpleGraph(n) : lollipop_graph(n1, n2)
-	if addedge
-		for i = 1:n1
-			for j = 1:n1
-				i < j && add_edge!(g, i, j)
-			end
-		end
-		add_edge!(g, n1, n1+1)
-		for i = n1+1:n-1
-			add_edge!(g, i, i+1)
-		end
-		add_edge!(g, n-2, n)
 	end
 	filepath != "" && save2file(g, filepath)
 	g
