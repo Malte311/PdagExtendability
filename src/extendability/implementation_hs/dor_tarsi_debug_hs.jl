@@ -23,6 +23,7 @@ function pdag2dag_debug_hs(g::SimpleDiGraph, useheuristic::Bool = false)::Simple
 		iterations += iter
 
 		@info "Checked sinks in iteration $runs: $vertex_order"
+		@info "Found sink $x with $iter checks in iteration $runs"
 
 		x != -1 || @info "Average iterations per vertex: $(iterations / runs)"
 		x != -1 || return SimpleDiGraph(0)
@@ -53,6 +54,7 @@ function sink_debug_hs(graph::DtGraph, useheuristic::Bool = false)::Tuple{Int64,
 
 	if useheuristic
 		for index = 1:length(graph.degrees)
+			iterations += 1
 			for vertex in graph.degrees[index]
 				iterations += 1
 				push!(vertex_order, vertex)
@@ -88,6 +90,7 @@ function is_sink_debug_hs(graph::DtGraph, x::Int64)::Tuple{Bool, Int64}
 	# All vertices connected to x via an undirected edge
 	# must be adjacent to all vertices adjacent to x.
 	for neighbor in graph.undirected[x]
+		iterations += 1
 		for other in union(graph.ingoing[x], graph.undirected[x])
 			iterations += 1
 			neighbor != other || continue
