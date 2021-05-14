@@ -275,8 +275,7 @@ end
 	graph2pdag(g::SimpleDiGraph, prob::Float64)::SimpleDiGraph
 
 Convert an undirected graph (encoded as a `SimpleDiGraph`) into a
-partially directed graph by randomly deleting edges from `g`. Each
-edge is directed with probability `prob`.
+partially directed graph.
 
 # Examples
 ```julia-repl
@@ -293,17 +292,19 @@ true
 julia> collect(edges(graph2pdag(g, 0.5)))
 3-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
+ Edge 1 => 3
  Edge 2 => 1
- Edge 3 => 1
 ```
 """
 function graph2pdag(g::SimpleDiGraph, prob::Float64)::SimpleDiGraph
 	result = copy(g)
-	done = Set{String}()
-	for e in edges(g)
-		isdone = ("$(e.src)-$(e.dst)" in done)
-		!isdone && push!(done, "$(e.dst)-$(e.src)")
-		!isdone && rand() < prob && rem_edge!(result, e.src, e.dst)
+
+	for v in vertices(g)
+		rand() < prob || continue
+		for u in all_neighbors(g, v)
+			rem_edge!(result, v, u)
+		end
 	end
+
 	result
 end
