@@ -35,7 +35,7 @@ for algorithm in config["algorithm"]
 
 	for (root, dirs, files) in walkdir(config["benchmarkdir"])
 		for f in files
-			!occursin(".DS_Store", f) || continue
+			(!occursin(".DS_Store", f) && !occursin("README.md", f)) || continue
 
 			@info "[$(Dates.format(now(), "HH:MM"))] Running benchmark for '$f'..."
 			pdag = readinputgraph(joinpath(root, f), config["only_undirected"])
