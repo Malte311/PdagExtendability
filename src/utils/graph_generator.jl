@@ -308,12 +308,3 @@ function graph2pdag(g::SimpleDiGraph, prob::Float64)::SimpleDiGraph
 
 	result
 end
-
-include("readinput.jl")
-g = readinputgraph("../benchmarks/undirected/chordal/n=10000/subtree-n=10000-1.txt", true)
-
-for p in [0.1, 0.2, 0.5, 0.7, 0.9]
-	for i = 1:5
-		save2file(graph2pdag(g, p), "../benchmarks/pdirected/subtree-n=10000-1/subtree-n=10000-1-p=$p-$i.txt", is_only_undir = false)
-	end
-end
