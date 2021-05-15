@@ -42,6 +42,9 @@ include("utils/utils.jl")
 export is_consistent_extension, isdag, skeleton, vstructures,
 graph2digraph, save2file, graph2str, nanosec2millisec
 
+include("utils/dag_generator.jl")
+export random_dag
+
 include("utils/graph_generator.jl")
 export barbellgraph, bintreegraph, centipedegraph, cliquegraph,
 completegraph, cyclegraph, doublestargraph, extbarbellgraph,
