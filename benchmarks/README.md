@@ -69,10 +69,63 @@ the subfolder `n=2048` contains graphs with 2048 nodes.
 All graphs are extendable.
 
 ### `chordal`
-This folder contains random undirected chordal graphs.
+This folder contains random undirected chordal graphs. The graphs inside
+the subfolder `n=1024` have 1024 nodes each. The filename indicates the
+generation approach for each graph: `peo` for computing a random perfect
+elimination order and `subtree` for computing a intersection graph of
+subtrees. All instances are different from each other.
+
+Analogously, the subfolder `n=10000` contains graphs with 10000 nodes,
+and the subfolder `n=100000` contains graphs with 100000 nodes.
+
+All graphs are extendable.
 
 ### `clique`
+This folder contains graphs consisting of a clique where each node of that
+clique has an additional neighbor which is not connected to any other node.
+The subfolder `n=512` contains graphs with 512 nodes each. All instances
+represent the exact same graph - only the numbering of the nodes is
+different.
+
+Analogously, the subfolder `n=1024` contains graphs with 1024 nodes, and
+the subfolder `n=2048` contains graphs with 2048 nodes.
+
+All graphs are extendable.
+
 ### `complete`
+This folder contains complete undirected graphs. The subfolder `n=512`
+contains a graph with 512 nodes and the subfolder `n=750` contains a
+graph with 750 nodes.
+
+All graphs are extendable.
+
 ### `doublestar`
+This folder contains graphs consisting of two stars where the middle
+nodes are connected via an additional edge. The subfolder `n=1024`
+contains graphs with 1024 nodes each. All instances represent the
+exact same graph - only the numbering of the nodes is different.
+
+Analogously, the subfolder `n=10000` contains graphs with 10000
+nodes, and the subfolder `n=100000` contains graphs with 100000 nodes.
+
+All graphs are extendable.
+
 ### `friendship`
+This folder contains friendship graphs. The subfolder `n=1001` contains
+graphs with 1001 nodes each. All instances represent the exact
+same graph - only the numbering of the nodes is different.
+
+Analogously, the subfolder `n=10001` contains graphs with 10001
+nodes, and the subfolder `n=100001` contains graphs with 100001 nodes.
+
+All graphs are extendable.
+
 ### `star`
+This folder contains star graphs. The subfolder `n=1024` contains
+graphs with 1024 nodes each. All instances represent the exact
+same graph - only the numbering of the nodes is different.
+
+Analogously, the subfolder `n=10000` contains graphs with 10000
+nodes, and the subfolder `n=100000` contains graphs with 100000 nodes.
+
+All graphs are extendable.
