@@ -16,5 +16,9 @@ false
 ```
 """
 function plotsvg(g, file::String)
-	draw(SVG(file), gplot(g, nodelabel=1:nv(g), layout=shell_layout))
+	if nv(g) >= 1
+		draw(SVG(file), gplot(g, nodelabel=1:nv(g), layout=shell_layout))
+	else
+		@warn "Cannot plot '$file' because the graph is empty." 
+	end
 end
