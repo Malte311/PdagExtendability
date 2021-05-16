@@ -23,6 +23,23 @@ Analogously, the subfolder `n=100000` contains the same path with
 
 All graphs are extendable (in fact, they are already DAGs).
 
+### `sparse`
+This folder contains sparse DAGs. All of the graphs in the subfolder
+`small` were generated via the function
+[`random_dag`](https://github.com/Malte311/PdagExtendability/blob/master/src/utils/dag_generator.jl#L20)
+with parameters `random_dag(20, 30, 50, 55, 0.01)` and have about
+1000 nodes each.
+The graphs in the subfolder `medium` were generated via
+`random_dag(100, 120, 90, 95, 0.001)` and have about 10000 nodes
+each.
+The maximum degree of graphs in the subfolders `small` and `medium`
+lies between 20 and 30 (i.e., no vertex has a degree greater than 30).
+The graphs in the subfolder `large` were generated via
+`random_dag(500, 520, 190, 195, 0.00005)` and have about 100000 nodes
+each. The maximum degree of these graphs is always between 15 and 20.
+
+All graphs are extendable (in fact, they are already DAGs).
+
 ## `pdirected` subdirectory
 The `pdirected` subdirectory contains partially directed input graphs,
 i.e., graphs with both directed and undirected edges.
