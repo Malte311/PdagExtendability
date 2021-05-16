@@ -38,3 +38,9 @@ the setup. These are the configuration options which are provided:
 - `visualize`: Boolean value to specify whether the input graph and the output graph should be plotted and saved to a `.svg` file.
 
 It is also possible to run multiple trials simultaneously using different configuration files for each trial.
+
+## Generating Your Own Benchmarks
+In order to run the algorithms on other graphs than the provided
+benchmarks, you can generate your own graphs. There are plenty of
+functions for generating graphs which can be found under the
+[Utilities](@ref utilities_header) section.

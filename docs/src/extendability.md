@@ -27,6 +27,7 @@ Pages = [
 	"extendability/implementation_hs/dor_tarsi_algo_datastructure_hs.jl",
 	"extendability/implementation_hs/dor_tarsi_algo_hs.jl",
 	"extendability/implementation_hs/dor_tarsi_alt_algo_hs.jl",
+	"extendability/implementation_hs/maximum_cardinality_search_hs.jl",
 	"extendability/implementation_hs/new_algo_datastructure_hs.jl",
 	"extendability/implementation_hs/new_algo_hs.jl",
 	"extendability/implementation_hs/new_algo_optimization_hs.jl",
