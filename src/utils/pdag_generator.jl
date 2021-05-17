@@ -1,5 +1,7 @@
 using LightGraphs
 
+@isdefined(graph2digraph) || include("utils.jl")
+
 """
 	random_pdag(g::SimpleDiGraph, p::Float64)::g::SimpleDiGraph
 
