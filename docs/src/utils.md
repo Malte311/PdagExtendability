@@ -6,6 +6,7 @@ Pages = [
 	"utils/dag_generator.jl",
 	"utils/graph_generator.jl",
 	"utils/logparser.jl",
+	"utils/pdag_generator.jl",
 	"utils/plotting.jl",
 	"utils/readinput.jl",
 	"utils/utils.jl"
