@@ -1,5 +1,6 @@
 using LightGraphs
 
+@isdefined(fastpdag2dag_hs) || include("../extendability/implementation_hs/new_algo_hs.jl")
 @isdefined(graph2digraph) || include("utils.jl")
 
 """
