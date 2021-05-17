@@ -42,3 +42,31 @@ function random_pdag(g::SimpleDiGraph, p::Float64)::SimpleDiGraph
 
 	result
 end
+
+"""
+	erdos_renyi_pdag(n::Int64, p1::Float64, p2::Float64; seed = 123)::SimpleDiGraph
+
+Create a partially directed graph using the
+[Erdős–Rényi model](https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model).
+The graph has `n` vertices with a probability `p1` for having an edge
+between two vertices. `p2` is the probablity for an edge to be directed.
+
+# Examples
+```julia-repl
+julia> erdos_renyi_pdag(10, 0.2, 0.5)
+{10, 12} directed simple Int64 graph
+```
+"""
+function erdos_renyi_pdag(n::Int64, p1::Float64, p2::Float64; seed = 123)::SimpleDiGraph
+	result = graph2digraph(erdos_renyi(n, p1, seed = seed))
+	done = Set{String}()
+
+	for e in edges(result)
+		isdone = "$(e.src)-$(e.dst)" in done
+		!isdone && push!(done, "$(e.dst)-$(e.src)")
+		(!isdone && rand() < p2) || continue
+		rem_edge!(result, e.src, e.dst)
+	end
+
+	result
+end

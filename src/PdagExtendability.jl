@@ -46,7 +46,7 @@ include("utils/dag_generator.jl")
 export random_dag
 
 include("utils/pdag_generator.jl")
-export random_pdag
+export random_pdag, erdos_renyi_pdag
 
 include("utils/graph_generator.jl")
 export barbellgraph, bintreegraph, centipedegraph, cliquegraph,
