@@ -216,6 +216,17 @@ nodes, and the subfolder `n=100001` contains graphs with 100001 nodes.
 
 All graphs are extendable.
 
+### `path`
+This folder contains path graphs (sequences of nodes). There are graphs
+with 1000 nodes in the subfolder `n=1000` which represent all
+the exact same path - only the numbering of the nodes is different.
+
+Analogously, the subfolder `n=10000` contains the same path with
+10000 nodes each and the subfolder `n=100000` contains the same
+path with 100000 nodes each.
+
+All graphs are extendable.
+
 ### `star`
 This folder contains star graphs. The subfolder `n=1024` contains
 graphs with 1024 nodes each. All instances represent the exact
