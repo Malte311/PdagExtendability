@@ -178,9 +178,9 @@ the subfolder `n=2048` contains graphs with 2048 nodes.
 All graphs are extendable.
 
 ### `complete`
-This folder contains complete undirected graphs. The subfolder `n=512`
-contains a graph with 512 nodes and the subfolder `n=750` contains a
-graph with 750 nodes.
+This folder contains complete undirected graphs. The subfolder `n=256`
+contains a graph with 256 nodes, the subfolder `n=512` contains a graph
+with 512 nodes and the subfolder `n=750` contains a graph with 750 nodes.
 
 All graphs are extendable.
 
