@@ -38,3 +38,35 @@ function random_dag(min_r, max_r, min_v_per_r, max_v_per_r, prob)::SimpleDiGraph
 	end
 	g
 end
+
+"""
+	random_dag_v2(n::Int64, m::Int64)::SimpleDiGraph
+
+Create a random DAG with `n` vertices and `m` edges.
+
+# Examples
+```julia-repl
+julia> random_dag_v2(10, 40)
+{10, 40} directed simple Int64 graph
+```
+"""
+function random_dag_v2(n::Int64, m::Int64)::SimpleDiGraph
+	g = SimpleDiGraph(n)
+	i = 0
+
+	while i < m
+		u = rand(1:n)
+		v = rand(1:n)
+		(u != v && !has_edge(g, u, v)) || continue
+
+		add_edge!(g, u, v)
+
+		if !is_cyclic(g)
+			i += 1
+		else
+			rem_edge!(g, u, v)
+		end
+	end
+
+	g
+end

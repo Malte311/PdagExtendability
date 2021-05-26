@@ -12,3 +12,10 @@
 		end
 	end
 end
+
+@testset "random_dag_v2" begin
+	for (n, m) in [(10, 40), (100, 400), (1000, 4000)]
+		dag = random_dag_v2(n, m)
+		@test isdag(dag)
+	end
+end

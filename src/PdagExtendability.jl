@@ -43,7 +43,7 @@ export is_consistent_extension, isdag, skeleton, vstructures,
 graph2digraph, save2file, graph2str, nanosec2millisec
 
 include("utils/dag_generator.jl")
-export random_dag
+export random_dag, random_dag_v2
 
 include("utils/pdag_generator.jl")
 export random_pdag, erdos_renyi_pdag
