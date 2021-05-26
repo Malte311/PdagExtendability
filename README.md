@@ -1,7 +1,7 @@
 ![Build Status](https://travis-ci.com/Malte311/PdagExtendability.svg?token=peoMTzKpBjcCaX8BZgzt&branch=master)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://malte311.github.io/PdagExtendability/)
 
-# PdagExtendability
+# PdagExtendability <img src="docs/src/assets/logo.svg" align="right" height="120">
 Causal relationships are of great interest in many research areas. In order to
 model causal relationships, graphical causal models are widely used.
 
