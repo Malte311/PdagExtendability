@@ -9,8 +9,7 @@ using LightGraphs
 Generates a partially directed graph by directing a given percentage
 of edges in a given undirected graph.
 Takes as input a fully undirected graph, encoded as a `SimpleDiGraph`.
-The generated PDAG will be extendable if and only if the input is
-extendable.
+The generated PDAG will be extendable if the input is extendable.
 
 # Examples
 ```julia-repl

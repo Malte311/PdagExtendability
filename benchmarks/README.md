@@ -209,7 +209,8 @@ The `p=...` in the filename gives the probability of an edge
 being directed (thus, `1-p` is the probability of an edge being
 directed).
 
-Analogously, the subfolder `n=10000` contains graphs with 10000 nodes.
+Analogously, the subfolder `n=10000` contains graphs with 10000
+nodes, and the subfolder `n=100000` contains graphs with 100000 nodes.
 
 All graphs are extendable.
 
