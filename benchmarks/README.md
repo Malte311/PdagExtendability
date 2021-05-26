@@ -182,6 +182,9 @@ generated based on the undirected chordal graph `subtree-n=10000-k=3-1`.
 
 All graphs are extendable.
 
+### `fromdag`
+TODO
+
 ### `path`
 This folder contains path graphs (sequences of nodes). There are graphs
 with 1000 nodes in the subfolder `n=1000` which represent all
