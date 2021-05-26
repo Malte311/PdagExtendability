@@ -3,17 +3,18 @@
 		"pdag2dag_hs(false)",
 		"pdag2dag_hs(true)",
 		"fastpdag2dag_hs(false)",
-		"fastpdag2dag_hs(true)"
+		"fastpdag2dag_hs(true)",
+		"undir2dag()"
 	],
-	"algorithm_log_id": "1",
-	"benchmarkdir": "../benchmarks/",
+	"algorithm_log_id": "",
+	"benchmarkdir": "../benchmarks/undirected/star/n=1024/",
 	"create_csv": false,
 	"logdir": "../logs/",
-	"logfile": "log.txt",
+	"logfile": "log-2.txt",
 	"logtofile": false,
 	"num_evals": 1,
-	"num_samples": 1000,
-	"only_undirected": false,
+	"num_samples": 5,
+	"only_undirected": true,
 	"use_median": true,
 	"visualize": false
 }

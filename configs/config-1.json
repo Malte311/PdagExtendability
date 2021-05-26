@@ -1,0 +1,19 @@
+{
+	"algorithm": [
+		"pdag2dag_hs(false)",
+		"pdag2dag_hs(true)",
+		"fastpdag2dag_hs(false)",
+		"fastpdag2dag_hs(true)"
+	],
+	"algorithm_log_id": "",
+	"benchmarkdir": "../benchmarks/pdirected/sparse/n=1024/",
+	"create_csv": false,
+	"logdir": "../logs/",
+	"logfile": "log-1.txt",
+	"logtofile": false,
+	"num_evals": 1,
+	"num_samples": 5,
+	"only_undirected": false,
+	"use_median": true,
+	"visualize": false
+}

@@ -33,7 +33,7 @@ the setup. These are the configuration options which are provided:
 - `logtofile`: Boolean value to specify whether logs should be written to the logfile (`true`) or to `stdout` (`false`).
 - `num_evals`: The number of evaluations per sample.
 - `num_samples`: The number of samples to take.
-- `only_undirected`: Boolean value to specify whether the input graphs contain only undirected edges (`true`) or not (`false`).
+- `only_undirected`: Boolean value to specify whether the input graphs contain only undirected edges (`true`) or not (`false`), i.e., if undirected edges are **not** encoded via two directed edges in the input file. For the `benchmarks/undirected` directory, this should be set to `true`. For the other directories (`benchmarks/directed` and `benchmarks/pdirected`), it should be set to `false`.
 - `use_median`: Boolean value to specify whether to use the median of the measurements. If set to `false`, the mean will be used instead.
 - `visualize`: Boolean value to specify whether the input graph and the output graph should be plotted and saved to a `.svg` file.
 
