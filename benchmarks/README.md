@@ -136,7 +136,8 @@ are two graphs with ~20% of the edges being directed (those with `p=0.2` in
 their name), two graphs with ~25% directed edges (`p=0.25`), and two graphs
 with ~30% directed edges (`p=0.3`).
 
-Analogously, the subfolder `n=750` contains complete graphs with 750 nodes
+Analogously, the subfolder `n=256` contains complete graphs with 256 nodes
+each and the subfolder `n=750` contains complete graphs with 750 nodes
 each.
 
 All graphs are extendable.
@@ -176,6 +177,18 @@ have been directed towards that node with a given probability (`p=0.1` for 10%,
 
 Analogously, the subfolder `subtree-n=10000-2` contains graphs that were generated
 using the undirected chordal graph `subtree-n=10000-2` as a basis.
+
+All graphs are extendable.
+
+### `path`
+This folder contains path graphs (sequences of nodes). There are graphs
+with 1000 nodes in the subfolder `n=1000` which represent all
+the exact same path - only the numbering of the nodes is different.
+The `p=...` in the filename is the probability for an edge to be directed
+(i.e., `1-p` is the probability for an edge to be undirected).
+
+Analogously, the subfolder `n=10000` contains the same path with
+10000 nodes each.
 
 All graphs are extendable.
 
