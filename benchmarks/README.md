@@ -183,7 +183,13 @@ generated based on the undirected chordal graph `subtree-n=10000-k=3-1`.
 All graphs are extendable.
 
 ### `fromdag`
-TODO
+This folder contains random PDAGs generated from sparse random DAGs. Graphs in
+the subfolder `sparse` were generated from `benchmarks/directed/sparse` and graphs
+in the subfolder `sparse-v2` were generated from `benchmarks/directed/sparse-v2`.
+The `p=...` in the filename is the probability for an edge to be directed
+(i.e., `1-p` is the probability for an edge to be undirected).
+
+All graphs are **not** extendable.
 
 ### `path`
 This folder contains path graphs (sequences of nodes). There are graphs
