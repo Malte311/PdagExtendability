@@ -9,6 +9,9 @@ number of ranks for the DAG and `max_r` the maximum number of ranks.
 `max_v_per_r` the maximum number of vertices per rank.
 `prob` is the probability of having an edge between two vertices.
 
+# References
+https://stackoverflow.com/questions/12790337/generating-a-random-dag
+
 # Examples
 ```julia-repl
 julia> random_dag(3, 5, 3, 5, 0.2)
