@@ -1,7 +1,7 @@
 module PdagExtendability
 
 include("extendability/implementation_hs/depth_first_search_hs.jl")
-export dir2dag, iscyclic
+export dir2dag, iscyclic!
 
 include("extendability/implementation_hs/dor_tarsi_alt_algo_hs.jl")
 export altpdag2dag_hs, list_sinks_hs, is_sink_hs

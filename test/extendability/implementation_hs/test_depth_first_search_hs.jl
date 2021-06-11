@@ -46,7 +46,7 @@ end
 				add_edge!(input, i, i+1)
 			end
 			add_edge!(input, n, 1)
-			@test iscyclic(setup_hs(input))
+			@test iscyclic!(setup_hs(input))
 		end
 	end
 
@@ -56,7 +56,7 @@ end
 			for i = 1:n-1
 				add_edge!(input, i, i+1)
 			end
-			@test !iscyclic(setup_hs(input))
+			@test !iscyclic!(setup_hs(input))
 		end
 	end
 end
