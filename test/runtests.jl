@@ -1,6 +1,7 @@
 using LightGraphs, PdagExtendability, Test
 
 tests = [
+	"extendability/implementation_hs/test_depth_first_search_hs.jl",
 	"extendability/implementation_hs/test_dor_tarsi_algo_datastructure_hs.jl",
 	"extendability/implementation_hs/test_dor_tarsi_algo_hs.jl",
 	"extendability/implementation_hs/test_dor_tarsi_alt_algo_hs.jl",

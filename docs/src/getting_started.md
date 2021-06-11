@@ -24,7 +24,7 @@ julia run.jl "../configs/config.json"
 You can adapt the configuration file `config.json` in order to customize
 the setup. These are the configuration options which are provided:
 
-- `algorithm`: An array containing the function calls of the algorithms which should be run (i.e., parenthesis and additional parameters must be provided). Available algorithms are [`pdag2dag_hs`](@ref), [`altpdag2dag_hs`](@ref), [`pdag2dag_lg`](@ref), [`fastpdag2dag_hs`](@ref), and [`fastpdag2dag_lg`](@ref). For fully undirected graphs, [`undir2dag`](@ref) is an option as well.
+- `algorithm`: An array containing the function calls of the algorithms which should be run (i.e., parenthesis and additional parameters must be provided). Available algorithms are [`pdag2dag_hs`](@ref), [`altpdag2dag_hs`](@ref), [`pdag2dag_lg`](@ref), [`fastpdag2dag_hs`](@ref), and [`fastpdag2dag_lg`](@ref). For fully undirected graphs [`undir2dag`](@ref) is an option as well and for fully directed graphs the algorithm [`dir2dag`](@ref) can be utilized as well.
 - `algorithm_log_id` (optional): An id to identify a specific run. For example, if you run the same algorithm twice, both results are named the same. In order to prevent this, you can add an id for each run. The id can be an arbitrary string.
 - `benchmarkdir`: The path to the directory which contains the benchmarks which should be run. Note that all subdirectories are evaluated as well.
 - `create_csv`: Boolean value to specify whether a `.csv` file of the run should be created. The file contains one row per benchmark. Each row contains the name of the algorithm, the name of the input file, and the measured time for that instance.

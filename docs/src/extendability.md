@@ -24,6 +24,7 @@ All the other functions are called internally in these algorithms.
 ```@autodocs
 Modules = [PdagExtendability]
 Pages = [
+	"extendability/implementation_hs/depth_first_search_hs.jl",
 	"extendability/implementation_hs/dor_tarsi_algo_datastructure_hs.jl",
 	"extendability/implementation_hs/dor_tarsi_algo_hs.jl",
 	"extendability/implementation_hs/dor_tarsi_alt_algo_hs.jl",
