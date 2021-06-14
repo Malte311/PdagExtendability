@@ -13,6 +13,7 @@ tests = [
 	"extendability/implementation_lg/test_new_algo_datastructure_lg.jl",
 	"extendability/implementation_lg/test_new_algo_lg.jl",
 	"extendability/implementation_lg/test_new_algo_optimization_lg.jl",
+	"extendability/implementation_mpdag/test_meek_rules.jl",
 	"utils/test_dag_generator.jl",
 	"utils/test_graph_generator.jl",
 	"utils/test_pdag_generator.jl",

@@ -41,6 +41,9 @@ update_deg_lg!
 export fastpdag2dag_lg, standardsetup_lg, optimizedsetup_lg,
 extendgraph_lg
 
+include("extendability/implementation_mpdag/meek_rules.jl")
+export pdag2mpdag, dtgraph2digraph
+
 include("utils/utils.jl")
 export is_consistent_extension, isdag, skeleton, vstructures,
 graph2digraph, save2file, graph2str, nanosec2millisec
