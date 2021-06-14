@@ -3,7 +3,29 @@ using LightGraphs
 @isdefined(DtGraph) || include("../implementation_hs/dor_tarsi_algo_datastructure_hs.jl")
 
 """
-TODO
+	pdag2mpdag(g::SimpleDiGraph)::DtGraph
+
+Apply the four Meek Rules to the input PDAG in order to obtain an MPDAG.
+
+# References
+Meek, C. (1995). Causal Inference and Causal Explanation with Background Knowledge.
+In Proceedings of the Eleventh Conference on Uncertainty in Artificial Intelligence, UAI’95.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> collect(edges(dtgraph2digraph(pdag2mpdag(g))))
+2-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 2
+ Edge 2 => 3
+```
 """
 function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 	graph = setup_hs(g)
@@ -48,7 +70,19 @@ function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 end
 
 """
-TODO
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> g == dtgraph2digraph(setup_hs(g))
+true
+```
 """
 function dtgraph2digraph(g::DtGraph)::SimpleDiGraph
 	result = SimpleDiGraph(g.numvertices)
