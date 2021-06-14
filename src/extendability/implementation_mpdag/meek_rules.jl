@@ -5,9 +5,8 @@ using LightGraphs
 """
 TODO
 """
-function pdag2mpdag(g::SimpleDiGraph)::SimpleDiGraph
+function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 	graph = setup_hs(g)
-	result = copy(g)
 
 	for u in graph.vertices
 		for v in graph.undirected[u] # undirected edges u-v
@@ -17,17 +16,30 @@ function pdag2mpdag(g::SimpleDiGraph)::SimpleDiGraph
 					delete!(graph.undirected[v], u)
 					push!(graph.ingoing[v], u)
 					push!(graph.outgoing[u], v)
-					rem_edge!(result, v, u)
 				elseif other in graph.outgoing[v] # Rule 2
 					delete!(graph.undirected[u], v)
 					delete!(graph.undirected[v], u)
 					push!(graph.ingoing[u], v)
 					push!(graph.outgoing[v], u)
-					rem_edge!(result, u, v)
+				end
+			end
+		end
+
+		for v in graph.outgoing[u] # directed edges u->v
+			for other in intersect(graph.undirected[u], graph.undirected[v])
+				# There must be an undirected edge between an ingoing vertex
+				# of v and o1 because R1 or R2 would have been applied otherwise.
+				# Note that u is element of graph.ingoing[v], thus checking
+				# whether graph.ingoing[v] is empty is not sufficient. 
+				if length(graph.ingoing[v]) > 1 # Rule 3
+					delete!(graph.undirected[other], v)
+					delete!(graph.undirected[v], other)
+					push!(graph.ingoing[v], other)
+					push!(graph.outgoing[other], v)
 				end
 			end
 		end
 	end
 
-	result
+	graph
 end
