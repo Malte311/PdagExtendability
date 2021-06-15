@@ -80,7 +80,7 @@ julia> add_edge!(g, 2, 3)
 true
 julia> add_edge!(g, 3, 2)
 true
-julia> x = sink_hs(g)
+julia> x = sink_hs(setup_hs(g))
 3
 ```
 """
