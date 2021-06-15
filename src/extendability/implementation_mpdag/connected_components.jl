@@ -21,7 +21,7 @@ end
 """
 TODO
 """
-function dfs!(g::DtGraph, u::Int64, visited::Vector{Bool})::Set{Int64}
+function dfs!(g::DtGraph, u::Int64, visited::BitArray)::Set{Int64}
 	bucket = Set{Int64}()
 	stack = Vector{Int64}([u])
 

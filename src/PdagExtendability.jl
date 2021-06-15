@@ -41,6 +41,9 @@ update_deg_lg!
 export fastpdag2dag_lg, standardsetup_lg, optimizedsetup_lg,
 extendgraph_lg
 
+include("extendability/implementation_mpdag/connected_components.jl")
+export buckets, dfs!
+
 include("extendability/implementation_mpdag/meek_rules.jl")
 export pdag2mpdag, dtgraph2digraph
 
