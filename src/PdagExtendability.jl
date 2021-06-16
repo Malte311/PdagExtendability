@@ -47,6 +47,9 @@ export buckets, dfs!
 include("extendability/implementation_mpdag/meek_rules.jl")
 export pdag2mpdag, dtgraph2digraph
 
+include("extendability/implementation_mpdag/new_algo_mpdag.jl")
+export mpdag2dag, subgraph, amo, isamo
+
 include("utils/utils.jl")
 export is_consistent_extension, isdag, skeleton, vstructures,
 graph2digraph, save2file, graph2str, nanosec2millisec
