@@ -51,6 +51,62 @@
 			has_edge(out, 1, 3) && has_edge(out, 3, 1) && has_edge(out, 1, 4) &&
 			has_edge(out, 4, 1) && has_edge(out, 3, 2) && has_edge(out, 4, 3)
 	end
+
+	@testset "No changes for DAG inputs 1" begin
+		input = SimpleDiGraph(2)
+		add_edge!(input, 1, 2)
+		out = dtgraph2digraph(pdag2mpdag(input))
+		@test input == out
+	end
+
+	@testset "No changes for DAG inputs 2" begin
+		input = SimpleDiGraph(3)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 3)
+		out = dtgraph2digraph(pdag2mpdag(input))
+		@test input == out
+	end
+
+	@testset "No changes for DAG inputs 3" begin
+		for n in [50, 100, 500]
+			input = SimpleDiGraph(n)
+			for i = 1:n-1
+				add_edge!(input, i, i+1)
+			end
+			out = dtgraph2digraph(pdag2mpdag(input))
+			@test input == out
+		end
+	end
+
+	@testset "No changes for fully undirected inputs 1" begin
+		input = SimpleDiGraph(2)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		out = dtgraph2digraph(pdag2mpdag(input))
+		@test input == out
+	end
+
+	@testset "No changes for fully undirected inputs 2" begin
+		input = SimpleDiGraph(3)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		out = dtgraph2digraph(pdag2mpdag(input))
+		@test input == out
+	end
+
+	@testset "No changes for fully undirected inputs 3" begin
+		for n in [50, 100, 500]
+			input = SimpleDiGraph(n)
+			for i = 1:n-1
+				add_edge!(input, i, i+1)
+				add_edge!(input, i+1, i)
+			end
+			out = dtgraph2digraph(pdag2mpdag(input))
+			@test input == out
+		end
+	end
 end
 
 @testset "dtgraph2digraph" begin
