@@ -80,6 +80,132 @@
 		out = mpdag2dag(mpdag)
 		@test is_consistent_extension(out, input)
 	end
+
+	@testset "More PDAGs with possible extensions 1" begin
+		input = SimpleDiGraph(4)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		add_edge!(input, 3, 4)
+		mpdag = dtgraph2digraph(pdag2mpdag(input))
+		out = mpdag2dag(mpdag)
+		@test is_consistent_extension(out, input)
+	end
+
+	@testset "More PDAGs with possible extensions 2" begin
+		for n in [20, 50, 100]
+			input = SimpleDiGraph(n)
+			for i = 1:n-1
+				add_edge!(input, i, i+1)
+				i % 2 == 0 && add_edge!(input, i+1, i)
+			end
+			mpdag = dtgraph2digraph(pdag2mpdag(input))
+			out = mpdag2dag(mpdag)
+			@test is_consistent_extension(out, input)
+		end
+	end
+
+	@testset "More PDAGs with possible extensions 3" begin
+		input = SimpleDiGraph(5)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 4, 5)
+		add_edge!(input, 5, 4)
+		add_edge!(input, 5, 2)
+		add_edge!(input, 5, 3)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		mpdag = dtgraph2digraph(pdag2mpdag(input))
+		out = mpdag2dag(mpdag)
+		@test is_consistent_extension(out, input)
+	end
+
+	@testset "More PDAGs with possible extensions 4" begin
+		input = SimpleDiGraph(5)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 5, 4)
+		add_edge!(input, 5, 2)
+		add_edge!(input, 5, 3)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		mpdag = dtgraph2digraph(pdag2mpdag(input))
+		out = mpdag2dag(mpdag)
+		@test is_consistent_extension(out, input)
+	end
+
+	@testset "More PDAGs with possible extensions 5" begin
+		input = SimpleDiGraph(5)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 5)
+		add_edge!(input, 5, 4)
+		add_edge!(input, 5, 2)
+		add_edge!(input, 5, 3)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		mpdag = dtgraph2digraph(pdag2mpdag(input))
+		out = mpdag2dag(mpdag)
+		@test is_consistent_extension(out, input)
+	end
+
+	@testset "More PDAGs with possible extensions 6" begin
+		input = SimpleDiGraph(5)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 4, 5)
+		add_edge!(input, 5, 4)
+		add_edge!(input, 5, 2)
+		add_edge!(input, 2, 5)
+		add_edge!(input, 5, 3)
+		add_edge!(input, 3, 5)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 3, 2)
+		mpdag = dtgraph2digraph(pdag2mpdag(input))
+		out = mpdag2dag(mpdag)
+		@test is_consistent_extension(out, input)
+	end
+
+	@testset "More PDAGs with possible extensions 7" begin
+		for n in [5, 50, 100]
+			input = graph2digraph(bintreegraph(n))
+			mpdag = dtgraph2digraph(pdag2mpdag(input))
+			out = mpdag2dag(mpdag)
+			@test is_consistent_extension(out, input)
+		end
+	end
+
+	@testset "More PDAGs with possible extensions 8" begin
+		for n in [5, 50, 100]
+			input = graph2digraph(pathgraph(n))
+			mpdag = dtgraph2digraph(pdag2mpdag(input))
+			out = mpdag2dag(mpdag)
+			@test is_consistent_extension(out, input)
+		end
+	end
+
+	@testset "More PDAGs with possible extensions 9" begin
+		for n in [5, 50, 100]
+			input = graph2digraph(stargraph(n))
+			mpdag = dtgraph2digraph(pdag2mpdag(input))
+			out = mpdag2dag(mpdag)
+			@test is_consistent_extension(out, input)
+		end
+	end
+
+	@testset "Empty graph if no consistent extension is possible 1" begin
+		# Input is a MPDAG which is fully undirected and not chordal.
+		g = SimpleDiGraph(5)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 1, 4)
+		add_edge!(g, 4, 1)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		add_edge!(g, 3, 4)
+		add_edge!(g, 4, 3)
+		out = mpdag2dag(g)
+		@test out == SimpleDiGraph(0)
+	end
 end
 
 @testset "subgraph" begin
