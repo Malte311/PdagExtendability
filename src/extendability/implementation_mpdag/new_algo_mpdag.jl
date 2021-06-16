@@ -108,5 +108,27 @@ end
 TODO
 """
 function isamo(g::DtGraph, ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool
-	
+	(orderindex, order) = ordering
+
+	f = zeros(Int64, length(order))
+	index = zeros(Int64, length(order))
+
+	for i = length(order):-1:1
+		w = order[i]
+		f[w] = w
+		index[w] = i
+		neighbors = union(g.undirected[w], g.outgoing[w], g.ingoing[w])
+
+		for v in neighbors
+			orderindex[v] > i || continue
+			index[v] = i
+			f[v] == v && (f[v] = w)
+		end
+
+		for v in neighbors
+			orderindex[v] > i && index[f[v]] > i && return false
+		end
+	end
+
+	true
 end

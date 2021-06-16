@@ -129,5 +129,77 @@ end
 end
 
 @testset "isamo" begin
-	# TODO
+	@testset "Undirected component with a single directed edge 1" begin
+		g = SimpleDiGraph(4)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 1, 4)
+		add_edge!(g, 4, 1)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		add_edge!(g, 3, 4)
+		add_edge!(g, 4, 3)
+		add_edge!(g, 3, 1)
+		dtgraph = setup_hs(g)
+		@test isamo(dtgraph, amo(dtgraph))
+	end
+
+	@testset "Undirected component with a single directed edge 2" begin
+		g = SimpleDiGraph(4)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 1, 4)
+		add_edge!(g, 4, 1)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		add_edge!(g, 3, 4)
+		add_edge!(g, 4, 3)
+		add_edge!(g, 1, 3)
+		dtgraph = setup_hs(g)
+		@test isamo(dtgraph, amo(dtgraph))
+	end
+
+	@testset "Undirected component with a single directed edge 3" begin
+		g = SimpleDiGraph(4)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 1, 4)
+		add_edge!(g, 4, 1)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		add_edge!(g, 3, 4)
+		add_edge!(g, 4, 3)
+		add_edge!(g, 2, 4)
+		dtgraph = setup_hs(g)
+		@test isamo(dtgraph, amo(dtgraph))
+	end
+
+	@testset "Undirected component with a single directed edge 4" begin
+		g = SimpleDiGraph(4)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 1, 4)
+		add_edge!(g, 4, 1)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		add_edge!(g, 3, 4)
+		add_edge!(g, 4, 3)
+		add_edge!(g, 4, 2)
+		dtgraph = setup_hs(g)
+		@test isamo(dtgraph, amo(dtgraph))
+	end
+
+	@testset "Undirected component (not chordal)" begin
+		g = SimpleDiGraph(4)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 1, 4)
+		add_edge!(g, 4, 1)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		add_edge!(g, 3, 4)
+		add_edge!(g, 4, 3)
+		dtgraph = setup_hs(g)
+		@test !isamo(dtgraph, amo(dtgraph))
+	end
 end
