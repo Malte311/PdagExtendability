@@ -66,4 +66,28 @@
 		@test length(bs) == 1 && length(bs[1]) == 4 &&
 			1 in bs[1] && 2 in bs[1] && 3 in bs[1] && 4 in bs[1]
 	end
+
+	@testset "Vertex separated by directed edge is no bucket 1" begin
+		g = SimpleDiGraph(4)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		add_edge!(g, 3, 4)
+		bs = buckets(setup_hs(g))
+		@test length(bs) == 1 && length(bs[1]) == 3 &&
+			1 in bs[1] && 2 in bs[1] && 3 in bs[1]
+	end
+
+	@testset "Vertex separated by directed edge is no bucket 2" begin
+		g = SimpleDiGraph(4)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		add_edge!(g, 4, 3)
+		bs = buckets(setup_hs(g))
+		@test length(bs) == 1 && length(bs[1]) == 3 &&
+			1 in bs[1] && 2 in bs[1] && 3 in bs[1]
+	end
 end
