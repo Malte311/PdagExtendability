@@ -76,7 +76,7 @@ function amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 	for i = 1:n
 		size[i] = 1
 		ingoing[i] = length(g.ingoing[i])
-		push!(ingoing[i] > 0 ? set[1] : set_noingoing[1], i)
+		push!(ingoing[i] == 0 ? set_noingoing[1] : set[1], i)
 	end
 
 	j = 1
@@ -96,7 +96,7 @@ function amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 
 		j += 1
 
-		while j >= 1 && isempty(set[j])
+		while j >= 1 && isempty(set_noingoing[j])
 			j -= 1
 		end
 	end
