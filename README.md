@@ -18,6 +18,9 @@ compute the graph resulting from applying Meek's rules repeatedly.
 
 All of the implemented algorithms are based on the paper "Extendability of
 Causal Graphical Models: Algorithms and Computational Complexity".
+> M. Wienöbst, M. Bannach, M. Liśkiewicz (2021).
+> Extendability of Causal Graphical Models: Algorithms and Computational Complexity.
+> 37th Conference on Uncertainty in Artificial Intelligence, 2021 (UAI 2021).
 
 ## Usage
 In order to run the benchmarks, download the repository first.
