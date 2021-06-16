@@ -13,9 +13,9 @@ function mpdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 	graph = setup_hs(g)
 
 	for bucket in buckets(graph)
-		(indices, ordering) = amo(subgraph(bucket))
-		# TODO: Test peo only on bucket, not on whole graph!!
-		#isamo(graph, bucket, (indices, ordering)) || return SimpleDiGraph(0)
+		sg = subgraph(graph, bucket)
+		(indices, ordering) = amo(sg)
+		isamo(sg, (indices, ordering)) || return SimpleDiGraph(0)
 		for i = length(ordering):-1:1
 			v = ordering[i]
 
@@ -65,12 +65,48 @@ end
 TODO
 """
 function amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
+	n = g.numvertices
+	alpha = Vector{Int64}(undef, n)
+	alphainvers = Vector{Int64}(undef, n)
+	set = [Set{Int64}() for _ in 1:n+1]
+	set_noingoing = [Set{Int64}() for _ in 1:n+1]
+	size = Vector{Int64}(undef, n)
+	ingoing = Vector{Int64}(undef, n)
 
+	for i = 1:n
+		size[i] = 1
+		ingoing[i] = length(g.ingoing[i])
+		push!(ingoing[i] > 0 ? set[1] : set_noingoing[1], i)
+	end
+
+	j = 1
+	for i = 1:n
+		v = pop!(set_noingoing[j])
+		alpha[v] = i
+		alphainvers[i] = v
+		size[v] = 0
+
+		for w in union(g.undirected[v], g.outgoing[v])
+			size[w] >= 1 || continue
+			delete!(ingoing[w] == 0 ? set_noingoing[size[w]] : set[size[w]], w)
+			size[w] += 1
+			(w in g.outgoing[v]) && (ingoing[w] -= 1)
+			push!(ingoing[w] == 0 ? set_noingoing[size[w]] : set[size[w]], w)
+		end
+
+		j += 1
+
+		while j >= 1 && isempty(set[j])
+			j -= 1
+		end
+	end
+
+	(alpha, alphainvers)
 end
 
 """
 TODO
 """
-function isamo()
+function isamo(g::DtGraph, ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool
 	
 end
