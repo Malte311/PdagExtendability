@@ -91,3 +91,32 @@
 			1 in bs[1] && 2 in bs[1] && 3 in bs[1]
 	end
 end
+
+@testset "dfs!" begin
+	@testset "Single undirected edge and single directed edge 1" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 2, 3)
+		bucket = dfs!(setup_hs(g), 1, falses(3))
+		@test length(bucket) == 2 && 1 in bucket && 2 in bucket
+	end
+
+	@testset "Single undirected edge and single directed edge 2" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 2, 3)
+		bucket = dfs!(setup_hs(g), 2, falses(3))
+		@test length(bucket) == 2 && 1 in bucket && 2 in bucket
+	end
+
+	@testset "Single undirected edge and single directed edge 3" begin
+		g = SimpleDiGraph(3)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 2, 3)
+		bucket = dfs!(setup_hs(g), 3, falses(3))
+		@test length(bucket) == 1 && 3 in bucket
+	end
+end
