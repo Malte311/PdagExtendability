@@ -13,11 +13,18 @@ function mpdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 	graph = setup_hs(g)
 
 	for bucket in buckets(graph)
-		sg = subgraph(graph, bucket)
+		mindex = 0
+		mapping = Dict()
+		invmapping = Dict()
+		for v in bucket
+			mapping[mindex += 1] = v
+			invmapping[v] = mindex
+		end
+		sg = subgraph(graph, bucket, invmapping)
 		(indices, ordering) = amo(sg)
 		isamo(sg, (indices, ordering)) || return SimpleDiGraph(0)
 		for i = length(ordering):-1:1
-			v = ordering[i]
+			v = mapping[ordering[i]]
 
 			for w in graph.undirected[v]
 				rem_edge!(result, v, w)
@@ -33,7 +40,7 @@ end
 """
 TODO
 """
-function subgraph(g::DtGraph, bucket::Set{Int64})::DtGraph
+function subgraph(g::DtGraph, bucket::Set{Int64}, m::Dict)::DtGraph
 	n = length(bucket)
 	result = DtGraph(
 		n,
@@ -47,13 +54,13 @@ function subgraph(g::DtGraph, bucket::Set{Int64})::DtGraph
 
 	for vertex in bucket
 		for dir in g.outgoing[vertex]
-			(dir in bucket) && insert_edge_hs!(result, vertex, dir, true)
+			(dir in bucket) && insert_edge_hs!(result, m[vertex], m[dir], true)
 		end
 		for undir in g.undirected[vertex]
 			# No need to check (undir in bucket) as undirected neighbors
 			# must be in the same bucket.
 			isdone = ("$vertex-$undir" in done)
-			!isdone && insert_edge_hs!(result, vertex, undir, false)
+			!isdone && insert_edge_hs!(result, m[vertex], m[undir], false)
 			!isdone && push!(done, "$undir-$vertex")
 		end
 	end
@@ -80,6 +87,7 @@ function amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 	end
 
 	j = 1
+	last_nonempty = 1
 	for i = 1:n
 		v = pop!(set_noingoing[j])
 		alpha[v] = i
@@ -95,10 +103,11 @@ function amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 		end
 
 		j += 1
-
 		while j >= 1 && isempty(set_noingoing[j])
+			!isempty(set[j]) && (last_nonempty = j+1)
 			j -= 1
 		end
+		j == 0 && (j = last_nonempty)
 	end
 
 	(alpha, alphainvers)
