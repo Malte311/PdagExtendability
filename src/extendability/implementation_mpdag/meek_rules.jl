@@ -118,14 +118,3 @@ function dtgraph2digraph(g::DtGraph)::SimpleDiGraph
 
 	result
 end
-
-# include("../../utils/readinput.jl")
-# include("../../utils/utils.jl")
-# dir = "../benchmarks/pdirected/fromchordal/subtree-n=10000-k=3-1/"
-# for f in readdir(dir)
-#     file = joinpath(dir, f)
-#     g = readinputgraph(file, false)
-#     mpdag = dtgraph2digraph(pdag2mpdag(g))
-#     save2file(mpdag, "../benchmarks/mpdirected/fromchordal/subtree-n=10000-k=3-1/$f", is_only_undir = false)
-# end
-
