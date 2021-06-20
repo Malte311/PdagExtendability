@@ -47,20 +47,39 @@ function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 				end
 			end
 		end
+	end
 
+	for u in graph.vertices
 		for v in graph.outgoing[u] # directed edges u->v
-			for other in intersect(graph.undirected[u], graph.undirected[v])
-				(other != u && other != v) || continue
-				# There must be an undirected edge between an ingoing vertex
-				# of v and o1 because R1 or R2 would have been applied otherwise.
-				# Note that u is element of graph.ingoing[v], thus checking
-				# whether graph.ingoing[v] is empty is not sufficient.
-				# Rule 3 & 4
-				if length(graph.ingoing[v]) > 1 || !isempty(graph.ingoing[u])
-					delete!(graph.undirected[other], v)
-					delete!(graph.undirected[v], other)
-					push!(graph.ingoing[v], other)
-					push!(graph.outgoing[other], v)
+			# Rule 3
+			for o1 in intersect(graph.undirected[u], graph.undirected[v])
+				(o1 != u && o1 != v) || continue
+				# There must be an undirected edge between o1 and o2
+				# because R1 or R2 would have been applied otherwise.
+				for o2 in graph.ingoing[v]
+					if o1 != u && o1 != o2 && !isadjacent_hs(graph, u, o2)
+						delete!(graph.undirected[o1], v)
+						delete!(graph.undirected[v], o1)
+						push!(graph.ingoing[v], o1)
+						push!(graph.outgoing[o1], v)
+						break
+					end
+				end
+			end
+
+			# Rule 4
+			for o1 in intersect(graph.undirected[u], graph.undirected[v])
+				(o1 != u && o1 != v) || continue
+				# There must be an undirected edge between o1 and o2
+				# because R1 or R2 would have been applied otherwise.
+				for o2 in graph.ingoing[u]
+					if o1 != v && o1 != o2 && !isadjacent_hs(graph, v, o2)
+						delete!(graph.undirected[o1], v)
+						delete!(graph.undirected[v], o1)
+						push!(graph.ingoing[v], o1)
+						push!(graph.outgoing[o1], v)
+						break
+					end
 				end
 			end
 		end
@@ -99,3 +118,14 @@ function dtgraph2digraph(g::DtGraph)::SimpleDiGraph
 
 	result
 end
+
+# include("../../utils/readinput.jl")
+# include("../../utils/utils.jl")
+# dir = "../benchmarks/pdirected/fromchordal/subtree-n=10000-k=3-1/"
+# for f in readdir(dir)
+#     file = joinpath(dir, f)
+#     g = readinputgraph(file, false)
+#     mpdag = dtgraph2digraph(pdag2mpdag(g))
+#     save2file(mpdag, "../benchmarks/mpdirected/fromchordal/subtree-n=10000-k=3-1/$f", is_only_undir = false)
+# end
+
