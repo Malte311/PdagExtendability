@@ -52,6 +52,45 @@
 			has_edge(out, 4, 1) && has_edge(out, 3, 2) && has_edge(out, 4, 3)
 	end
 
+	@testset "Small PDAG 1" begin
+		input = SimpleDiGraph(5)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 4, 3)
+		add_edge!(input, 1, 5)
+		add_edge!(input, 5, 1)
+		out = dtgraph2digraph(pdag2mpdag(input))
+		@test nv(out) == 5 && ne(out) == 9 && has_edge(out, 1, 2) &&
+			has_edge(out, 2, 1) && has_edge(out, 1, 3) && has_edge(out, 1, 4) &&
+			has_edge(out, 4, 1) && has_edge(out, 2, 3) && has_edge(out, 4, 3) &&
+			has_edge(out, 1, 5) && has_edge(out, 5, 1)
+	end
+
+	@testset "Small PDAG 2" begin
+		input = SimpleDiGraph(5)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 4, 3)
+		add_edge!(input, 1, 5)
+		add_edge!(input, 5, 1)
+		add_edge!(input, 5, 3)
+		out = dtgraph2digraph(pdag2mpdag(input))
+		@test nv(out) == 5 && ne(out) == 10 && has_edge(out, 1, 2) &&
+			has_edge(out, 2, 1) && has_edge(out, 1, 3) && has_edge(out, 1, 4) &&
+			has_edge(out, 4, 1) && has_edge(out, 2, 3) && has_edge(out, 4, 3) &&
+			has_edge(out, 1, 5) && has_edge(out, 5, 1) && has_edge(out, 5, 3)
+	end
+
 	@testset "No changes for DAG inputs 1" begin
 		input = SimpleDiGraph(2)
 		add_edge!(input, 1, 2)
