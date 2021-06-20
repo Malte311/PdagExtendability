@@ -150,7 +150,7 @@ function amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 	end
 
 	j = 1
-	last_nonempty = 1
+	latest = -1
 	for i = 1:n
 		v = pop!(set_noingoing[j])
 		alpha[v] = i
@@ -163,14 +163,18 @@ function amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 			size[w] += 1
 			(w in g.outgoing[v]) && (ingoing[w] -= 1)
 			push!(ingoing[w] == 0 ? set_noingoing[size[w]] : set[size[w]], w)
+			w in g.outgoing[v] && ingoing[w] == 0 && j+1 < size[w] && latest < size[w] && (latest = size[w])
 		end
 
-		j += 1
+		if latest == -1
+			j += 1
+		else
+			j = latest
+			latest = -1
+		end
 		while j >= 1 && isempty(set_noingoing[j])
-			!isempty(set[j]) && (last_nonempty = j+1)
 			j -= 1
 		end
-		j == 0 && (j = last_nonempty)
 	end
 
 	(alpha, alphainvers)
