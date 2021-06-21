@@ -91,6 +91,52 @@
 			has_edge(out, 1, 5) && has_edge(out, 5, 1) && has_edge(out, 5, 3)
 	end
 
+	@testset "No changes for MPDAG inputs 1" begin
+		input = SimpleDiGraph(4)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 4, 3)
+		add_edge!(input, 4, 2)
+		out = dtgraph2digraph(pdag2mpdag(input))
+		@test input == out
+	end
+
+	@testset "No changes for MPDAG inputs 2" begin
+		input = SimpleDiGraph(4)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 4, 3)
+		add_edge!(input, 2, 4)
+		out = dtgraph2digraph(pdag2mpdag(input))
+		@test input == out
+	end
+
+	@testset "No changes for MPDAG inputs 3" begin
+		input = SimpleDiGraph(4)
+		add_edge!(input, 1, 2)
+		add_edge!(input, 2, 1)
+		add_edge!(input, 1, 3)
+		add_edge!(input, 3, 1)
+		add_edge!(input, 1, 4)
+		add_edge!(input, 4, 1)
+		add_edge!(input, 2, 3)
+		add_edge!(input, 4, 3)
+		add_edge!(input, 2, 4)
+		add_edge!(input, 4, 2)
+		out = dtgraph2digraph(pdag2mpdag(input))
+		@test input == out
+	end
+
 	@testset "No changes for DAG inputs 1" begin
 		input = SimpleDiGraph(2)
 		add_edge!(input, 1, 2)
