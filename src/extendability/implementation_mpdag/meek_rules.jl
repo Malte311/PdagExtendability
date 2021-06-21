@@ -31,9 +31,8 @@ function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 	graph = setup_hs(g)
 
 	for u in graph.vertices
-		for v in graph.undirected[u] # undirected edges u-v
-			for other in graph.ingoing[u]
-				(other != u && other != v) || continue
+		for v in copy(graph.undirected[u]) # undirected edges u-v
+			for other in copy(graph.ingoing[u])
 				if !isadjacent_hs(graph, v, other) # Rule 1
 					delete!(graph.undirected[u], v)
 					delete!(graph.undirected[v], u)
@@ -50,19 +49,30 @@ function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 	end
 
 	for u in graph.vertices
-		for v in graph.outgoing[u] # directed edges u->v
-			for other in intersect(graph.undirected[u], graph.undirected[v])
-				(other != u && other != v) || continue
-				# There must be an undirected edge between an ingoing vertex
-				# of v and o1 because R1 or R2 would have been applied otherwise.
-				# Note that u is element of graph.ingoing[v], thus checking
-				# whether graph.ingoing[v] is empty is not sufficient.
-				# Rule 3 & 4
-				if length(graph.ingoing[v]) > 1 || !isempty(graph.ingoing[u])
-					delete!(graph.undirected[other], v)
-					delete!(graph.undirected[v], other)
-					push!(graph.ingoing[v], other)
-					push!(graph.outgoing[other], v)
+		for v in copy(graph.outgoing[u]) # directed edges u->v
+			for a in intersect(graph.undirected[u], graph.undirected[v])
+				# Rule 3
+				for b in copy(graph.ingoing[v])
+					# There must be an undirected edge between an a and b
+					# because R1 or R2 would have been applied otherwise.
+					if u != b && !isadjacent_hs(graph, u, b)
+						delete!(graph.undirected[a], v)
+						delete!(graph.undirected[v], a)
+						push!(graph.ingoing[v], a)
+						push!(graph.outgoing[a], v)
+					end
+				end
+
+				# Rule 4
+				for d in graph.ingoing[u]
+					# There must be an undirected edge between an a and d
+					# because R1 or R2 would have been applied otherwise.
+					if !isadjacent_hs(graph, v, d)
+						delete!(graph.undirected[a], v)
+						delete!(graph.undirected[v], a)
+						push!(graph.ingoing[v], a)
+						push!(graph.outgoing[a], v)
+					end
 				end
 			end
 		end
