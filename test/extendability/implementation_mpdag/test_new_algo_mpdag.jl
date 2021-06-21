@@ -336,20 +336,6 @@ end
 		(index, order) = amo(setup_hs(g))
 		@test index[4] < index[2]
 	end
-
-	@testset "Meek Rule R3 (Input)" begin
-		g = SimpleDiGraph(4)
-		add_edge!(g, 1, 2)
-		add_edge!(g, 2, 1)
-		add_edge!(g, 1, 3)
-		add_edge!(g, 3, 1)
-		add_edge!(g, 1, 4)
-		add_edge!(g, 4, 1)
-		add_edge!(g, 2, 3)
-		add_edge!(g, 4, 3)
-		(index, order) = amo(setup_hs(g))
-		@test index[2] < index[3] && index[4] < index[3]
-	end
 end
 
 @testset "isamo" begin
