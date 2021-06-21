@@ -138,41 +138,40 @@ function amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 	n = g.numvertices
 	alpha = Vector{Int64}(undef, n)
 	alphainvers = Vector{Int64}(undef, n)
-	set = [Set{Int64}() for _ in 1:n+1]
-	set_noingoing = [Set{Int64}() for _ in 1:n+1]
-	size = Vector{Int64}(undef, n)
-	ingoing = Vector{Int64}(undef, n)
+
+	# Sets are separated in two parts: [1] with no ingoing edges, [2] the rest
+	set = [[Set{Int64}(), Set{Int64}()] for _ in 1:n+1]
+	# Vector [a, b] where a gives the set and b the part of the set
+	size = Vector{Vector{Int64}}(undef, n)
+	# Counter for number of ingoing edges of each vertex
+	numingoing = Vector{Int64}(undef, n)
 
 	for i = 1:n
-		size[i] = 1
-		ingoing[i] = length(g.ingoing[i])
-		push!(ingoing[i] == 0 ? set_noingoing[1] : set[1], i)
+		numingoing[i] = length(g.ingoing[i])
+		size[i] = [1, numingoing[i] != 0 ? 2 : 1]
+		push!(set[1][numingoing[i] != 0 ? 2 : 1], i)
 	end
 
 	j = 1
-	latest = -1
 	for i = 1:n
-		v = pop!(set_noingoing[j])
+		v = pop!(set[j][1])
 		alpha[v] = i
 		alphainvers[i] = v
-		size[v] = 0
+		size[v] = [0, 0]
 
 		for w in union(g.undirected[v], g.outgoing[v])
-			size[w] >= 1 || continue
-			delete!(ingoing[w] == 0 ? set_noingoing[size[w]] : set[size[w]], w)
-			size[w] += 1
-			(w in g.outgoing[v]) && (ingoing[w] -= 1)
-			push!(ingoing[w] == 0 ? set_noingoing[size[w]] : set[size[w]], w)
-			w in g.outgoing[v] && ingoing[w] == 0 && j+1 < size[w] && latest < size[w] && (latest = size[w])
+			size[w][1] >= 1 || continue
+			delete!(set[size[w][1]][size[w][2]], w)
+
+			size[w][1] += 1
+			(w in g.outgoing[v]) && (numingoing[w] -= 1)
+			(numingoing[w] == 0) && (size[w][2] = 1)
+
+			push!(set[size[w][1]][size[w][2]], w)
 		end
 
-		if latest == -1
-			j += 1
-		else
-			j = latest
-			latest = -1
-		end
-		while j >= 1 && isempty(set_noingoing[j])
+		j += 1
+		while j >= 1 && isempty(set[j][1])
 			j -= 1
 		end
 	end
