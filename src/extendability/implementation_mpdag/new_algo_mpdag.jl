@@ -140,40 +140,44 @@ function amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 	alphainvers = Vector{Int64}(undef, n)
 
 	# Sets are separated in two parts: [1] with no ingoing edges, [2] the rest
-	set = [[Set{Int64}(), Set{Int64}()] for _ in 1:n+1]
-	# Vector [a, b] where a gives the set and b the part of the set
-	size = Vector{Vector{Int64}}(undef, n)
+	set = Vector{Vector{Set{Int64}}}([[Set{Int64}(), Set{Int64}()]])
+	# Indicator (a, b) for each vertex where a is the set, b the part of the set
+	size = Vector{Vector{Any}}(undef, n)
 	# Counter for number of ingoing edges of each vertex
 	numingoing = Vector{Int64}(undef, n)
 
 	for i = 1:n
 		numingoing[i] = length(g.ingoing[i])
-		size[i] = [1, numingoing[i] != 0 ? 2 : 1]
 		push!(set[1][numingoing[i] != 0 ? 2 : 1], i)
+		size[i] = [set[1], numingoing[i] != 0 ? 2 : 1]
 	end
 
-	j = 1
 	for i = 1:n
-		v = pop!(set[j][1])
+		v = pop!(set[1][1])
 		alpha[v] = i
 		alphainvers[i] = v
-		size[v] = [0, 0]
+		size[i] = [nothing, nothing]
 
-		for w in union(g.undirected[v], g.outgoing[v])
-			size[w][1] >= 1 || continue
-			delete!(set[size[w][1]][size[w][2]], w)
-
-			size[w][1] += 1
-			(w in g.outgoing[v]) && (numingoing[w] -= 1)
-			(numingoing[w] == 0) && (size[w][2] = 1)
-
-			push!(set[size[w][1]][size[w][2]], w)
+		for w in g.outgoing[v]
+			!isnothing(size[w][1]) || continue
+			numingoing[w] -= 1
+			if numingoing[w] == 0
+				delete!(size[w][1][2], w)
+				push!(size[w][1][1], w)
+				size[w][2] = 1
+			end
 		end
 
-		j += 1
-		while j >= 1 && isempty(set[j][1])
-			j -= 1
+		neighbors = union(g.undirected[v], g.outgoing[v])
+		newset = Vector{Vector{Set{Int64}}}()
+		for (s1, s2) in set
+			n1 = [intersect(s1, neighbors), intersect(s2, neighbors)]
+			n2 = [setdiff(s1, neighbors), setdiff(s2, neighbors)]
+			(!isempty(n1[1]) || !isempty(n1[2])) && push!(newset, n1)
+			(!isempty(n2[1]) || !isempty(n2[2])) && push!(newset, n2)
 		end
+
+		set = newset
 	end
 
 	(alpha, alphainvers)
