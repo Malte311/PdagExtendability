@@ -33,17 +33,10 @@ function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 	for u in graph.vertices
 		for v in copy(graph.undirected[u]) # undirected edges u-v
 			for other in copy(graph.ingoing[u])
-				if !isadjacent_hs(graph, v, other) # Rule 1
-					delete!(graph.undirected[u], v)
-					delete!(graph.undirected[v], u)
-					push!(graph.ingoing[v], u)
-					push!(graph.outgoing[u], v)
-				elseif other in graph.outgoing[v] && other in graph.ingoing[u] # Rule 2
-					delete!(graph.undirected[u], v)
-					delete!(graph.undirected[v], u)
-					push!(graph.ingoing[u], v)
-					push!(graph.outgoing[v], u)
-				end
+				# Meek rule 1
+				!isadjacent_hs(graph, v, other) && directedge!(graph, u, v)
+				# Meek rule 2
+				(other in graph.outgoing[v]) && directedge!(graph, v, u)
 			end
 		end
 	end
@@ -51,27 +44,21 @@ function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 	for u in graph.vertices
 		for v in copy(graph.outgoing[u]) # directed edges u->v
 			for a in intersect(graph.undirected[u], graph.undirected[v])
-				# Rule 3
+				# Meek rule 3
 				for b in copy(graph.ingoing[v])
 					# There must be an undirected edge between an a and b
 					# because R1 or R2 would have been applied otherwise.
 					if u != b && !isadjacent_hs(graph, u, b)
-						delete!(graph.undirected[a], v)
-						delete!(graph.undirected[v], a)
-						push!(graph.ingoing[v], a)
-						push!(graph.outgoing[a], v)
+						directedge!(graph, a, v)
 					end
 				end
 
-				# Rule 4
+				# Meek rule 4
 				for d in graph.ingoing[u]
 					# There must be an undirected edge between an a and d
 					# because R1 or R2 would have been applied otherwise.
 					if !isadjacent_hs(graph, v, d)
-						delete!(graph.undirected[a], v)
-						delete!(graph.undirected[v], a)
-						push!(graph.ingoing[v], a)
-						push!(graph.outgoing[a], v)
+						directedge!(graph, a, v)
 					end
 				end
 			end
@@ -79,6 +66,47 @@ function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 	end
 
 	graph
+end
+
+"""
+	directedge!(g::DtGraph, u::Int64, v::Int64)
+
+Direct an undirected edge `u-v` in `g` from `u` to `v` (`u->v`).
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(2)
+{2, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 1)
+true
+julia> dtgr = setup_hs(g)
+DtGraph(
+	2,
+	Set([2, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set()],
+	Set{Int64}[Set(), Set()],
+	Set{Int64}[Set([2]), Set([1])]
+)
+julia> directedge!(dtgr, 1, 2)
+julia> dtgr
+DtGraph(
+	2,
+	Set([2, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1])],
+	Set{Int64}[Set([2]), Set()],
+	Set{Int64}[Set(), Set()]
+)
+```
+"""
+function directedge!(g::DtGraph, u::Int64, v::Int64)
+	delete!(g.undirected[u], v)
+	delete!(g.undirected[v], u)
+	push!(g.ingoing[v], u)
+	push!(g.outgoing[u], v)
 end
 
 """
