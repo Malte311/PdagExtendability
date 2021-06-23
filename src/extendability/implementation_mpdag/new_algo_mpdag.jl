@@ -141,7 +141,7 @@ function amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 	visited = falses(n)
 
 	# Sets are separated in two parts: [1] with no ingoing edges, [2] the rest
-	set = Vector{Vector{Any}}([[Set{Int64}(), Set{Int64}(), 1]])
+	set = Vector{Vector{Any}}([[Set{Int64}(), Set{Int64}()]])
 	# Counter for number of ingoing edges of each vertex
 	numingoing = Vector{Int64}(undef, n)
 
@@ -161,19 +161,19 @@ function amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}
 		end
 
 		neighbors = union(g.undirected[v], g.outgoing[v])
-		for (s1, s2, index) in set
+		newset = Vector{Vector{Any}}()
+		for (s1, s2) in set
+			!isempty(s1) || !isempty(s2) || continue
 			swaps = filter(n -> numingoing[n] == 0, s2)
 			s1 = union(s1, swaps)
 			s2 = setdiff(s2, swaps)
 			(n11, n12) = [intersect(s1, neighbors), intersect(s2, neighbors)]
 			(n21, n22) = [setdiff(s1, neighbors), setdiff(s2, neighbors)]
-			if !isempty(n11) || !isempty(n12)
-				set[index] = [n11, n12, index]
-				(!isempty(n21) || !isempty(n22)) && insert!(set, index+1, [n21, n22, index+1])
-			elseif !isempty(n21) || !isempty(n22)
-				set[index] = [n21, n22, index]
-			end
+			(!isempty(n11) || !isempty(n12)) && push!(newset, [n11, n12])
+			(!isempty(n21) || !isempty(n22)) && push!(newset, [n21, n22])
 		end
+
+		set = newset
 	end
 
 	(alpha, alphainvers)
@@ -230,3 +230,16 @@ function isamo(g::DtGraph, ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool
 
 	true
 end
+
+include("meek_rules.jl")
+g = SimpleDiGraph(4)
+add_edge!(g, 1, 2)
+add_edge!(g, 2, 1)
+add_edge!(g, 1, 3)
+add_edge!(g, 3, 1)
+add_edge!(g, 1, 4)
+add_edge!(g, 4, 1)
+add_edge!(g, 2, 3)
+add_edge!(g, 4, 3)
+mpdag = dtgraph2digraph(pdag2mpdag(g))
+out = mpdag2dag(mpdag)
