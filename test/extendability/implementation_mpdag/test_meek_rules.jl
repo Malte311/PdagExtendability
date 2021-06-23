@@ -194,6 +194,124 @@
 	end
 end
 
+@testset "ismpdag" begin
+	@testset "Detects an actual MPDAG 1" begin
+		# Meek rule 1 output
+		for n in [3, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 3)
+			@test ismpdag(input)
+		end
+	end
+
+	@testset "Detects an actual MPDAG 2" begin
+		# Meek rule 2 output
+		for n in [3, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 2, 3)
+			@test ismpdag(input)
+		end
+	end
+
+	@testset "Detects an actual MPDAG 3" begin
+		# Meek rule 3 output
+		for n in [4, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 1)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 4, 3)
+			@test ismpdag(input)
+		end
+	end
+
+	@testset "Detects an actual MPDAG 4" begin
+		# Meek rule 4 output
+		for n in [4, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 3, 1)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 1)
+			add_edge!(input, 3, 2)
+			add_edge!(input, 4, 3)
+			@test ismpdag(input)
+		end
+	end
+
+	@testset "Detects when the input is no MPDAG 1" begin
+		for n in [3, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 1)
+			@test !ismpdag(input)
+		end
+	end
+
+	@testset "Detects when the input is no MPDAG 2" begin
+		# Meek rule 1
+		for n in [3, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			@test !ismpdag(input)
+		end
+	end
+
+	@testset "Detects when the input is no MPDAG 3" begin
+		# Meek rule 2
+		for n in [3, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 3, 1)
+			add_edge!(input, 2, 3)
+			@test !ismpdag(input)
+		end
+	end
+
+	@testset "Detects when the input is no MPDAG 4" begin
+		# Meek rule 3
+		for n in [3, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 3, 1)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 1)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 4, 3)
+			@test !ismpdag(input)
+		end
+	end
+
+	@testset "Detects when the input is no MPDAG 5" begin
+		# Meek rule 4
+		for n in [3, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 3, 1)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 1)
+			add_edge!(input, 3, 2)
+			add_edge!(input, 4, 3)
+			@test !ismpdag(input)
+		end
+	end
+end
+
 @testset "hasdircycle" begin
 	@testset "Detects a directed cycle 1" begin
 		for n in [3, 5, 10]
@@ -378,6 +496,16 @@ end
 			add_edge!(input, 3, 2)
 			add_edge!(input, 4, 2)
 			add_edge!(input, 5, 2)
+			@test !hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects when there is no directed cycle 10" begin
+		for n in [5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 2, 3)
 			@test !hasdircycle(setup_hs(input))
 		end
 	end

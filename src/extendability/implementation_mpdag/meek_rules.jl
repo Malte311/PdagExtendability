@@ -165,23 +165,38 @@ true
 ```
 """
 function hasdircycle(g::DtGraph)::Bool
-	visited = falses(g.numvertices)
+	# 0: not visited, 1: in stack, 2: done
+	visited = zeros(UInt8, g.numvertices)
 
 	for u = 1:g.numvertices
-		reachable = Set{Int64}()
-		if !visited[u]
+		if visited[u] == 0
 			stack = Vector{Int64}([u])
-			while !isempty(stack)
-				v = pop!(stack)
-				visited[v] = true
-				push!(reachable, v)
-				for w in g.outgoing[v]
-					!(w in reachable) || return true
-					!visited[w] && push!(stack, w)
-				end
-			end
+			visited[u] = 1
+			!hascycledfs!(g, stack, visited) || return true
 		end
 	end
+
+	false
+end
+
+"""
+	hascycledfs!(g::DtGraph, stack::Vector{Int64}, visited::Vector{UInt8})::Bool
+
+Called by [`hasdircycle`](@ref) to perform a depth first search checking for
+cycles in a graph.
+"""
+function hascycledfs!(g::DtGraph, stack::Vector{Int64}, visited::Vector{UInt8})::Bool
+	for v in g.outgoing[stack[end]]
+		!(visited[v] == 1) || return true
+		if visited[v] == 0
+			push!(stack, v)
+			visited[v] = 1
+			!hascycledfs!(g, stack, visited) || return true
+		end
+	end
+
+	visited[stack[end]] = 2
+	pop!(stack)
 
 	false
 end
