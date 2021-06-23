@@ -29,38 +29,66 @@ julia> collect(edges(dtgraph2digraph(pdag2mpdag(g))))
 """
 function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 	graph = setup_hs(g)
+	done = false
 
-	for u in graph.vertices
-		for v in copy(graph.undirected[u]) # undirected edges u-v
-			for other in copy(graph.ingoing[u])
-				# Meek rule 1
-				!isadjacent_hs(graph, v, other) && directedge!(graph, u, v)
-				# Meek rule 2
-				(other in graph.outgoing[v]) && directedge!(graph, v, u)
+	while !done
+		done = true
+
+		# Meek rule 1
+		# a -> b - c => b -> c
+		for b in graph.vertices, c in graph.undirected[b]
+			for a in graph.ingoing[b]
+				if a != b && a != c && !isadjacent_hs(graph, a, c)
+					directedge!(graph, b, c)
+					done = false
+				end
 			end
 		end
-	end
 
-	for u in graph.vertices
-		for v in copy(graph.outgoing[u]) # directed edges u->v
-			for a in intersect(graph.undirected[u], graph.undirected[v])
-				# Meek rule 3
-				for b in copy(graph.ingoing[v])
-					# There must be an undirected edge between an a and b
-					# because R1 or R2 would have been applied otherwise.
-					if u != b && !isadjacent_hs(graph, u, b)
-						directedge!(graph, a, v)
-					end
-				end
+		# Meek rule 2
+		# a -> b -> c and a - c => a -> c
+		for a in graph.vertices, c in graph.undirected[a]
+			if !isempty(intersect(graph.outgoing[a], graph.ingoing[c]))
+				directedge!(graph, a, c)
+				done = false
+			end
+		end
 
-				# Meek rule 4
-				for d in graph.ingoing[u]
-					# There must be an undirected edge between an a and d
-					# because R1 or R2 would have been applied otherwise.
-					if !isadjacent_hs(graph, v, d)
-						directedge!(graph, a, v)
-					end
+		# Meek rule 3
+		# a - d -> c <- b with a - b and a - c => a -> c
+		for d in graph.vertices, c in graph.outgoing[d]
+			# There must be an undirected edge between an a and b
+			# because R1 or R2 would have been applied otherwise.
+			existsb = false
+			for b in graph.ingoing[c]
+				if b != d && !isadjacent_hs(graph, b, d)
+					existsb = true
+					break
 				end
+			end
+			existsb || continue
+			for a in intersect(graph.undirected[d], graph.undirected[c])
+				directedge!(graph, a, c)
+				done = false
+			end
+		end
+
+		# Meek rule 4
+		# d -> c -> b with a - b, a - c, and a - d => a -> b
+		for c in graph.vertices, b in graph.outgoing[c]
+			# There must be an undirected edge between an a and d
+			# because R1 or R2 would have been applied otherwise.
+			existsd = false
+			for d in graph.ingoing[c]
+				if b != d && !isadjacent_hs(graph, b, d)
+					existsd = true
+					break
+				end
+			end
+			existsd || continue
+			for a in intersect(graph.undirected[b], graph.undirected[c])
+				directedge!(graph, a, b)
+				done = false
 			end
 		end
 	end

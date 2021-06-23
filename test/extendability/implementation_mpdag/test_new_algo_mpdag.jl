@@ -192,6 +192,44 @@
 		end
 	end
 
+	@testset "More PDAGs with possible extensions 10" begin
+		dtgraph = DtGraph(
+			23,
+			Set([
+				5, 16, 20, 12, 8, 17, 1, 19, 22, 23, 6,
+				11, 9, 14, 3, 7, 4, 13, 15, 2, 10, 18, 21
+			]),
+			Set{Int64}[],
+			Set{Int64}[
+				Set(), Set([4, 20]), Set(), Set(), Set(), Set(), Set(), Set(),
+				Set([16, 17, 19]), Set([7, 20]), Set([18, 17]), Set([4, 20]),
+				Set(), Set(), Set([4, 20]), Set([17]), Set([7, 20]), Set([17]),
+				Set([16, 17]), Set([7]), Set(), Set(), Set()
+			],
+			Set{Int64}[
+				Set(), Set(), Set(), Set([15, 2, 12]), Set(), Set(),
+				Set([20, 10, 17]), Set(), Set(), Set(), Set(), Set(), Set(), Set(),
+				Set(), Set([9, 19]), Set([16, 11, 18, 9, 19]), Set([11]), Set([9]),
+				Set([15, 2, 10, 12, 17]), Set(), Set(), Set()
+			],
+			Set{Int64}[
+				Set([16]), Set([15, 12]), Set([4, 7, 20, 10, 17, 23]),
+				Set([7, 20, 10, 14, 17, 3, 23]), Set([22, 13, 6, 21, 12]),
+				Set([5, 22, 21, 12, 8]), Set([4, 16, 11, 18, 9, 3, 23, 19]),
+				Set([6, 21]), Set([7, 11, 18]), Set([4, 17, 3, 23]),
+				Set([16, 7, 9, 19]), Set([5, 22, 6, 21, 2, 15]), Set([5]),
+				Set([4, 15]), Set([2, 12, 14]), Set([7, 11, 18, 1]),
+				Set([4, 10, 3, 23]), Set([16, 7, 9, 19]), Set([7, 11, 18]),
+				Set([4, 3, 23]), Set([5, 22, 6, 12, 8]), Set([5, 6, 21, 12]),
+				Set([4, 7, 20, 10, 17, 3])
+			]
+		)
+		input = dtgraph2digraph(dtgraph)
+		mpdag = dtgraph2digraph(pdag2mpdag(input))
+		out = mpdag2dag(mpdag)
+		@test is_consistent_extension(out, input)
+	end
+
 	@testset "Empty graph if no consistent extension is possible 1" begin
 		# Input is a MPDAG which is fully undirected and not chordal.
 		g = SimpleDiGraph(5)
