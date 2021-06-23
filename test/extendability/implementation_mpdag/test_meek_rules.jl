@@ -246,6 +246,54 @@ end
 		end
 	end
 
+	@testset "Detects an actual MPDAG 5" begin
+		for n in [4, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 1)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			add_edge!(input, 3, 4)
+			add_edge!(input, 4, 3)
+			@test ismpdag(input)
+		end
+	end
+
+	@testset "Detects an actual MPDAG 6" begin
+		for n in [4, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 1)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			add_edge!(input, 3, 4)
+			add_edge!(input, 4, 3)
+			add_edge!(input, 1, 3)
+			@test ismpdag(input)
+		end
+	end
+
+	@testset "Detects an actual MPDAG 7" begin
+		for n in [4, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 4)
+			add_edge!(input, 4, 1)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			add_edge!(input, 3, 4)
+			add_edge!(input, 4, 3)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 3, 1)
+			@test ismpdag(input)
+		end
+	end
+
 	@testset "Detects when the input is no MPDAG 1" begin
 		for n in [3, 5, 10]
 			input = SimpleDiGraph(n)
@@ -281,7 +329,7 @@ end
 
 	@testset "Detects when the input is no MPDAG 4" begin
 		# Meek rule 3
-		for n in [3, 5, 10]
+		for n in [4, 5, 10]
 			input = SimpleDiGraph(n)
 			add_edge!(input, 1, 2)
 			add_edge!(input, 2, 1)
@@ -297,7 +345,7 @@ end
 
 	@testset "Detects when the input is no MPDAG 5" begin
 		# Meek rule 4
-		for n in [3, 5, 10]
+		for n in [4, 5, 10]
 			input = SimpleDiGraph(n)
 			add_edge!(input, 1, 2)
 			add_edge!(input, 2, 1)
@@ -307,6 +355,30 @@ end
 			add_edge!(input, 4, 1)
 			add_edge!(input, 3, 2)
 			add_edge!(input, 4, 3)
+			@test !ismpdag(input)
+		end
+	end
+
+	@testset "Detects when the input is no MPDAG 6" begin
+		for n in [4, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 3, 4)
+			add_edge!(input, 2, 4)
+			add_edge!(input, 4, 2)
+			@test !ismpdag(input)
+		end
+	end
+
+	@testset "Detects when the input is no MPDAG 7" begin
+		for n in [5, 7, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			add_edge!(input, 3, 5)
+			add_edge!(input, 5, 4)
+			add_edge!(input, 4, 1)
 			@test !ismpdag(input)
 		end
 	end

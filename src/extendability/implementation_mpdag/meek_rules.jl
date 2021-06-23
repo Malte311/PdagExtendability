@@ -127,7 +127,7 @@ function ismpdag(g::SimpleDiGraph)::Bool
 		for c in graph.outgoing[d]
 			!isempty(intersect(graph.undirected[d], graph.undirected[c])) || continue
 			for b in graph.ingoing[c]
-				isadjacent_hs(graph, b, d) || return false
+				b == d || isadjacent_hs(graph, b, d) || return false
 			end
 		end
 	end
