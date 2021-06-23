@@ -230,16 +230,3 @@ function isamo(g::DtGraph, ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool
 
 	true
 end
-
-include("meek_rules.jl")
-g = SimpleDiGraph(4)
-add_edge!(g, 1, 2)
-add_edge!(g, 2, 1)
-add_edge!(g, 1, 3)
-add_edge!(g, 3, 1)
-add_edge!(g, 1, 4)
-add_edge!(g, 4, 1)
-add_edge!(g, 2, 3)
-add_edge!(g, 4, 3)
-mpdag = dtgraph2digraph(pdag2mpdag(g))
-out = mpdag2dag(mpdag)
