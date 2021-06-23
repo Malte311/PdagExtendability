@@ -82,6 +82,111 @@ function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 end
 
 """
+	ismpdag(g::SimpleDiGraph)::Bool
+
+Check whether a given graph `g` is an MPDAG.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 1)
+true
+julia> ismpdag(g)
+false
+```
+"""
+function ismpdag(g::SimpleDiGraph)::Bool
+	graph = setup_hs(g)
+
+	# Cycle checking
+	!hasdircycle(graph) || return false
+
+	# Meek rule 1
+	for b in graph.vertices
+		for c in graph.undirected[b]
+			for a in graph.ingoing[b]
+				isadjacent_hs(graph, a, c) || return false
+			end
+		end
+	end
+
+	# Meek rule 2
+	for a in graph.vertices
+		for c in graph.undirected[a]
+			isempty(intersect(graph.outgoing[a], graph.ingoing[c])) || return false
+		end
+	end
+
+	# Meek rule 3
+	for d in graph.vertices
+		for c in graph.outgoing[d]
+			!isempty(intersect(graph.undirected[d], graph.undirected[c])) || continue
+			for b in graph.ingoing[c]
+				isadjacent_hs(graph, b, d) || return false
+			end
+		end
+	end
+
+	# Meek rule 4
+	for c in graph.vertices
+		for b in graph.outgoing[c]
+			!isempty(intersect(graph.undirected[b], graph.undirected[c])) || continue
+			for d in graph.ingoing[c]
+				isadjacent_hs(graph, b, d) || return false
+			end
+		end
+	end
+
+	true
+end
+
+"""
+	hasdircycle(g::DtGraph)::Bool
+
+Check whether the graph `g` contains a directed cycle.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 1)
+true
+julia> hasdircycle(setup_hs(g))
+true
+```
+"""
+function hasdircycle(g::DtGraph)::Bool
+	visited = falses(g.numvertices)
+
+	for u = 1:g.numvertices
+		reachable = Set{Int64}()
+		if !visited[u]
+			stack = Vector{Int64}([u])
+			while !isempty(stack)
+				v = pop!(stack)
+				visited[v] = true
+				push!(reachable, v)
+				for w in g.outgoing[v]
+					!(w in reachable) || return true
+					!visited[w] && push!(stack, w)
+				end
+			end
+		end
+	end
+
+	false
+end
+
+"""
 # Examples
 ```julia-repl
 julia> g = SimpleDiGraph(3)

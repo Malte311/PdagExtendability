@@ -357,6 +357,30 @@ end
 			@test !hasdircycle(setup_hs(input))
 		end
 	end
+
+	@testset "Detects when there is no directed cycle 8" begin
+		for n in [5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			add_edge!(input, 3, 1)
+			add_edge!(input, 1, 3)
+			@test !hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects when there is no directed cycle 9" begin
+		for n in [5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 3, 2)
+			add_edge!(input, 4, 2)
+			add_edge!(input, 5, 2)
+			@test !hasdircycle(setup_hs(input))
+		end
+	end
 end
 
 @testset "dtgraph2digraph" begin
