@@ -194,6 +194,171 @@
 	end
 end
 
+@testset "hasdircycle" begin
+	@testset "Detects a directed cycle 1" begin
+		for n in [3, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 1)
+			@test hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects a directed cycle 2" begin
+		for n in [3, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 3, 2)
+			@test hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects a directed cycle 3" begin
+		for n in [5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 3, 2)
+			add_edge!(input, 4, 5)
+			add_edge!(input, 5, 4)
+			@test hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects a directed cycle 4" begin
+		for n in [5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 4)
+			add_edge!(input, 4, 5)
+			add_edge!(input, 5, 1)
+			@test hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects a directed cycle 5" begin
+		for n in [5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 3, 1)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 4)
+			add_edge!(input, 4, 2)
+			add_edge!(input, 4, 5)
+			add_edge!(input, 5, 4)
+			@test hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects a directed cycle 6" begin
+		for n in [5, 10, 100, 500, 1000]
+			input = SimpleDiGraph(n)
+			for i = 1:n-1
+				add_edge!(input, i, i+1)
+			end
+			add_edge!(input, n, 1)
+			@test hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects when there is no directed cycle 1" begin
+		for n in [3, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 2)
+			add_edge!(input, 3, 1)
+			@test !hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects when there is no directed cycle 2" begin
+		for n in [3, 5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 3, 2)
+			@test !hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects when there is no directed cycle 3" begin
+		for n in [5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 3, 1)
+			add_edge!(input, 3, 2)
+			add_edge!(input, 4, 5)
+			add_edge!(input, 5, 4)
+			@test !hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects when there is no directed cycle 4" begin
+		for n in [5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 4)
+			add_edge!(input, 4, 3)
+			add_edge!(input, 4, 5)
+			add_edge!(input, 5, 1)
+			@test !hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects when there is no directed cycle 5" begin
+		for n in [5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 1, 3)
+			add_edge!(input, 3, 1)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 4)
+			add_edge!(input, 2, 4)
+			add_edge!(input, 4, 2)
+			add_edge!(input, 4, 5)
+			add_edge!(input, 5, 4)
+			@test !hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects when there is no directed cycle 6" begin
+		for n in [5, 10, 100, 500, 1000]
+			input = SimpleDiGraph(n)
+			for i = 1:n-1
+				add_edge!(input, i, i+1)
+			end
+			add_edge!(input, n, 1)
+			add_edge!(input, 1, n)
+			@test !hasdircycle(setup_hs(input))
+		end
+	end
+
+	@testset "Detects when there is no directed cycle 7" begin
+		for n in [5, 10]
+			input = SimpleDiGraph(n)
+			add_edge!(input, 1, 2)
+			add_edge!(input, 2, 1)
+			add_edge!(input, 3, 1)
+			add_edge!(input, 2, 3)
+			add_edge!(input, 3, 4)
+			add_edge!(input, 2, 4)
+			add_edge!(input, 4, 2)
+			add_edge!(input, 5, 4)
+			@test !hasdircycle(setup_hs(input))
+		end
+	end
+end
+
 @testset "dtgraph2digraph" begin
 	@testset "Meek Rule R1" begin
 		for useheuristic in [true, false]

@@ -45,7 +45,7 @@ include("extendability/implementation_mpdag/connected_components.jl")
 export buckets, dfs!
 
 include("extendability/implementation_mpdag/meek_rules.jl")
-export pdag2mpdag, dtgraph2digraph
+export pdag2mpdag, ismpdag, hasdircycle, dtgraph2digraph
 
 include("extendability/implementation_mpdag/new_algo_mpdag.jl")
 export mpdag2dag, subgraph, amo, isamo
