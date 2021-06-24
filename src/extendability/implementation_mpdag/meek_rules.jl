@@ -56,39 +56,23 @@ function pdag2mpdag(g::SimpleDiGraph)::DtGraph
 
 		# Meek rule 3
 		# a - d -> c <- b with a - b and a - c => a -> c
-		for d in graph.vertices, c in graph.outgoing[d]
-			# There must be an undirected edge between an a and b
-			# because R1 or R2 would have been applied otherwise.
-			existsb = false
-			for b in graph.ingoing[c]
-				if b != d && !isadjacent_hs(graph, b, d)
-					existsb = true
-					break
+		for d in graph.vertices, c in graph.outgoing[d], b in graph.ingoing[c]
+			if b != d && !isadjacent_hs(graph, b, d)
+				for a in intersect(graph.undirected[b], graph.undirected[c], graph.undirected[d])
+					directedge!(graph, a, c)
+					done = false
 				end
-			end
-			existsb || continue
-			for a in intersect(graph.undirected[d], graph.undirected[c])
-				directedge!(graph, a, c)
-				done = false
 			end
 		end
 
 		# Meek rule 4
 		# d -> c -> b with a - b, a - c, and a - d => a -> b
-		for c in graph.vertices, b in graph.outgoing[c]
-			# There must be an undirected edge between an a and d
-			# because R1 or R2 would have been applied otherwise.
-			existsd = false
-			for d in graph.ingoing[c]
-				if b != d && !isadjacent_hs(graph, b, d)
-					existsd = true
-					break
+		for c in graph.vertices, b in graph.outgoing[c], d in graph.ingoing[c]
+			if b != d && !isadjacent_hs(graph, b, d)
+				for a in intersect(graph.undirected[b], graph.undirected[c], graph.undirected[d])
+					directedge!(graph, a, b)
+					done = false
 				end
-			end
-			existsd || continue
-			for a in intersect(graph.undirected[b], graph.undirected[c])
-				directedge!(graph, a, b)
-				done = false
 			end
 		end
 	end
