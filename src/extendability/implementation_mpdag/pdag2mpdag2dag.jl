@@ -6,7 +6,28 @@ using LightGraphs
 
 
 """
-TODO
+	pdag2mpdag2dag(g::SimpleDiGraph)::SimpleDiGraph
+
+Convert a PDAG into a DAG. First, Meek's rules are applied exhaustively
+to the input graph, then it is checked whether cycles or new v-structures
+were formed (if so, the input is not extendable) and lastly, the resulting
+MPDAG is converted into a DAG in linear time.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> collect(edges(pdag2mpdag2dag(g)))
+2-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 2
+ Edge 2 => 3
+```
 """
 function pdag2mpdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 	graph = setup_hs(g)
@@ -19,7 +40,21 @@ function pdag2mpdag2dag(g::SimpleDiGraph)::SimpleDiGraph
 end
 
 """
-TODO
+	countvstructs(g::DtGraph)::UInt
+
+Count the numer of v-structures in the given graph `g`.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> countvstructs(setup_hs(g))
+1
+```
 """
 function countvstructs(g::DtGraph)::UInt
 	n = g.numvertices
