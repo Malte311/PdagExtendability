@@ -51,6 +51,9 @@ dtgraph2digraph
 include("extendability/implementation_mpdag/new_algo_mpdag.jl")
 export mpdag2dag, subgraph, amo, isamo
 
+include("extendability/implementation_mpdag/pdag2mpdag2dag.jl")
+export pdag2mpdag2dag, countvstructs
+
 include("utils/utils.jl")
 export is_consistent_extension, isdag, skeleton, vstructures,
 graph2digraph, save2file, graph2str, nanosec2millisec
