@@ -313,4 +313,13 @@ end
 		add_edge!(input, 6, 1)
 		@test countvstructs(setup_hs(input)) == 3
 	end
+
+	@testset "Example graph 9" begin
+		g = SimpleDiGraph(4)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 3, 4)
+		add_edge!(g, 2, 4)
+		add_edge!(g, 4, 2)
+		@test countvstructs(setup_hs(g)) == 0
+	end
 end

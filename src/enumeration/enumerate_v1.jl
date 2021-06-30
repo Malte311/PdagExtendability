@@ -19,6 +19,10 @@ TODO
 function enumerate_v1(g::SimpleDiGraph)::Vector{DtGraph}
 	graph = pdag2mpdag(g)
 
+	if hasdircycle(graph) || countvstructs(graph) != countvstructs(setup_hs(g))
+		return []
+	end
+
 	undiredges = Vector{Tuple{Int64, Int64}}()
 	for u in graph.vertices
 		for v in graph.undirected[u]
@@ -31,7 +35,7 @@ function enumerate_v1(g::SimpleDiGraph)::Vector{DtGraph}
 end
 
 """
-	extensions_rec!(g::DtGraph, numvstr::Uint, undiredges::Vector)::Vector
+	extensions_rec!(g::DtGraph, numvstr::UInt, undiredges::Vector)::Vector
 
 Compute all extensions of `g` recursively by generating all possible directions
 and filter out those which are either cyclic or not consistent.
