@@ -17,7 +17,7 @@ not have the same set of v-structures as `g`.
 TODO
 """
 function enumerate_v1(g::SimpleDiGraph)::Vector{DtGraph}
-	graph = setup_hs(g)
+	graph = pdag2mpdag(g)
 
 	undiredges = Vector{Tuple{Int64, Int64}}()
 	for u in graph.vertices
@@ -40,7 +40,7 @@ and filter out those which are either cyclic or not consistent.
 
 TODO
 """
-function extensions_rec!(g::DtGraph, numvstr::Uint, undiredges::Vector)::Vector
+function extensions_rec!(g::DtGraph, numvstr::UInt, undiredges::Vector)::Vector
 	if isempty(undiredges)
 		isext = !hasdircycle(g) && numvstr == countvstructs(g)
 		return isext ? [g] : []

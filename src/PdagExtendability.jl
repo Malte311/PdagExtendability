@@ -1,5 +1,8 @@
 module PdagExtendability
 
+include("enumeration/enumerate_v1.jl")
+export enumerate_v1, extensions_rec!
+
 include("extendability/implementation_hs/depth_first_search_hs.jl")
 export dir2dag, iscyclic!
 
