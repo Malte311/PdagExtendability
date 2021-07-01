@@ -52,19 +52,18 @@ function extensions_rec!(g::DtGraph, numvstr::UInt, undiredges::Vector)::Vector
 
 	# Take any undirected edge, direct it in both directions and recurse.
 	nxtedge = pop!(undiredges)
-	delete!(g.undirected[nxtedge[1]], nxtedge[2])
-	delete!(g.undirected[nxtedge[2]], nxtedge[1])
+	gcpyfirst = deepcopy(g)
+	delete!(gcpyfirst.undirected[nxtedge[1]], nxtedge[2])
+	delete!(gcpyfirst.undirected[nxtedge[2]], nxtedge[1])
+	gcpysecond = deepcopy(gcpyfirst)
 
-	push!(g.ingoing[nxtedge[1]], nxtedge[2])
-	push!(g.outgoing[nxtedge[2]], nxtedge[1])
-	first = extensions_rec!(g, numvstr, undiredges)
+	push!(gcpyfirst.ingoing[nxtedge[1]], nxtedge[2])
+	push!(gcpyfirst.outgoing[nxtedge[2]], nxtedge[1])
+	first = extensions_rec!(gcpyfirst, numvstr, copy(undiredges))
 
-	delete!(g.ingoing[nxtedge[1]], nxtedge[2])
-	delete!(g.outgoing[nxtedge[2]], nxtedge[1])
-
-	push!(g.ingoing[nxtedge[2]], nxtedge[1])
-	push!(g.outgoing[nxtedge[1]], nxtedge[2])
-	second = extensions_rec!(g, numvstr, undiredges)
+	push!(gcpysecond.ingoing[nxtedge[2]], nxtedge[1])
+	push!(gcpysecond.outgoing[nxtedge[1]], nxtedge[2])
+	second = extensions_rec!(gcpysecond, numvstr, copy(undiredges))
 
 	return vcat(first, second)
 end

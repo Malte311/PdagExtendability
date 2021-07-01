@@ -11,6 +11,15 @@ mutable struct DtGraph
 	undirected::Vector{Set{Int64}}
 end
 
+Base.deepcopy(g::DtGraph) = DtGraph(
+	g.numvertices,
+	deepcopy(g.vertices),
+	deepcopy(g.degrees),
+	deepcopy(g.ingoing),
+	deepcopy(g.outgoing),
+	deepcopy(g.undirected)
+)
+
 """
 	setup_hs(g::SimpleDiGraph, useheuristic::Bool = false)::DtGraph
 
