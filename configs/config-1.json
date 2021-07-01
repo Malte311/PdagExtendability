@@ -8,6 +8,7 @@
 	"algorithm_log_id": "",
 	"benchmarkdir": "../benchmarks/pdirected/sparse/n=1024/",
 	"create_csv": false,
+	"enumerate": false,
 	"logdir": "../logs/",
 	"logfile": "log-1.txt",
 	"logtofile": false,

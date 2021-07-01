@@ -9,6 +9,7 @@
 	"algorithm_log_id": "",
 	"benchmarkdir": "../benchmarks/undirected/star/n=1024/",
 	"create_csv": false,
+	"enumerate": false,
 	"logdir": "../logs/",
 	"logfile": "log-2.txt",
 	"logtofile": false,

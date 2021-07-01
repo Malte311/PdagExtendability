@@ -39,18 +39,21 @@ for algorithm in config["algorithm"]
 
 			@info "[$(Dates.format(now(), "HH:MM"))] Running benchmark for '$f'..."
 			pdag = readinputgraph(joinpath(root, f), config["only_undirected"])
-			dag = getfield(Main, algo)(pdag, params...)
+			result = getfield(Main, algo)(pdag, params...)
+			config["enumerate"] && (result = map(g -> dtgraph2digraph(g), result))
 
 			bench = @benchmark getfield(Main, algo)(
 				$pdag,
 				$params...
 			) samples=samples evals=evals
 
-			if dag == SimpleDiGraph(0)
+			if (!config["enumerate"] && result == SimpleDiGraph(0)) ||
+					(config["enumerate"] && isempty(result))
 				push!(emptygraphs, f)
-			elseif !is_consistent_extension(dag, pdag)
+			elseif (!config["enumerate"] && !is_consistent_extension(result, pdag)) ||
+					(config["enumerate"] && any(g -> !is_consistent_extension(g, pdag), result))
 				file = string(config["logdir"], "err-", replace(f, ".txt" => ".svg"))
-				plotsvg(dag, file)
+				plotsvg(result, file)
 				@error "Output is no consistent extension! A plot can be found at $file."
 				exit()
 			else
@@ -67,7 +70,10 @@ for algorithm in config["algorithm"]
 			config["visualize"] || continue
 
 			plotsvg(pdag, string(config["logdir"], "in-", replace(f, ".txt" => ".svg")))
-			plotsvg(dag, string(config["logdir"], "out-", replace(f, ".txt" => ".svg")))
+			i = 0
+			for dag in (config["enumerate"] ? result : [result])
+				plotsvg(dag, string(config["logdir"], "out-$(i+=1)-", replace(f, ".txt" => ".svg")))
+			end
 		end
 	end
 

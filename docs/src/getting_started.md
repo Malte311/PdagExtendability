@@ -28,6 +28,7 @@ the setup. These are the configuration options which are provided:
 - `algorithm_log_id` (optional): An id to identify a specific run. For example, if you run the same algorithm twice, both results are named the same. In order to prevent this, you can add an id for each run. The id can be an arbitrary string.
 - `benchmarkdir`: The path to the directory which contains the benchmarks which should be run. Note that all subdirectories are evaluated as well.
 - `create_csv`: Boolean value to specify whether a `.csv` file of the run should be created. The file contains one row per benchmark. Each row contains the name of the algorithm, the name of the input file, and the measured time for that instance.
+- `enumerate`: Boolean value to specify whether the algorithms solve the enumeration problem (`true`) or the extension problem (`false`).
 - `logdir`: The path to the directory in which logs should be written.
 - `logfile`: The name of the logfile.
 - `logtofile`: Boolean value to specify whether logs should be written to the logfile (`true`) or to `stdout` (`false`).
