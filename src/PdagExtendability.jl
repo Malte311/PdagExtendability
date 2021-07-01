@@ -1,8 +1,5 @@
 module PdagExtendability
 
-include("enumeration/enumerate_v1.jl")
-export enumerate_v1, extensions_rec!
-
 include("extendability/implementation_hs/depth_first_search_hs.jl")
 export dir2dag, iscyclic!
 
@@ -56,6 +53,9 @@ export mpdag2dag, subgraph, amo, isamo
 
 include("extendability/implementation_mpdag/pdag2mpdag2dag.jl")
 export pdag2mpdag2dag, countvstructs
+
+include("enumeration/enumerate_v1.jl")
+export enumerate_v1, extensions_rec!
 
 include("utils/utils.jl")
 export is_consistent_extension, isdag, skeleton, vstructures,
