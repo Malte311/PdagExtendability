@@ -87,6 +87,7 @@ end
 
 @info "Extendable inputs: $extendable"
 @info "Not extendable inputs: $not_extendable"
+config["enumerate"] && @info "Number of extensions: $num_extensions"
 
 for (key, val) in not_extendable
 	if val != collect(values(not_extendable))[1]
