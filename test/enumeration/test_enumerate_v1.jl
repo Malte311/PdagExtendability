@@ -125,5 +125,22 @@
 end
 
 @testset "extensions_rec!" begin
-	
+	@testset "Lists all extensions for MPDAGs" begin
+		g = SimpleDiGraph(4)
+		add_edge!(g, 1, 2)
+		add_edge!(g, 2, 1)
+		add_edge!(g, 1, 3)
+		add_edge!(g, 1, 4)
+		add_edge!(g, 4, 1)
+		add_edge!(g, 2, 3)
+		add_edge!(g, 3, 2)
+		add_edge!(g, 3, 4)
+		add_edge!(g, 4, 3)
+		dt = setup_hs(g)
+		exts = extensions_rec!(dt, countvstructs(dt), [(1, 2), (1, 4), (2, 3), (3, 4)])
+		@test length(exts) == 5
+		for ext in exts
+			@test is_consistent_extension(dtgraph2digraph(ext), g)
+		end
+	end
 end

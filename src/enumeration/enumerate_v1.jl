@@ -13,8 +13,26 @@ as in `g` and then removing the ones that are either cyclic or do
 not have the same set of v-structures as `g`.
 
 # Examples
-
-TODO
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> enumerate_v1(g)
+1-element Vector{DtGraph}:
+ DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+ )
+```
 """
 function enumerate_v1(g::SimpleDiGraph)::Vector{DtGraph}
 	graph = pdag2mpdag(g)
@@ -41,8 +59,35 @@ Compute all extensions of `g` recursively by generating all possible directions
 and filter out those which are either cyclic or not consistent.
 
 # Examples
-
-TODO
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> mpdag = pdag2mpdag(g)
+DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia> extensions_rec!(mpdag, countvstructs(mpdag), [(2, 3)])
+1-element Vector{Any}:
+ DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+ )
+```
 """
 function extensions_rec!(g::DtGraph, numvstr::UInt, undiredges::Vector)::Vector
 	if isempty(undiredges)
