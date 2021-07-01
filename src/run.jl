@@ -19,6 +19,7 @@ evals = config["num_evals"]
 
 extendable = Vector()
 not_extendable = Dict()
+num_extensions = Dict()
 
 for algorithm in config["algorithm"]
 	global algo = Symbol(algorithm[1:findfirst("(", algorithm)[1]-1])
@@ -30,6 +31,7 @@ for algorithm in config["algorithm"]
 	params = isempty(params) ? Vector() : map(s -> parse(Bool, s), params)
 
 	emptygraphs = Vector()
+	config["enumerate"] && (num_extensions[algorithm] = Dict())
 
 	@info "Running algorithm '$algorithm-$(config["algorithm_log_id"])'"
 
@@ -58,6 +60,7 @@ for algorithm in config["algorithm"]
 				exit()
 			else
 				push!(extendable, f)
+				config["enumerate"] && (num_extensions[algorithm][string(root, f)] = length(result))
 			end
 
 			@info "Minimum time (ms): $(nanosec2millisec(minimum(bench.times)))"
@@ -88,6 +91,13 @@ end
 for (key, val) in not_extendable
 	if val != collect(values(not_extendable))[1]
 		@error "Algorithms found different non-extendable graphs."
+		exit()
+	end
+end
+
+for (key, val) in num_extensions
+	if val != collect(values(num_extensions))[1]
+		@error "Algorithms found different numbers of extensions."
 		exit()
 	end
 end
