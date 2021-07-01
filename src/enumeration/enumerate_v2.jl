@@ -4,7 +4,33 @@ using LightGraphs
 @isdefined(pdag2mpdag) || include("../extendability/implementation_mpdag/meek_rules.jl")
 
 """
-TODO
+	enumerate_v2(g::SimpleDiGraph)::Vector{DtGraph}
+
+Compute all consistent extensions of the input graph `g` by directing
+a random edge in both directions, close the result under the four
+Meek rules, and recursing.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> enumerate_v2(g)
+1-element Vector{DtGraph}:
+ DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+ )
+```
 """
 function enumerate_v2(g::SimpleDiGraph)::Vector{DtGraph}
 	graph = setup_hs(g)
@@ -21,16 +47,48 @@ function enumerate_v2(g::SimpleDiGraph)::Vector{DtGraph}
 end
 
 """
-TODO
+	extsmeek_rec!(g::DtGraph, numvstr::UInt, undiredges::Vector)::Vector
+
+Compute all extensions of `g` recursively by generating all possible directions
+and applying Meek's rules every time an edges was directed on the resulting graph.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> mpdag = pdag2mpdag(g)
+DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia> extsmeek_rec!(mpdag, countvstructs(mpdag), [(2, 3)])
+1-element Vector{Any}:
+	DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+	)
+```
 """
 function extsmeek_rec!(g::DtGraph, numvstr::UInt, undiredges::Vector)::Vector
 	mpdag = pdag2mpdag(g, nocopy = true)
 
 	(hasdircycle(mpdag) || countvstructs(mpdag) != numvstr) && return []
 
-	for (u, v) in undiredges
-		u in mpdag.undirected[v] || delete!(undiredges, (u, v))
-	end
+	filter!(e -> e[1] in mpdag.undirected[e[2]], undiredges)
 
 	isempty(undiredges) && return [g]
 

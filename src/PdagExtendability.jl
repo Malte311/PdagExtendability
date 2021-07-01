@@ -57,6 +57,9 @@ export pdag2mpdag2dag, countvstructs
 include("enumeration/enumerate_v1.jl")
 export enumerate_v1, extensions_rec!
 
+include("enumeration/enumerate_v2.jl")
+export enumerate_v2, extsmeek_rec!
+
 include("utils/utils.jl")
 export is_consistent_extension, isdag, skeleton, vstructures,
 graph2digraph, save2file, graph2str, nanosec2millisec

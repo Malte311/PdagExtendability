@@ -2,6 +2,7 @@ using LightGraphs, PdagExtendability, Test
 
 tests = [
 	"enumeration/test_enumerate_v1.jl",
+	"enumeration/test_enumerate_v2.jl",
 	"extendability/implementation_hs/test_depth_first_search_hs.jl",
 	"extendability/implementation_hs/test_dor_tarsi_algo_datastructure_hs.jl",
 	"extendability/implementation_hs/test_dor_tarsi_algo_hs.jl",
