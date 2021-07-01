@@ -3,9 +3,12 @@ using LightGraphs
 @isdefined(DtGraph) || include("../implementation_hs/dor_tarsi_algo_datastructure_hs.jl")
 
 """
-	pdag2mpdag(g::SimpleDiGraph)::DtGraph
+	pdag2mpdag(g; nocopy = false)::DtGraph
 
 Apply the four Meek Rules to the input PDAG in order to obtain an MPDAG.
+The input must either be of type `SimpleDiGraph` or `DtGraph`.
+In case the input has type `DtGraph`, the paramter `nocopy` can be set to
+`true` in order to manipulate it directly instead of creating a copy.
 
 # References
 Meek, C. (1995). Causal Inference and Causal Explanation with Background Knowledge.
@@ -27,8 +30,8 @@ julia> collect(edges(dtgraph2digraph(pdag2mpdag(g))))
  Edge 2 => 3
 ```
 """
-function pdag2mpdag(g::SimpleDiGraph)::DtGraph
-	graph = setup_hs(g)
+function pdag2mpdag(g; nocopy = false)::DtGraph
+	graph = typeof(g) == DtGraph ? (nocopy ? g : deepcopy(g)) : setup_hs(g)
 	done = false
 
 	while !done
