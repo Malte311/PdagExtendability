@@ -1,4 +1,4 @@
-using LightGraphs
+using LightGraphs, Random
 
 @isdefined(fastpdag2dag_hs) || include("../extendability/implementation_hs/new_algo_hs.jl")
 @isdefined(graph2digraph) || include("utils.jl")
@@ -40,6 +40,57 @@ function random_pdag(g::SimpleDiGraph, p::Float64)::SimpleDiGraph
 		(!isdone && rand() < p) || continue
 		is_s2d = ext != SimpleDiGraph(0) && has_edge(ext, e.src, e.dst)
 		rem_edge!(result, is_s2d ? e.dst : e.src, is_s2d ? e.src : e.dst)
+	end
+
+	result
+end
+
+"""
+	random_pdag(g::SimpleDiGraph, m::Int64)::SimpleDiGraph
+
+Generates a partially directed graph by keeping `m` undirected
+edges in a given undirected graph `g`; all other edges are being directed.
+Takes as input a fully undirected graph, encoded as a `SimpleDiGraph`.
+The generated PDAG will be extendable if the input is extendable.
+
+# Examples
+```julia-repl
+julia> g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia> add_edge!(g, 1, 2)
+true
+julia> add_edge!(g, 2, 1)
+true
+julia> add_edge!(g, 2, 3)
+true
+julia> add_edge!(g, 3, 2)
+true
+julia> collect(edges(random_pdag(g, 1)))
+3-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 2
+ Edge 2 => 1
+ Edge 2 => 3
+julia> collect(edges(random_pdag(g, 1)))
+3-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 2
+ Edge 2 => 3
+ Edge 3 => 2
+```
+"""
+function random_pdag(g::SimpleDiGraph, m::Int64)::SimpleDiGraph
+	m < convert(Int, floor(ne(g)/2)) || return g
+
+	result = copy(g)
+	ext = fastpdag2dag_hs(g)
+
+	edges_shuffled = map(e -> (e.src, e.dst), shuffle(collect(edges(g))))
+	done = Set{String}()
+	for (u, v) in edges_shuffled
+		isdone = "$u-$v" in done
+		!isdone && push!(done, "$v-$u")
+		is_s2d = ext != SimpleDiGraph(0) && has_edge(ext, u, v)
+		rem_edge!(result, is_s2d ? v : u, is_s2d ? u : v)
+		length(done) == (convert(Int, floor(ne(g)/2)) - m) && break
 	end
 
 	result
