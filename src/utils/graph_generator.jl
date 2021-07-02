@@ -234,7 +234,7 @@ function friendshipgraph(n::Int64; filepath::String = "")::SimpleGraph
 end
 
 """
-pathgraph(n::Int64; filepath::String = "")::SimpleGraph
+	pathgraph(n::Int64; filepath::String = "")::SimpleGraph
 
 Create a path with `n` vertices.
 
