@@ -5,11 +5,8 @@ The benchmarking framework contains efficient algorithms for extending
 (causal) graphs and more than 1000 exemplary input graph instances.
 
 More precisely, algorithms solving the following two problems are provided:
-1. Given any partially directed graph _G_, compute a consistent DAG extension
-for _G_ if _G_ admits such an extension, otherwise return a negative answer
-(Extension Problem).
-2. Given any partially directed graph _G_, compute the set of **all** consistent
-DAG extensions for _G_ (Enumeration Problem).
+1. Given any partially directed graph _G_, compute a consistent DAG extension for _G_ if _G_ admits such an extension, otherwise return a negative answer (Extension Problem).
+2. Given any partially directed graph _G_, compute the set of **all** consistent DAG extensions for _G_ (Enumeration Problem).
 
 !!! note
 
@@ -18,8 +15,7 @@ DAG extensions for _G_ (Enumeration Problem).
 
 ## Features
 
-- Fast algorithms for the [extension problem](@ref extendability_header)
-and for the [enumeration problem](@ref enumeration_header).
+- Fast algorithms for the [extension problem](@ref extendability_header) and for the [enumeration problem](@ref enumeration_header).
 - Automatically run benchmarks and create time measurements in `.csv` format.
 - Full Docker support. Julia does not even have to be installed on your system.
 - Automatically build and deploy via TravisCI.
