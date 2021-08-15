@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Enumeration Problem · PdagExtendability</title><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.039/juliamono-regular.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.svg" alt="PdagExtendability logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">PdagExtendability</a></span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Overview</a></li><li><a class="tocitem" href="../getting_started/">Getting Started</a></li><li><a class="tocitem" href="../extendability/">Extension Problem</a></li><li class="is-active"><a class="tocitem" href>Enumeration Problem</a></li><li><a class="tocitem" href="../utils/">Utilities</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Enumeration Problem</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Enumeration Problem</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/Malte311/PdagExtendability/blob/master/docs/src/enumeration.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="enumeration_header"><a class="docs-heading-anchor" href="#enumeration_header">Enumeration Problem</a><a id="enumeration_header-1"></a><a class="docs-heading-anchor-permalink" href="#enumeration_header" title="Permalink"></a></h1><p>Below, there are algorithms listed that solve the enumeration problem. That is, given a partially directed graph <span>$G$</span>, compute <strong>all</strong> consistent DAG extensions of <span>$G$</span>.</p><p>Currently, the following algorithms are available:</p><ul><li><a href="#PdagExtendability.enumerate_v1-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>enumerate_v1</code></a> - An algorithm with worst-case time complexity <span>$O(2^{|E|} \Delta |E|^3)$</span>.</li><li><a href="#PdagExtendability.enumerate_v2-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>enumerate_v2</code></a> - An algorithm with worst-case time complexity <span>$O(2^{|E|} \Delta |E|^3)$</span>.</li></ul><p>Both algorithms <a href="#PdagExtendability.enumerate_v1-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>enumerate_v1</code></a> and <a href="#PdagExtendability.enumerate_v2-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>enumerate_v2</code></a> do not differ very much and use a rather naive approach to compute a result.</p><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.enumerate_v1-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.enumerate_v1-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.enumerate_v1</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">enumerate_v1(g::SimpleDiGraph)::Vector{DtGraph}</code></pre><p>Compute all consistent extensions of the input graph <code>g</code> by first generating all fully directed graphs with the same edge directions as in <code>g</code> and then removing the ones that are either cyclic or do not have the same set of v-structures as <code>g</code>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; enumerate_v1(g)
+1-element Vector{DtGraph}:
+ DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+ )</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/enumeration/enumerate_v1.jl#L7-L36">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.extensions_rec!-Tuple{DtGraph, UInt64, Vector{T} where T}" href="#PdagExtendability.extensions_rec!-Tuple{DtGraph, UInt64, Vector{T} where T}"><code>PdagExtendability.extensions_rec!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">extensions_rec!(g::DtGraph, numvstr::UInt, undiredges::Vector)::Vector</code></pre><p>Compute all extensions of <code>g</code> recursively by generating all possible directions and filter out those which are either cyclic or not consistent.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; mpdag = pdag2mpdag(g)
+DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia&gt; extensions_rec!(mpdag, countvstructs(mpdag), [(2, 3)])
+1-element Vector{Any}:
+ DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+ )</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/enumeration/enumerate_v1.jl#L55-L91">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.enumerate_v2-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.enumerate_v2-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.enumerate_v2</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">enumerate_v2(g::SimpleDiGraph)::Vector{DtGraph}</code></pre><p>Compute all consistent extensions of the input graph <code>g</code> by directing a random edge in both directions, close the result under the four Meek rules, and recursing.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; enumerate_v2(g)
+1-element Vector{DtGraph}:
+ DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+ )</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/enumeration/enumerate_v2.jl#L6-L34">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.extsmeek_rec!-Tuple{DtGraph, UInt64, Vector{T} where T}" href="#PdagExtendability.extsmeek_rec!-Tuple{DtGraph, UInt64, Vector{T} where T}"><code>PdagExtendability.extsmeek_rec!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">extsmeek_rec!(g::DtGraph, numvstr::UInt, undiredges::Vector)::Vector</code></pre><p>Compute all extensions of <code>g</code> recursively by generating all possible directions and applying Meek&#39;s rules every time an edges was directed on the resulting graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; mpdag = pdag2mpdag(g)
+DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia&gt; extsmeek_rec!(mpdag, countvstructs(mpdag), [(2, 3)])
+1-element Vector{Any}:
+	DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+	)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/enumeration/enumerate_v2.jl#L49-L85">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../extendability/">« Extension Problem</a><a class="docs-footer-nextpage" href="../utils/">Utilities »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.5 on <span class="colophon-date" title="Sunday 15 August 2021 09:46">Sunday 15 August 2021</span>. Using Julia version 1.6.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

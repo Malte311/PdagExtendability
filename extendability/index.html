@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Extension Problem · PdagExtendability</title><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.039/juliamono-regular.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.svg" alt="PdagExtendability logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">PdagExtendability</a></span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Overview</a></li><li><a class="tocitem" href="../getting_started/">Getting Started</a></li><li class="is-active"><a class="tocitem" href>Extension Problem</a><ul class="internal"><li><a class="tocitem" href="#Implementation-using-the-LightGraphs-Library"><span>Implementation using the LightGraphs Library</span></a></li><li><a class="tocitem" href="#Implementation-using-HashSets"><span>Implementation using HashSets</span></a></li><li><a class="tocitem" href="#Debugging"><span>Debugging</span></a></li></ul></li><li><a class="tocitem" href="../enumeration/">Enumeration Problem</a></li><li><a class="tocitem" href="../utils/">Utilities</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Extension Problem</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Extension Problem</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/Malte311/PdagExtendability/blob/master/docs/src/extendability.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="extendability_header"><a class="docs-heading-anchor" href="#extendability_header">Extension Problem</a><a id="extendability_header-1"></a><a class="docs-heading-anchor-permalink" href="#extendability_header" title="Permalink"></a></h1><p>The main component of this framework is composed of algorithms for the extension problem. That is, given a partially directed graph, compute a consistent DAG extension if possible, otherwise return a negative answer.</p><p>Some algorithms have been implemented in two variants. The first variant uses HashSets internally while the second one uses the <a href="https://github.com/JuliaGraphs/LightGraphs.jl">LightGraphs</a> library internally. It is noteworthy that the implementation using HashSets has a better performance in general and thus not all algorithms have been implemented using the LightGraphs library internally.</p><h2 id="Implementation-using-the-LightGraphs-Library"><a class="docs-heading-anchor" href="#Implementation-using-the-LightGraphs-Library">Implementation using the LightGraphs Library</a><a id="Implementation-using-the-LightGraphs-Library-1"></a><a class="docs-heading-anchor-permalink" href="#Implementation-using-the-LightGraphs-Library" title="Permalink"></a></h2><p>Since the performance of the implementation with LightGraphs is inferior to the performance of the HashSets implementation, not all algorithms have been implemented using LightGraphs. Available algorithms are:</p><ul><li><a href="#PdagExtendability.pdag2dag_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>pdag2dag_lg</code></a> - An algorithm with worst-case time complexity <span>$O(\Delta^2 |E|)$</span>.</li><li><a href="#PdagExtendability.fastpdag2dag_lg"><code>fastpdag2dag_lg</code></a> - An algorithm with worst-case time complexity <span>$O(\Delta |E|)$</span>.</li></ul><p>All of the other functions that are listed below are called internally in these algorithms.</p><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.pdag2dag_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.pdag2dag_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.pdag2dag_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">pdag2dag_lg(g::SimpleDiGraph)::SimpleDiGraph</code></pre><p>Convert a partially directed acyclic graph (PDAG) into a fully directed acyclic graph (DAG). If this is not possible, an empty graph is returned.</p><p>Undirected edges are represented as two directed edges.</p><p><strong>References</strong></p><p>D. Dor, M. Tarsi (1992). A simple algorithm to construct a consistent extension of a partially oriented graph. Technicial Report R-185, Cognitive Systems Laboratory, UCLA</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; dag = pdag2dag_lg(g)
+{3, 2} directed simple Int64 graph
+julia&gt; collect(edges(dag))
+2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 =&gt; 2
+ Edge 2 =&gt; 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/dor_tarsi_algo_lg.jl#L3-L34">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.sink_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.sink_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.sink_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">sink_lg(g::SimpleDiGraph)::Int64</code></pre><p>Find a sink in a partially directed graph. The sink has no outgoing edges and all vertices connected to it via an undirected edge are adjacent to all adjacent vertices of the sink. If no sink is found, -1 is returned.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; x = sink_lg(g)
+3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/dor_tarsi_algo_lg.jl#L62-L82">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.Graph" href="#PdagExtendability.Graph"><code>PdagExtendability.Graph</code></a> — <span class="docstring-category">Type</span></header><section><div><p>The datastructure to store a partially directed graph, using the LightGraphs library internally.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L3-L6">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.init_auxvectors_lg!-Tuple{PdagExtendability.Graph}" href="#PdagExtendability.init_auxvectors_lg!-Tuple{PdagExtendability.Graph}"><code>PdagExtendability.init_auxvectors_lg!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">init_auxvectors_lg!(g::Graph)</code></pre><p>Initialize the auxilliary vectors for the given graph g.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(SimpleDiGraph(3))
+Graph(
+	{3, 0} directed simple Int64 graph,
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0]
+)
+julia&gt; init_auxvectors_lg!(g)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L247-L266">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.init_lg" href="#PdagExtendability.init_lg"><code>PdagExtendability.init_lg</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">init_lg(g::SimpleDiGraph, emptygraph::Bool = false)::Graph</code></pre><p>Allocate memory for the HybridGraph datastructure representing a graph with n vertices. The datastructure holds a copy of the input graph g. This can be disabled by setting emptygraph to true.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(SimpleDiGraph(3))
+Graph(
+	{3, 0} directed simple Int64 graph,
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0]
+)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L19-L40">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.insert_arc_lg!" href="#PdagExtendability.insert_arc_lg!"><code>PdagExtendability.insert_arc_lg!</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">insert_arc_lg!(graph::Graph, u::Int64, v::Int64, update::Bool = false)</code></pre><p>Insert an arc (a directed edge) from u to v into the given graph. If update is set to true, the edge is inserted into graph.g and the values for alpha and beta are updated as well.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(3)
+...
+julia&gt; insert_arc_lg!(g, 1, 2)
+julia&gt; is_adjacent_lg(g, 1, 2)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L111-L126">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.insert_edge_lg!" href="#PdagExtendability.insert_edge_lg!"><code>PdagExtendability.insert_edge_lg!</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">insert_edge_lg!(graph::Graph, u::Int64, v::Int64, update::Bool = false)</code></pre><p>Insert an undirected edge between u and v into the given graph. If update is set to true, the edge is inserted into graph.g and the values for alpha and beta are updated as well.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(3)
+...
+julia&gt; insert_edge_lg!(g, 2, 3)
+julia&gt; is_adjacent_lg(g, 2, 3)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L135-L150">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.is_adjacent_lg-Tuple{PdagExtendability.Graph, Int64, Int64}" href="#PdagExtendability.is_adjacent_lg-Tuple{PdagExtendability.Graph, Int64, Int64}"><code>PdagExtendability.is_adjacent_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">is_adjacent_lg(graph::Graph, u::Int64, v::Int64)::Bool</code></pre><p>Check whether vertices u and v are adjacent in the given graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(3)
+...
+julia&gt; is_adjacent_lg(g, 1, 2)
+false
+julia&gt; insert_arc_lg!(g, 1, 2)
+julia&gt; is_adjacent_lg(g, 1, 2)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L55-L70">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.is_directed_lg-Tuple{PdagExtendability.Graph, Int64, Int64}" href="#PdagExtendability.is_directed_lg-Tuple{PdagExtendability.Graph, Int64, Int64}"><code>PdagExtendability.is_directed_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">is_directed_lg(graph::Graph, u::Int64, v::Int64)::Bool</code></pre><p>Check whether the given graph contains a directed edge from u to v.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(3)
+...
+julia&gt; insert_arc_lg!(g, 1, 2)
+julia&gt; is_directed_lg(g, 1, 2)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L75-L88">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.is_ps_lg-Tuple{PdagExtendability.Graph, Int64}" href="#PdagExtendability.is_ps_lg-Tuple{PdagExtendability.Graph, Int64}"><code>PdagExtendability.is_ps_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">is_ps_lg(g::Graph, s::Int64)::Bool</code></pre><p>Determine whether s is a potential sink in g.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(3)
+...
+julia&gt; is_ps_lg(g, 1)
+true
+julia&gt; insert_arc_lg!(g, 1, 2)
+julia&gt; is_ps_lg(g, 1)
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L305-L320">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.is_undirected_lg-Tuple{PdagExtendability.Graph, Int64, Int64}" href="#PdagExtendability.is_undirected_lg-Tuple{PdagExtendability.Graph, Int64, Int64}"><code>PdagExtendability.is_undirected_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">is_undirected_lg(graph::Graph, u::Int64, v::Int64)::Bool</code></pre><p>Check whether the given graph contains an undirected edge between u and v.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(3)
+...
+julia&gt; insert_arc_lg!(g, 1, 2)
+julia&gt; is_undirected_lg(g, 1, 2)
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L93-L106">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.list_ps_lg-Tuple{PdagExtendability.Graph}" href="#PdagExtendability.list_ps_lg-Tuple{PdagExtendability.Graph}"><code>PdagExtendability.list_ps_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">list_ps_lg(graph::Graph)::Vector{Int64}</code></pre><p>List potential sinks in the given graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(3)
+...
+julia&gt; list_ps_lg(g)
+3-element Vector{Int64}:
+ 1
+ 2
+ 3
+julia&gt; insert_arc_lg!(g, 1, 2)
+julia&gt; insert_edge_lg!(g, 2, 3)
+julia&gt; list_ps_lg(g)
+1-element Vector{Int64}:
+ 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L327-L347">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.pop_ps_lg!-Tuple{PdagExtendability.Graph, Int64}" href="#PdagExtendability.pop_ps_lg!-Tuple{PdagExtendability.Graph, Int64}"><code>PdagExtendability.pop_ps_lg!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">pop_ps_lg!(graph::Graph, s::Int64)::Vector{Int64}</code></pre><p>Mark s as deleted and delete all edges (directed and undirected) incident to s. Return a list of neighbors of s that became potential sinks after the removal.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(3)
+...
+julia&gt; insert_arc_lg!(g, 1, 2)
+julia&gt; insert_edge_lg!(g, 2, 3)
+julia&gt; list_ps_lg(g)
+1-element Vector{Int64}:
+ 3
+julia&gt; pop_ps_lg!(g, 3)
+1-element Vector{Int64}:
+ 2</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L358-L378">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.print_graph_lg" href="#PdagExtendability.print_graph_lg"><code>PdagExtendability.print_graph_lg</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">print_graph_lg(graph::Graph, io::Core.IO = stdout)</code></pre><p>Print the components of a given graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(1)
+...
+julia&gt; print_graph_lg(g)
+Vertex 1:
+        Alpha   = 0     Beta    = 0
+        δ+(G1)  = 0     δ-(G1)  = 0     δ+(G2)  = 0     δ-(G2)  = 0
+        Adj     = 
+        In      = 
+        Out     = </code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L412-L429">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.remove_arc_lg!-Tuple{PdagExtendability.Graph, Int64, Int64}" href="#PdagExtendability.remove_arc_lg!-Tuple{PdagExtendability.Graph, Int64, Int64}"><code>PdagExtendability.remove_arc_lg!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">remove_arc_lg!(graph::Graph, u::Int64, v::Int64)</code></pre><p>Remove an arc (a directed edge) from u to v from the given graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(3)
+...
+julia&gt; insert_arc_lg!(g, 1, 2)
+julia&gt; is_adjacent_lg(g, 1, 2)
+true
+julia&gt; remove_arc_lg!(g, 1, 2)
+julia&gt; is_adjacent_lg(g, 1, 2)
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L162-L178">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.remove_edge_lg!-Tuple{PdagExtendability.Graph, Int64, Int64}" href="#PdagExtendability.remove_edge_lg!-Tuple{PdagExtendability.Graph, Int64, Int64}"><code>PdagExtendability.remove_edge_lg!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">remove_edge_lg!(graph::Graph, u::Int64, v::Int64)</code></pre><p>Remove an undirected edge between u and v from the given graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_lg(3)
+...
+julia&gt; insert_edge_lg!(g, 2, 3)
+julia&gt; is_adjacent_lg(g, 2, 3)
+true
+julia&gt; remove_edge_lg!(g, 2, 3)
+julia&gt; is_adjacent_lg(g, 2, 3)
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L188-L204">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.update_alphabeta_lg!-Tuple{PdagExtendability.Graph, Int64, Int64, Int64, Bool}" href="#PdagExtendability.update_alphabeta_lg!-Tuple{PdagExtendability.Graph, Int64, Int64, Int64, Bool}"><code>PdagExtendability.update_alphabeta_lg!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">update_alphabeta_lg!(g::Graph, u::Int64, v::Int64, val::Int64, is_uv_dir::Bool)</code></pre><p>Update values for alpha and beta in g. Either add to (positive value for val) or subtract from (negative value for val) alpha and beta. The parameter is<em>uv</em>dir indicates whether the edge between u and v is directed from u to v.</p><p>Is called internally whenever an edge (both directed and undirected) is inserted or removed. Do not call this function by hand.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_datastructure_lg.jl#L217-L226">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.extendgraph_lg-Tuple{PdagExtendability.Graph}" href="#PdagExtendability.extendgraph_lg-Tuple{PdagExtendability.Graph}"><code>PdagExtendability.extendgraph_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">extendgraph_lg(graph::Graph)::SimpleDiGraph</code></pre><p>Compute the extension of the given graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; graph = standardsetup_lg(g)
+...
+julia&gt; extendgraph_lg(graph)
+{3, 2} directed simple Int64 graph</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_lg.jl#L137-L157">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.fastpdag2dag_lg" href="#PdagExtendability.fastpdag2dag_lg"><code>PdagExtendability.fastpdag2dag_lg</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">fastpdag2dag_lg(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph</code></pre><p>Convert a partially directed acyclic graph (PDAG) into a fully directed acyclic graph (DAG). If this is not possible, an empty graph is returned.</p><p>Undirected edges are represented as two directed edges.</p><p>If the parameter optimize is omitted or set to false, the algorithm runs in time O(Δm) with Δ being the maximum degree of g and m the number of edges in g. Setting optimize to true will yield an algorithm in time O(dm), where d is the degeneracy of the skeleton.</p><p><strong>References</strong></p><p>M. Wienöbst, M. Bannach, M. Liśkiewicz (2021). Extendability of Causal Graphical Models: Algorithms and Computational Complexity. 37th Conference on Uncertainty in Artificial Intelligence, 2021 (UAI 2021).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; dag = fastpdag2dag_lg(g)
+{3, 2} directed simple Int64 graph
+julia&gt; collect(edges(dag))
+2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 =&gt; 2
+ Edge 2 =&gt; 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_lg.jl#L6-L42">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.optimizedsetup_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.optimizedsetup_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.optimizedsetup_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">optimizedsetup_lg(g::SimpleDiGraph)::Graph</code></pre><p>Set up the datastructure for the algorithm with time complexity O(dm).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; optimizedsetup_lg(g)
+Graph(
+	{3, 3} directed simple Int64 graph,
+	[0, 0, 0],
+	[0, 0, 0],
+	[1, 0, 0],
+	[0, 1, 1],
+	[0, 1, 0],
+	[0, 1, 1]
+)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_lg.jl#L84-L110">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.standardsetup_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.standardsetup_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.standardsetup_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">standardsetup_lg(g::SimpleDiGraph)::Graph</code></pre><p>Set up the datastructure for the algorithm with time complexity O(Δm).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; standardsetup_lg(g)
+Graph(
+	{3, 3} directed simple Int64 graph,
+	[0, 0, 0],
+	[0, 0, 0],
+	[1, 0, 0],
+	[0, 1, 1],
+	[0, 1, 0],
+	[0, 1, 1]
+)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_lg.jl#L49-L75">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.deg_struct_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.deg_struct_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.deg_struct_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">deg_struct_lg(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}</code></pre><p>Compute the degree structure for the graph g. Return a tuple consisting of an array holding the degree for each vertex in g and an array where each index represents a degree (index 1 for degree 0, index 2 for degree 1, ..., index n for degree n-1) and holds a set of vertices which have that degree.</p><p>For example, if we have three vertices 1, 2, 3 with degree 1, 2, and 1, respectively, we obtain the following degree structure: ([1, 2, 1], [Set(), Set([1, 3]), Set([2])])</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; deg_struct_lg(g)
+([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_optimization_lg.jl#L53-L78">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.degeneracy_ordering_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.degeneracy_ordering_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.degeneracy_ordering_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">degeneracy_ordering_lg(g::SimpleDiGraph)::Tuple{Vector{Int64}, Dict{Int64, Int64}}</code></pre><p>Compute a degeneracy ordering for the skeleton of the graph g.</p><p><strong>References</strong></p><p>David W. Matula, Leland L. Beck (1983). Smallest-last ordering and clustering and graph coloring algorithms. Journal of the ACM, 30(3):417–427.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; degeneracy_ordering_lg(g)
+([1, 2, 3], Dict(2 =&gt; 2, 3 =&gt; 3, 1 =&gt; 1))</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_optimization_lg.jl#L3-L26">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.pop_min_deg_vertex_lg!-Tuple{Vector{Set{Int64}}}" href="#PdagExtendability.pop_min_deg_vertex_lg!-Tuple{Vector{Set{Int64}}}"><code>PdagExtendability.pop_min_deg_vertex_lg!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">pop_min_deg_vertex_lg!(degs::Vector{Set{Int64}})::Int64</code></pre><p>Find the vertex with minimum degree in the given degree structure. The vertex will be removed from the structure before returning it. In case there are multiple vertices with the same minimum degree, there is no specific order of choosing them, i.e., any of those vertices is returned.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; (_, degs) = deg_struct_lg(g)
+([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])
+julia&gt; pop_min_deg_vertex_lg!(degs)
+3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_optimization_lg.jl#L93-L116">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.update_deg_lg!-Tuple{Int64, Vector{Int64}, Vector{Set{Int64}}}" href="#PdagExtendability.update_deg_lg!-Tuple{Int64, Vector{Int64}, Vector{Set{Int64}}}"><code>PdagExtendability.update_deg_lg!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">update_deg_lg!(v::Int64, aux::Vector{Int64}, degs::Vector{Set{Int64}})</code></pre><p>Update the degree of a vertex after an adjacent vertex has been removed, i.e., reduce the degree by one and move it into the correct set in the degree structure.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; (aux, degs) = deg_struct_lg(g)
+([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])
+julia&gt; update_deg_lg!(3, aux, degs)
+julia&gt; (aux, degs)
+([1, 2, 0], Set{Int64}[Set([3]), Set([1]), Set([2])])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/new_algo_optimization_lg.jl#L125-L148">source</a></section></article><h2 id="Implementation-using-HashSets"><a class="docs-heading-anchor" href="#Implementation-using-HashSets">Implementation using HashSets</a><a id="Implementation-using-HashSets-1"></a><a class="docs-heading-anchor-permalink" href="#Implementation-using-HashSets" title="Permalink"></a></h2><p>Basically, there are three different algorithms implemented using HashSets internally:</p><ul><li><a href="#PdagExtendability.pdag2dag_hs"><code>pdag2dag_hs</code></a> - An algorithm with worst-case time complexity <span>$O(\Delta^2 |E|)$</span>.</li><li><a href="#PdagExtendability.altpdag2dag_hs-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>altpdag2dag_hs</code></a> - An alternative implementation for <a href="#PdagExtendability.pdag2dag_hs"><code>pdag2dag_hs</code></a> with worst-case time complexity <span>$O(\Delta^2 |E|)$</span>.</li><li><a href="#PdagExtendability.fastpdag2dag_hs"><code>fastpdag2dag_hs</code></a> - An algorithm with worst-case time complexity <span>$O(\Delta |E|)$</span>.</li><li><a href="#PdagExtendability.pdag2mpdag2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>pdag2mpdag2dag</code></a> - An algorithm with worst-case time complexity <span>$O(\Delta |E|^2)$</span> (as the worst-case complexity already suggests, this algorithm is way slower than the other algorithms).</li></ul><p>Again, all of the other functions listed below are called internally in these algorithms.</p><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.DtGraph" href="#PdagExtendability.DtGraph"><code>PdagExtendability.DtGraph</code></a> — <span class="docstring-category">Type</span></header><section><div><p>The datastructure to store a partially directed graph, using HashSets internally.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_algo_datastructure_hs.jl#L1-L4">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.degree_hs-Tuple{DtGraph, Int64}" href="#PdagExtendability.degree_hs-Tuple{DtGraph, Int64}"><code>PdagExtendability.degree_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">degree_hs(graph::DtGraph, u::Int64)::Int64</code></pre><p>Compute the degree of vertix <code>u</code> in the given graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; dtgraph = setup_hs(g)
+DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set()],
+	Set{Int64}[Set([2]), Set(), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia&gt; degree_hs(dtgraph, 1)
+1</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_algo_datastructure_hs.jl#L113-L136">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.insert_edge_hs!-Tuple{DtGraph, Int64, Int64, Bool}" href="#PdagExtendability.insert_edge_hs!-Tuple{DtGraph, Int64, Int64, Bool}"><code>PdagExtendability.insert_edge_hs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">insert_edge_hs!(graph::DtGraph, u::Int64, v::Int64, isdir::Bool)</code></pre><p>Insert an edge between u and v into the given graph. The parameter isdir indicates whether the edge is directed or not.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; dtgraph = setup_hs(g)
+DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set()],
+	Set{Int64}[Set([2]), Set(), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia&gt; insert_edge_hs!(dtgraph, 2, 3, true)
+julia&gt; isadjacent_hs(dtgraph, 3, 2)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_algo_datastructure_hs.jl#L141-L166">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.isadjacent_hs-Tuple{DtGraph, Int64, Int64}" href="#PdagExtendability.isadjacent_hs-Tuple{DtGraph, Int64, Int64}"><code>PdagExtendability.isadjacent_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">isadjacent_hs(graph::DtGraph, u::Int64, v::Int64)::Bool</code></pre><p>Check whether vertices u and v are adjacent in the given graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; dtgraph = setup_hs(g)
+DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set()],
+	Set{Int64}[Set([2]), Set(), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia&gt; isadjacent_hs(dtgraph, 1, 2)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_algo_datastructure_hs.jl#L85-L108">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.print_graph_hs" href="#PdagExtendability.print_graph_hs"><code>PdagExtendability.print_graph_hs</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">print_graph_hs(graph::DtGraph, io::Core.IO = stdout)</code></pre><p>Print a given graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; dtgraph = setup_hs(g)
+DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set()],
+	Set{Int64}[Set([2]), Set(), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia&gt; print_graph_hs(dtgraph)
+Vertex 1:
+        Ingoing    = 
+        Outgoing   = 2
+        Undirected = 
+Vertex 2:
+        Ingoing    = 1
+        Outgoing   = 
+        Undirected = 
+Vertex 3:
+        Ingoing    = 
+        Outgoing   = 
+        Undirected = </code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_algo_datastructure_hs.jl#L245-L279">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.remove_vertex_hs!" href="#PdagExtendability.remove_vertex_hs!"><code>PdagExtendability.remove_vertex_hs!</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">remove_vertex_hs!(graph::DtGraph, x::Int64, useheuristic::Bool = false)</code></pre><p>Remove vertex x from the given graph. Note that this only removes x from sets of other nodes and the sets of x itself are left unchanged, so do not use index x anymore after the removal.</p><p>The parameter <code>useheuristic</code> indicates whether to update the priority queue with vertices&#39; degrees.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; dtgraph = setup_hs(g)
+DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set()],
+	Set{Int64}[Set([2]), Set(), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia&gt; remove_vertex_hs!(dtgraph, 2)
+julia&gt; dtgraph
+DtGraph(
+	2,
+	Set([3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set()],
+	Set{Int64}[Set(), Set(), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_algo_datastructure_hs.jl#L177-L214">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.setup_hs" href="#PdagExtendability.setup_hs"><code>PdagExtendability.setup_hs</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">setup_hs(g::SimpleDiGraph, useheuristic::Bool = false)::DtGraph</code></pre><p>Initialize the datastructure from a given graph g.</p><p>The parameter <code>useheuristic</code> indicates whether to maintain a priority queue with vertices&#39; degrees which is used to prefer vertices with low degrees over ones with higher degrees.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; setup_hs(g)
+DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set()],
+	Set{Int64}[Set([2]), Set(), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia&gt; setup_hs(g, true)
+DtGraph(
+	3,
+	Set{Int64}(),
+	Set{Int64}[Set([3]), Set([2, 1]), Set()],
+	Set{Int64}[Set(), Set([1]), Set()],
+	Set{Int64}[Set([2]), Set(), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_algo_datastructure_hs.jl#L23-L57">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.pdag2dag_hs" href="#PdagExtendability.pdag2dag_hs"><code>PdagExtendability.pdag2dag_hs</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">pdag2dag_hs(g::SimpleDiGraph, useheuristic::Bool = false)::SimpleDiGraph</code></pre><p>Convert a partially directed acyclic graph (PDAG) into a fully directed acyclic graph (DAG). If this is not possible, an empty graph is returned.</p><p>Undirected edges are represented as two directed edges.</p><p>Set <code>useheuristic</code> to <code>true</code> if the algorithm should consider vertices with lower degrees first.</p><p><strong>References</strong></p><p>D. Dor, M. Tarsi (1992). A simple algorithm to construct a consistent extension of a partially oriented graph. Technicial Report R-185, Cognitive Systems Laboratory, UCLA</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; dag = pdag2dag_hs(g)
+{3, 2} directed simple Int64 graph
+julia&gt; collect(edges(dag))
+2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 =&gt; 2
+ Edge 2 =&gt; 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_algo_hs.jl#L6-L40">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.sink_hs" href="#PdagExtendability.sink_hs"><code>PdagExtendability.sink_hs</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">sink_hs(graph::DtGraph, useheuristic::Bool = false)::Int64</code></pre><p>Find a sink in a partially directed graph. The sink has no outgoing edges and all vertices connected to it via an undirected edge are adjacent to all adjacent vertices of the sink. If no sink is found, -1 is returned.</p><p>Set <code>useheuristic</code> to <code>true</code> if the algorithm should consider vertices with lower degrees first.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; x = sink_hs(setup_hs(g))
+3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_algo_hs.jl#L63-L86">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.altpdag2dag_hs-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.altpdag2dag_hs-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.altpdag2dag_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">altpdag2dag_hs(g::SimpleDiGraph)::SimpleDiGraph</code></pre><p>Alternative implementation of <a href="#PdagExtendability.pdag2dag_hs"><code>pdag2dag_hs</code></a>. Computes a list of sinks at the beginning. As long as there are sinks left, removes a sink from the graph and checks for all previous neighbors if they became a sink now. If so, adds them to the list of sinks. Terminates when no sinks are left or all vertices are removed.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; dag = altpdag2dag_hs(g)
+{3, 2} directed simple Int64 graph
+julia&gt; collect(edges(dag))
+2-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 =&gt; 2
+ Edge 2 =&gt; 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_alt_algo_hs.jl#L5-L31">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.is_sink_hs-Tuple{DtGraph, Int64}" href="#PdagExtendability.is_sink_hs-Tuple{DtGraph, Int64}"><code>PdagExtendability.is_sink_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">is_sink_hs(graph::DtGraph, x::Int64)::Bool</code></pre><p>Check whether vertex x is a sink in the given graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; setup = setup_hs(g)
+...
+julia&gt; is_sink_hs(setup, 1)
+false
+julia&gt; is_sink_hs(setup, 3)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_alt_algo_hs.jl#L93-L115">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.list_sinks_hs-Tuple{DtGraph}" href="#PdagExtendability.list_sinks_hs-Tuple{DtGraph}"><code>PdagExtendability.list_sinks_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">list_sinks_hs(graph::DtGraph)::Vector{Int64}</code></pre><p>Compute a list of sinks in the given graph.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; setup = setup_hs(g)
+...
+julia&gt; list_sinks_hs(setup)
+1-element Vector{Int64}:
+ 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_alt_algo_hs.jl#L61-L82">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.DirectedGraph" href="#PdagExtendability.DirectedGraph"><code>PdagExtendability.DirectedGraph</code></a> — <span class="docstring-category">Type</span></header><section><div><p>The datastructure to store a directed graph.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L1-L3">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.HybridGraph" href="#PdagExtendability.HybridGraph"><code>PdagExtendability.HybridGraph</code></a> — <span class="docstring-category">Type</span></header><section><div><p>The datastructure to store a partially directed graph.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L12-L14">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.init_hs-Tuple{Int64}" href="#PdagExtendability.init_hs-Tuple{Int64}"><code>PdagExtendability.init_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">init_hs(n::Int64)::HybridGraph</code></pre><p>Allocate memory for the HybridGraph datastructure representing a graph with n vertices.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_hs(3)
+HybridGraph(
+	DirectedGraph(
+		Set{Int64}[Set(), Set(), Set()],
+		[0, 0, 0],
+		[0, 0, 0],
+		Set{Int64}[Set(), Set(), Set()],
+		Set{Int64}[Set(), Set(), Set()]
+	),
+	DirectedGraph(
+		Set{Int64}[Set(), Set(), Set()],
+		[0, 0, 0],
+		[0, 0, 0],
+		Set{Int64}[Set(), Set(), Set()],
+		Set{Int64}[Set(), Set(), Set()]
+	),
+	[0, 0, 0],
+	[0, 0, 0]
+)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L24-L52">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.insert_arc_hs!-Tuple{PdagExtendability.DirectedGraph, Int64, Int64}" href="#PdagExtendability.insert_arc_hs!-Tuple{PdagExtendability.DirectedGraph, Int64, Int64}"><code>PdagExtendability.insert_arc_hs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">insert_arc_hs!(g::DirectedGraph, u::Int64, v::Int64)</code></pre><p>Insert an arc (a directed edge) from u to v into g.</p><p>Is called internally and should not be called by hand! For inserting arcs, use the function insert<em>arc</em>hs! directly on the HybridGraph datastructure instead. ```</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L113-L122">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.insert_arc_hs!-Tuple{PdagExtendability.HybridGraph, Int64, Int64}" href="#PdagExtendability.insert_arc_hs!-Tuple{PdagExtendability.HybridGraph, Int64, Int64}"><code>PdagExtendability.insert_arc_hs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">insert_arc_hs!(g::HybridGraph, u::Int64, v::Int64)</code></pre><p>Insert an arc (a directed edge) from u to v into g.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_hs(3)
+...
+julia&gt; insert_arc_hs!(g, 1, 2)
+julia&gt; is_adjacent_hs(g, 1, 2)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L94-L107">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.insert_edge_hs!-Tuple{PdagExtendability.HybridGraph, Int64, Int64}" href="#PdagExtendability.insert_edge_hs!-Tuple{PdagExtendability.HybridGraph, Int64, Int64}"><code>PdagExtendability.insert_edge_hs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">insert_edge_hs!(g::HybridGraph, u::Int64, v::Int64)</code></pre><p>Insert an undirected edge between u and v into g.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_hs(3)
+...
+julia&gt; insert_edge_hs!(g, 2, 3)
+julia&gt; is_adjacent_hs(g, 2, 3)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L133-L146">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.is_adjacent_hs-Tuple{PdagExtendability.HybridGraph, Int64, Int64}" href="#PdagExtendability.is_adjacent_hs-Tuple{PdagExtendability.HybridGraph, Int64, Int64}"><code>PdagExtendability.is_adjacent_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">is_adjacent_hs(g::HybridGraph, u::Int64, v::Int64)::Bool</code></pre><p>Check whether vertices u and v are adjacent in graph g.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_hs(3)
+...
+julia&gt; is_adjacent_hs(g, 1, 2)
+false
+julia&gt; insert_arc_hs!(g, 1, 2)
+julia&gt; is_adjacent_hs(g, 1, 2)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L74-L89">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.is_ps_hs-Tuple{PdagExtendability.HybridGraph, Int64}" href="#PdagExtendability.is_ps_hs-Tuple{PdagExtendability.HybridGraph, Int64}"><code>PdagExtendability.is_ps_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">is_ps_hs(g::HybridGraph, s::Int64)::Bool</code></pre><p>Determine whether s is a potential sink in g.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_hs(3)
+...
+julia&gt; is_ps_hs(g, 1)
+true
+julia&gt; insert_arc_hs!(g, 1, 2)
+julia&gt; is_ps_hs(g, 1)
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L252-L267">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.list_ps_hs-Tuple{PdagExtendability.HybridGraph}" href="#PdagExtendability.list_ps_hs-Tuple{PdagExtendability.HybridGraph}"><code>PdagExtendability.list_ps_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">list_ps_hs(g::HybridGraph)::Vector{Int64}</code></pre><p>List potential sinks in g.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_hs(3)
+...
+julia&gt; list_ps_hs(g)
+3-element Array{Int64,1}:
+ 1
+ 2
+ 3
+julia&gt; insert_arc_hs!(g, 1, 2)
+julia&gt; insert_edge_hs!(g, 2, 3)
+julia&gt; list_ps_hs(g)
+1-element Array{Int64,1}:
+ 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L274-L294">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.pop_ps_hs!-Tuple{PdagExtendability.HybridGraph, Int64}" href="#PdagExtendability.pop_ps_hs!-Tuple{PdagExtendability.HybridGraph, Int64}"><code>PdagExtendability.pop_ps_hs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">pop_ps_hs!(g::HybridGraph, s::Int64)::Vector{Int64}</code></pre><p>Mark s as deleted and delete all edges (directed and undirected) incident to s. Return a list of neighbors of s that became potential sinks after the removal.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_hs(3)
+...
+julia&gt; insert_arc_hs!(g, 1, 2)
+julia&gt; insert_edge_hs!(g, 2, 3)
+julia&gt; list_ps_hs(g)
+1-element Array{Int64,1}:
+ 3
+julia&gt; pop_ps_hs!(g, 3)
+1-element Array{Int64,1}:
+ 2</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L305-L325">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.print_graph_hs" href="#PdagExtendability.print_graph_hs"><code>PdagExtendability.print_graph_hs</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">print_graph_hs(g::HybridGraph, io::Core.IO = stdout)</code></pre><p>Print the components of a HybridGraph g.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_hs(1)
+...
+julia&gt; print_graph_hs(g)
+Vertex 1:
+        Alpha   = 0     Beta    = 0
+        δ+(G1)  = 0     δ-(G1)  = 0     δ+(G2)  = 0     δ-(G2)  = 0
+        Adj(G1) =       Adj(G2) = 
+        In(G1)  =       In(G2)  = 
+        Out(G1) =       Out(G2) = </code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L354-L371">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.remove_arc_hs!-Tuple{PdagExtendability.DirectedGraph, Int64, Int64}" href="#PdagExtendability.remove_arc_hs!-Tuple{PdagExtendability.DirectedGraph, Int64, Int64}"><code>PdagExtendability.remove_arc_hs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">remove_arc_hs!(g::DirectedGraph, u::Int64, v::Int64)</code></pre><p>Remove an arc (a directed edge) from u to v from g.</p><p>Is called internally and should not be called by hand! For removing arcs, use the function remove<em>arc</em>hs! directly on the HybridGraph datastructure instead.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L175-L183">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.remove_arc_hs!-Tuple{PdagExtendability.HybridGraph, Int64, Int64}" href="#PdagExtendability.remove_arc_hs!-Tuple{PdagExtendability.HybridGraph, Int64, Int64}"><code>PdagExtendability.remove_arc_hs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">remove_arc_hs!(g::HybridGraph, u::Int64, v::Int64)</code></pre><p>Remove an arc (a directed edge) from u to v from g.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_hs(3)
+...
+julia&gt; insert_arc_hs!(g, 1, 2)
+julia&gt; is_adjacent_hs(g, 1, 2)
+true
+julia&gt; remove_arc_hs!(g, 1, 2)
+julia&gt; is_adjacent_hs(g, 1, 2)
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L153-L169">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.remove_edge_hs!-Tuple{PdagExtendability.HybridGraph, Int64, Int64}" href="#PdagExtendability.remove_edge_hs!-Tuple{PdagExtendability.HybridGraph, Int64, Int64}"><code>PdagExtendability.remove_edge_hs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">remove_edge_hs!(g::HybridGraph, u::Int64, v::Int64)</code></pre><p>Remove an undirected edge between u and v from g.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = init_hs(3)
+...
+julia&gt; insert_edge_hs!(g, 2, 3)
+julia&gt; is_adjacent_hs(g, 2, 3)
+true
+julia&gt; remove_edge_hs!(g, 2, 3)
+julia&gt; is_adjacent_hs(g, 2, 3)
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L193-L209">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.update_alphabeta_hs!-Tuple{PdagExtendability.HybridGraph, Int64, Int64, Int64}" href="#PdagExtendability.update_alphabeta_hs!-Tuple{PdagExtendability.HybridGraph, Int64, Int64, Int64}"><code>PdagExtendability.update_alphabeta_hs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">update_alphabeta_hs!(g::HybridGraph, u::Int64, v::Int64, val::Int64)</code></pre><p>Update values for alpha and beta in g. Either add to (positive value for val) or subtract from (negative value for val) alpha and beta.</p><p>Is called internally whenever an edge (both directed and undirected) is inserted or removed. Do not call this function by hand.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_datastructure_hs.jl#L217-L225">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.extendgraph_hs-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph, PdagExtendability.HybridGraph}" href="#PdagExtendability.extendgraph_hs-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph, PdagExtendability.HybridGraph}"><code>PdagExtendability.extendgraph_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">extendgraph_hs(g::SimpleDiGraph, hg::HybridGraph)::SimpleDiGraph</code></pre><p>Compute the extension of graph hg.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; hg = standardsetup_hs(g)
+...
+julia&gt; extendgraph_hs(g, hg)
+{3, 2} directed simple Int64 graph</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_hs.jl#L175-L195">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.fastpdag2dag_hs" href="#PdagExtendability.fastpdag2dag_hs"><code>PdagExtendability.fastpdag2dag_hs</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">fastpdag2dag_hs(g::SimpleDiGraph, optimize::Bool = false)::SimpleDiGraph</code></pre><p>Convert a partially directed acyclic graph (PDAG) into a fully directed acyclic graph (DAG). If this is not possible, an empty graph is returned.</p><p>Undirected edges are represented as two directed edges.</p><p>If the parameter optimize is omitted or set to false, the algorithm runs in time O(Δm) with Δ being the maximum degree of g and m the number of edges in g. Setting optimize to true will yield an algorithm in time O(dm), where d is the degeneracy of the skeleton.</p><p><strong>References</strong></p><p>M. Wienöbst, M. Bannach, M. Liśkiewicz (2021). Extendability of Causal Graphical Models: Algorithms and Computational Complexity. 37th Conference on Uncertainty in Artificial Intelligence, 2021 (UAI 2021).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; dag = fastpdag2dag_hs(g)
+{3, 2} directed simple Int64 graph
+julia&gt; collect(edges(dag))
+2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 =&gt; 2
+ Edge 2 =&gt; 3
+julia&gt; dag = fastpdag2dag_hs(g, true)
+{3, 2} directed simple Int64 graph
+julia&gt; collect(edges(dag))
+2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 =&gt; 2
+ Edge 2 =&gt; 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_hs.jl#L6-L48">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.optimizedsetup_hs-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.optimizedsetup_hs-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.optimizedsetup_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">optimizedsetup_hs(g::SimpleDiGraph)::HybridGraph</code></pre><p>Set up the datastructure for the algorithm with time complexity O(dm).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; optimizedsetup_hs(g)
+HybridGraph(
+	DirectedGraph(
+		Set{Int64}[Set(), Set([3]), Set([2])],
+		[0, 1, 1],
+		[0, 1, 1],
+		Set{Int64}[Set(), Set([3]), Set([2])],
+		Set{Int64}[Set(), Set([3]), Set([2])]
+	),
+	DirectedGraph(
+		Set{Int64}[Set([2]), Set([1]), Set()],
+		[1, 0, 0],
+		[0, 1, 0],
+		Set{Int64}[Set(), Set([1]), Set()],
+		Set{Int64}[Set([2]), Set(), Set()]
+	),
+	[0, 0, 0],
+	[0, 0, 0]
+)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_hs.jl#L112-L147">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.standardsetup_hs-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.standardsetup_hs-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.standardsetup_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">standardsetup_hs(g::SimpleDiGraph)::HybridGraph</code></pre><p>Set up the datastructure for the algorithm with time complexity O(Δm).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; standardsetup_hs(g)
+HybridGraph(
+	DirectedGraph(
+		Set{Int64}[Set(), Set([3]), Set([2])],
+		[0, 1, 1],
+		[0, 1, 1],
+		Set{Int64}[Set(), Set([3]), Set([2])],
+		Set{Int64}[Set(), Set([3]), Set([2])]
+	),
+	DirectedGraph(
+		Set{Int64}[Set([2]), Set([1]), Set()],
+		[1, 0, 0],
+		[0, 1, 0],
+		Set{Int64}[Set(), Set([1]), Set()],
+		Set{Int64}[Set([2]), Set(), Set()]
+	),
+	[0, 0, 0],
+	[0, 0, 0]
+)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_hs.jl#L57-L92">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.deg_struct_hs-Tuple{DtGraph}" href="#PdagExtendability.deg_struct_hs-Tuple{DtGraph}"><code>PdagExtendability.deg_struct_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">deg_struct_hs(g::DtGraph)::Tuple{Vector{Int64}, Vector{Set{Int64}}}</code></pre><p>Compute the degree structure for the graph g. Return a tuple consisting of an array holding the degree for each vertex in g and an array where each index represents a degree (index 1 for degree 0, index 2 for degree 1, ..., index n for degree n-1) and holds a set of vertices which have that degree.</p><p>For example, if we have three vertices 1, 2, 3 with degree 1, 2, and 1, respectively, we obtain the following degree structure: ([1, 2, 1], [Set(), Set([1, 3]), Set([2])])</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; deg_struct_hs(setup_hs(g))
+([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_optimization_hs.jl#L69-L94">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.degeneracy_ordering_hs-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.degeneracy_ordering_hs-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.degeneracy_ordering_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">degeneracy_ordering_hs(g::SimpleDiGraph)::Tuple{Vector{Int64}, Vector{Int64}}</code></pre><p>Compute a degeneracy ordering for the skeleton of the graph g. The second component of the tuple holds a mapping for each vertex of the ordering that maps the vertex to its index in the ordering.</p><p><strong>References</strong></p><p>David W. Matula, Leland L. Beck (1983). Smallest-last ordering and clustering and graph coloring algorithms. Journal of the ACM, 30(3):417–427.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; degeneracy_ordering_hs(g)
+([1, 2, 3], [1, 2, 3])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_optimization_hs.jl#L5-L30">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.pop_min_deg_vertex_hs!-Tuple{Vector{Set{Int64}}}" href="#PdagExtendability.pop_min_deg_vertex_hs!-Tuple{Vector{Set{Int64}}}"><code>PdagExtendability.pop_min_deg_vertex_hs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">pop_min_deg_vertex_hs!(degs::Vector{Set{Int64}})::Int64</code></pre><p>Find the vertex with minimum degree in the given degree structure. The vertex will be removed from the structure before returning it. In case there are multiple vertices with the same minimum degree, there is no specific order of choosing them, i.e., any of those vertices is returned.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; (_, degs) = deg_struct_hs(g)
+([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])
+julia&gt; pop_min_deg_vertex_hs!(degs)
+3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_optimization_hs.jl#L109-L132">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.update_deg_hs!-Tuple{Int64, Vector{Int64}, Vector{Set{Int64}}}" href="#PdagExtendability.update_deg_hs!-Tuple{Int64, Vector{Int64}, Vector{Set{Int64}}}"><code>PdagExtendability.update_deg_hs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">update_deg_hs!(v::Int64, aux::Vector{Int64}, degs::Vector{Set{Int64}})</code></pre><p>Update the degree of a vertex after an adjacent vertex has been removed, i.e., reduce the degree by one and move it into the correct set in the degree structure.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; (aux, degs) = deg_struct_hs(g)
+([1, 2, 1], Set{Int64}[Set(), Set([3, 1]), Set([2])])
+julia&gt; update_deg_hs!(3, aux, degs)
+julia&gt; (aux, degs)
+([1, 2, 0], Set{Int64}[Set([3]), Set([1]), Set([2])])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/new_algo_optimization_hs.jl#L141-L164">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.countvstructs-Tuple{DtGraph}" href="#PdagExtendability.countvstructs-Tuple{DtGraph}"><code>PdagExtendability.countvstructs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">countvstructs(g::DtGraph)::UInt</code></pre><p>Count the numer of v-structures in the given graph <code>g</code>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; countvstructs(setup_hs(g))
+1</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/pdag2mpdag2dag.jl#L42-L58">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.pdag2mpdag2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.pdag2mpdag2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.pdag2mpdag2dag</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">pdag2mpdag2dag(g::SimpleDiGraph)::SimpleDiGraph</code></pre><p>Convert a PDAG into a DAG. First, Meek&#39;s rules are applied exhaustively to the input graph, then it is checked whether cycles or new v-structures were formed (if so, the input is not extendable) and lastly, the resulting MPDAG is converted into a DAG in linear time.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; collect(edges(pdag2mpdag2dag(g)))
+2-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 =&gt; 2
+ Edge 2 =&gt; 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/pdag2mpdag2dag.jl#L8-L31">source</a></section></article><h3 id="Algorithms-for-Specific-Types-of-Input-Graphs"><a class="docs-heading-anchor" href="#Algorithms-for-Specific-Types-of-Input-Graphs">Algorithms for Specific Types of Input Graphs</a><a id="Algorithms-for-Specific-Types-of-Input-Graphs-1"></a><a class="docs-heading-anchor-permalink" href="#Algorithms-for-Specific-Types-of-Input-Graphs" title="Permalink"></a></h3><p>The following algorithms are implemented using HashSets internally as well, but they work only for specific types of input graphs.</p><ul><li><a href="#PdagExtendability.dir2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>dir2dag</code></a> - An algorithm with worst-case time complexity <span>$O(|V|+|E|)$</span> that works only for fully directed input graphs.</li><li><a href="#PdagExtendability.undir2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>undir2dag</code></a> - An algorithm with worst-case time complexity <span>$O(|V|+|E|)$</span> that works only for fully undirected input graphs.</li><li><a href="#PdagExtendability.mpdag2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>mpdag2dag</code></a> - An algorithm with worst-case time complexity <span>$O(|V|+|E|)$</span> that works only for maximally oriented partially directed acyclic graphs (MPDAGs).</li></ul><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.dir2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.dir2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.dir2dag</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">dir2dag(g::SimpleDiGraph)::SimpleDiGraph</code></pre><p>Convert a directed graph into a fully directed acyclic graph (DAG). If this is not possible, an empty graph is returned.</p><p>Note that this function only works for fully directed input graphs as it simply checks acyclicity of the input graph.</p><p><strong>Important:</strong> The input must not contain two edges between the same two nodes (i.e., if an edge u-&gt;v exists, v-&gt;u is forbidden) because the internal data structure treats such edges as undirected edges.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 1, 3)
+true
+julia&gt; collect(edges(dir2dag(g)))
+2-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 =&gt; 2
+ Edge 1 =&gt; 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/depth_first_search_hs.jl#L5-L31">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.iscyclic!-Tuple{DtGraph}" href="#PdagExtendability.iscyclic!-Tuple{DtGraph}"><code>PdagExtendability.iscyclic!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">iscyclic!(g::DtGraph)::Bool</code></pre><p>Checks whether <code>g</code> is cyclic by computing a topological sorting using Kahn&#39;s algorithm. Note that <code>g</code> must be fully directed (undirected edges are forbidden).</p><p><strong>Important:</strong> The input must not contain two edges between the same two nodes (i.e., if an edge u-&gt;v exists, v-&gt;u is forbidden) because the internal data structure treats such edges as undirected edges.</p><p><strong>References</strong></p><p>Kahn, Arthur B. (1962). Topological sorting of large networks. Communications of the ACM, 5</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 1, 3)
+true
+julia&gt; iscyclic!(setup_hs(g))
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/depth_first_search_hs.jl#L37-L63">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.ispeo-Tuple{DtGraph, Tuple{Vector{Int64}, Vector{Int64}}}" href="#PdagExtendability.ispeo-Tuple{DtGraph, Tuple{Vector{Int64}, Vector{Int64}}}"><code>PdagExtendability.ispeo</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">ispeo(g::DtGraph, ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool</code></pre><p>Check whether <code>ordering</code> is a perfect elimination order. That is, for each vertex v, v and all neighbors coming after v form a clique.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleGraph(3)
+{3, 0} undirected simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 1, 3)
+true
+julia&gt; add_edge!(g, 2, 3)
+julia&gt; dt = setup_hs(graph2digraph(g))
+...
+julia&gt; ispeo(dt, mcs(dt))
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/maximum_cardinality_search_hs.jl#L49-L70">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.mcs-Tuple{DtGraph}" href="#PdagExtendability.mcs-Tuple{DtGraph}"><code>PdagExtendability.mcs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">mcs(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}</code></pre><p>Compute a vertex ordering using maximum cardinality search.</p><p><strong>References</strong></p><p>Tarjan, Robert E.; Yannakakis, Mihalis (1984). Simple Linear-Time Algorithms to Test Chordality of Graphs, Test Acyclicity of Hypergraphs, and Selectively Reduce Acyclic Hypergraphs. SIAM Journal on Computing, 13(3), 566–579.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleGraph(3)
+{3, 0} undirected simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 1, 3)
+true
+julia&gt; add_edge!(g, 2, 3)
+julia&gt; dt = setup_hs(graph2digraph(g))
+...
+julia&gt; mcs(dt)
+([3, 1, 2], [2, 3, 1])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/maximum_cardinality_search_hs.jl#L96-L121">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.undir2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.undir2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.undir2dag</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">undir2dag(g::SimpleDiGraph)::SimpleDiGraph</code></pre><p>Convert an undirected graph into a fully directed acyclic graph (DAG). If this is not possible, an empty graph is returned.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleGraph(3)
+{3, 0} undirected simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 1, 3)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; collect(edges(undir2dag(graph2digraph(g))))
+3-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 2 =&gt; 1
+ Edge 2 =&gt; 3
+ Edge 3 =&gt; 1</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/maximum_cardinality_search_hs.jl#L5-L27">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.buckets-Tuple{DtGraph}" href="#PdagExtendability.buckets-Tuple{DtGraph}"><code>PdagExtendability.buckets</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">buckets(g::DtGraph)::Vector{Set{Int64}}</code></pre><p>Compute all buckets, i.e., maximum undirected subcomponents, of <code>g</code>.</p><p><strong>References</strong></p><p>M. Wienöbst, M. Bannach, M. Liśkiewicz (2021). Extendability of Causal Graphical Models: Algorithms and Computational Complexity. 37th Conference on Uncertainty in Artificial Intelligence, 2021 (UAI 2021).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; buckets(setup_hs(g))
+Set{Int64}[]
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; buckets(setup_hs(g))
+1-element Vector{Set{Int64}}:
+ Set([2, 3])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/connected_components.jl#L4-L30">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.dfs!-Tuple{DtGraph, Int64, BitArray}" href="#PdagExtendability.dfs!-Tuple{DtGraph, Int64, BitArray}"><code>PdagExtendability.dfs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">dfs!(g::DtGraph, u::Int64, visited::BitArray)::Set{Int64}</code></pre><p>Start a depth first search at vertex <code>u</code> in graph <code>g</code> and visit only previously unvisited vertices. <code>visited</code> specifies for each vertex whether it was visited before or not and is updated accordingly. The result is a set of vertices reachable from <code>u</code> via <em>undirected</em> edges only.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; dfs!(setup_hs(g), 1, falses(3))
+Set{Int64} with 1 element:
+  1
+julia&gt; dfs!(setup_hs(g), 2, falses(3))
+Set{Int64} with 2 elements:
+  2
+  3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/connected_components.jl#L45-L72">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.directedge!-Tuple{DtGraph, Int64, Int64}" href="#PdagExtendability.directedge!-Tuple{DtGraph, Int64, Int64}"><code>PdagExtendability.directedge!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">directedge!(g::DtGraph, u::Int64, v::Int64)</code></pre><p>Direct an undirected edge <code>u-v</code> in <code>g</code> from <code>u</code> to <code>v</code> (<code>u-&gt;v</code>).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(2)
+{2, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 1)
+true
+julia&gt; dtgr = setup_hs(g)
+DtGraph(
+	2,
+	Set([2, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set()],
+	Set{Int64}[Set(), Set()],
+	Set{Int64}[Set([2]), Set([1])]
+)
+julia&gt; directedge!(dtgr, 1, 2)
+julia&gt; dtgr
+DtGraph(
+	2,
+	Set([2, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1])],
+	Set{Int64}[Set([2]), Set()],
+	Set{Int64}[Set(), Set()]
+)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/meek_rules.jl#L86-L119">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.dtgraph2digraph-Tuple{DtGraph}" href="#PdagExtendability.dtgraph2digraph-Tuple{DtGraph}"><code>PdagExtendability.dtgraph2digraph</code></a> — <span class="docstring-category">Method</span></header><section><div><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; g == dtgraph2digraph(setup_hs(g))
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/meek_rules.jl#L247-L261">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.hascycledfs!-Tuple{DtGraph, Vector{Int64}, Vector{UInt8}}" href="#PdagExtendability.hascycledfs!-Tuple{DtGraph, Vector{Int64}, Vector{UInt8}}"><code>PdagExtendability.hascycledfs!</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">hascycledfs!(g::DtGraph, stack::Vector{Int64}, visited::Vector{UInt8})::Bool</code></pre><p>Called by <a href="#PdagExtendability.hasdircycle-Tuple{DtGraph}"><code>hasdircycle</code></a> to perform a depth first search checking for cycles in a graph.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/meek_rules.jl#L225-L230">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.hasdircycle-Tuple{DtGraph}" href="#PdagExtendability.hasdircycle-Tuple{DtGraph}"><code>PdagExtendability.hasdircycle</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">hasdircycle(g::DtGraph)::Bool</code></pre><p>Check whether the graph <code>g</code> contains a directed cycle.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 1)
+true
+julia&gt; hasdircycle(setup_hs(g))
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/meek_rules.jl#L191-L209">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.ismpdag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.ismpdag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.ismpdag</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">ismpdag(g::SimpleDiGraph)::Bool</code></pre><p>Check whether a given graph <code>g</code> is an MPDAG.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 1)
+true
+julia&gt; ismpdag(g)
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/meek_rules.jl#L127-L145">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.pdag2mpdag-Tuple{Any}" href="#PdagExtendability.pdag2mpdag-Tuple{Any}"><code>PdagExtendability.pdag2mpdag</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">pdag2mpdag(g; nocopy = false)::DtGraph</code></pre><p>Apply the four Meek Rules to the input PDAG in order to obtain an MPDAG. The input must either be of type <code>SimpleDiGraph</code> or <code>DtGraph</code>. In case the input has type <code>DtGraph</code>, the paramter <code>nocopy</code> can be set to <code>true</code> in order to manipulate it directly instead of creating a copy.</p><p><strong>References</strong></p><p>Meek, C. (1995). Causal Inference and Causal Explanation with Background Knowledge. In Proceedings of the Eleventh Conference on Uncertainty in Artificial Intelligence, UAI’95.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; add_edge!(g, 3, 2)
+true
+julia&gt; collect(edges(dtgraph2digraph(pdag2mpdag(g))))
+2-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 =&gt; 2
+ Edge 2 =&gt; 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/meek_rules.jl#L5-L32">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.amo-Tuple{DtGraph}" href="#PdagExtendability.amo-Tuple{DtGraph}"><code>PdagExtendability.amo</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">amo(g::DtGraph)::Tuple{Vector{Int64}, Vector{Int64}}</code></pre><p>Compute an acyclic moral orientation (AMO) for a bucket in linear time. If the input graph does not admit an AMO, the result will not be an AMO but an arbitrary ordering. The result can be checked via <a href="#PdagExtendability.isamo-Tuple{DtGraph, Tuple{Vector{Int64}, Vector{Int64}}}"><code>isamo</code></a>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; amo(setup_hs(g))
+([1, 2, 3], [1, 2, 3])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/new_algo_mpdag.jl#L118-L136">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.isamo-Tuple{DtGraph, Tuple{Vector{Int64}, Vector{Int64}}}" href="#PdagExtendability.isamo-Tuple{DtGraph, Tuple{Vector{Int64}, Vector{Int64}}}"><code>PdagExtendability.isamo</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">isamo(g::DtGraph, ordering::Tuple{Vector{Int64}, Vector{Int64}})::Bool</code></pre><p>Check whether a given ordering is an acyclic moral orientation for a bucket.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; dtgraph = setup_hs(g)
+DtGraph(
+	3,
+	Set([2, 3, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1]), Set([2])],
+	Set{Int64}[Set([2]), Set([3]), Set()],
+	Set{Int64}[Set(), Set(), Set()]
+)
+julia&gt; isamo(dtgraph, amo(dtgraph))
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/new_algo_mpdag.jl#L182-L207">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.mpdag2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.mpdag2dag-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.mpdag2dag</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">mpdag2dag(g::SimpleDiGraph)::SimpleDiGraph</code></pre><p>Convert a given MPDAG to a consistent DAG extension. Only works for MPDAGs.</p><p><strong>References</strong></p><p>M. Wienöbst, M. Bannach, M. Liśkiewicz (2021). Extendability of Causal Graphical Models: Algorithms and Computational Complexity. 37th Conference on Uncertainty in Artificial Intelligence, 2021 (UAI 2021).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; collect(edges(mpdag2dag(g)))
+2-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 =&gt; 2
+ Edge 2 =&gt; 3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/new_algo_mpdag.jl#L6-L29">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.subgraph-Tuple{DtGraph, Set{Int64}, Dict}" href="#PdagExtendability.subgraph-Tuple{DtGraph, Set{Int64}, Dict}"><code>PdagExtendability.subgraph</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">subgraph(g::DtGraph, bucket::Set{Int64}, m::Dict)::DtGraph</code></pre><p>Compute the subgraph induces by the vertices in <code>bucket</code>. <code>m</code> is a mapping for vertices which is necessary if the vertices in <code>bucket</code> are not labelled from <code>1</code> to <code>length(bucket)</code>. It has to map each vertex in <code>bucket</code> to a number between <code>1</code> and <code>length(bucket)</code>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; g = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+julia&gt; add_edge!(g, 1, 2)
+true
+julia&gt; add_edge!(g, 2, 3)
+true
+julia&gt; s = subgraph(setup_hs(g), Set([1, 2]), Dict(1 =&gt; 1, 2 =&gt; 2))
+DtGraph(
+	2,
+	Set([2, 1]),
+	Set{Int64}[],
+	Set{Int64}[Set(), Set([1])],
+	Set{Int64}[Set([2]), Set()],
+	Set{Int64}[Set(), Set()]
+)
+julia&gt; collect(edges(dtgraph2digraph(s)))
+1-element Vector{LightGraphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 =&gt; 2</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_mpdag/new_algo_mpdag.jl#L59-L89">source</a></section></article><h2 id="Debugging"><a class="docs-heading-anchor" href="#Debugging">Debugging</a><a id="Debugging-1"></a><a class="docs-heading-anchor-permalink" href="#Debugging" title="Permalink"></a></h2><p>In practice, the algorithm <a href="#PdagExtendability.pdag2dag_hs"><code>pdag2dag_hs</code></a> may sometimes be faster than <a href="#PdagExtendability.fastpdag2dag_hs"><code>fastpdag2dag_hs</code></a>, although it has a worse time complexity. Thus, one might be interested to find out how many iterations were actually needed by the algorithm <a href="#PdagExtendability.pdag2dag_hs"><code>pdag2dag_hs</code></a> to compute the result.</p><p>The debug version <a href="#PdagExtendability.pdag2dag_debug_hs"><code>pdag2dag_debug_hs</code></a> logs the average number of iterations needed to find a potential sink in the input graph. Note that a potential sink is searched <span>$|V|$</span>-times, i.e., the total number of iterations can be approximated by multiplying the outputted average with <span>$|V|$</span>.</p><p><a href="#PdagExtendability.pdag2dag_debug_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>pdag2dag_debug_lg</code></a> does the same for the implementation using the LightGraphs library internally.</p><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.is_sink_debug_hs-Tuple{DtGraph, Int64}" href="#PdagExtendability.is_sink_debug_hs-Tuple{DtGraph, Int64}"><code>PdagExtendability.is_sink_debug_hs</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">is_sink_debug_hs(graph::DtGraph, x::Int64)::Tuple{Bool, Int64}</code></pre><p>Debug version of <a href="#PdagExtendability.is_sink_hs-Tuple{DtGraph, Int64}"><code>is_sink_hs</code></a>. The debug version counts the number of iterations needed to check whether x is a sink. </p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_debug_hs.jl#L79-L84">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.pdag2dag_debug_hs" href="#PdagExtendability.pdag2dag_debug_hs"><code>PdagExtendability.pdag2dag_debug_hs</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">pdag2dag_debug_hs(g::SimpleDiGraph, useheuristic::Bool = false)::SimpleDiGraph</code></pre><p>Debug version of <a href="#PdagExtendability.pdag2dag_hs"><code>pdag2dag_hs</code></a>. The debug version logs the average number of iterations needed to find a sink.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_debug_hs.jl#L5-L10">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.sink_debug_hs" href="#PdagExtendability.sink_debug_hs"><code>PdagExtendability.sink_debug_hs</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">sink_debug_hs(graph::DtGraph, useheuristic::Bool = false)::Tuple{Int64, Int64, Vector{Int64}}</code></pre><p>Debug version of <a href="#PdagExtendability.sink_hs"><code>sink_hs</code></a>. The debug version counts the number of iterations needed to find a sink and computes the average number of iterations needed in the whole algorithm. </p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_hs/dor_tarsi_debug_hs.jl#L44-L50">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.pdag2dag_debug_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.pdag2dag_debug_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.pdag2dag_debug_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">pdag2dag_debug_lg(g::SimpleDiGraph)::SimpleDiGraph</code></pre><p>Debug version of <a href="#PdagExtendability.pdag2dag_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>pdag2dag_lg</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/dor_tarsi_debug_lg.jl#L3-L7">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="PdagExtendability.sink_debug_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}" href="#PdagExtendability.sink_debug_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>PdagExtendability.sink_debug_lg</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">sink_debug_lg(g::SimpleDiGraph)::Tuple{Int64, Int64}</code></pre><p>Debug version of <a href="#PdagExtendability.sink_lg-Tuple{LightGraphs.SimpleGraphs.SimpleDiGraph}"><code>sink_lg</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/Malte311/PdagExtendability/blob/e65f124e1cd4a6e82c6ce1974154360c5850dad8/src/extendability/implementation_lg/dor_tarsi_debug_lg.jl#L44-L48">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../getting_started/">« Getting Started</a><a class="docs-footer-nextpage" href="../enumeration/">Enumeration Problem »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.5 on <span class="colophon-date" title="Sunday 15 August 2021 09:46">Sunday 15 August 2021</span>. Using Julia version 1.6.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
