@@ -8,8 +8,6 @@ script:
   - julia --project=./ -e 'using Pkg; Pkg.instantiate()'
   - julia --project=./ --code-coverage test/runtests.jl
 
-coveralls: true
-
 deploy:
 - provider: pages
   github-token: $GITHUB_TOKEN
@@ -17,3 +15,6 @@ deploy:
   skip-cleanup: true
   on:
     branch: master
+
+after_success:
+  - julia --project=./ -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
