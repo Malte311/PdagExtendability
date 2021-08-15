@@ -17,6 +17,11 @@ time O(Δm) with Δ being the maximum degree of g and m the number of edges in
 g. Setting optimize to true will yield an algorithm in time O(dm), where d
 is the degeneracy of the skeleton.
 
+# References
+M. Wienöbst, M. Bannach, M. Liśkiewicz (2021).
+Extendability of Causal Graphical Models: Algorithms and Computational Complexity.
+37th Conference on Uncertainty in Artificial Intelligence, 2021 (UAI 2021).
+
 # Examples
 ```julia-repl
 julia> g = SimpleDiGraph(3)
