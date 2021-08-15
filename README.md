@@ -7,6 +7,13 @@ This repository contains a benchmarking framework for the extendability of
 The benchmarking framework contains efficient algorithms for extending
 (causal) graphs and more than 1000 exemplary input graph instances.
 
+More precisely, algorithms solving the following two problems are provided:
+1. Given any partially directed graph _G_, compute a consistent DAG extension
+for _G_ if _G_ admits such an extension, otherwise return a negative answer
+(Extension Problem).
+2. Given any partially directed graph _G_, compute the set of **all** consistent
+DAG extensions for _G_ (Enumeration Problem).
+
 ## Usage
 In order to run the benchmarks, download the repository first.
 The benchmarks can be started directly from the terminal via
