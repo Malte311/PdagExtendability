@@ -68,4 +68,4 @@ An exemplary configuration file could look like this:
 In order to run the algorithms on other graphs than the provided
 benchmarks, you can generate your own graphs. There are plenty of
 functions for generating graphs which can be found under the
-[Utilities](@ref utilities_header) section.
+[Utilities](@ref utilities_graphgeneration_header) section.

@@ -21,7 +21,7 @@ Pages = [
 ]
 ```
 
-## Graph Generators
+## [Graph Generators](@id utilities_graphgeneration_header)
 
 In order to generate even more input graph instances, there are
 different graph generation approaches available.
