@@ -1,5 +1,6 @@
 ![Build Status](https://travis-ci.com/Malte311/PdagExtendability.svg?token=peoMTzKpBjcCaX8BZgzt&branch=master)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://malte311.github.io/PdagExtendability/)
+[![Coverage Status](https://coveralls.io/repos/github/Malte311/PdagExtendability/badge.svg?branch=master)](https://coveralls.io/github/Malte311/PdagExtendability?branch=master)
 
 # PdagExtendability <img src="docs/src/assets/logo.svg" align="right" height="120">
 This repository contains a benchmarking framework for the extendability of
