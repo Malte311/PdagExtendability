@@ -2,25 +2,10 @@
 [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://malte311.github.io/PdagExtendability/)
 
 # PdagExtendability <img src="docs/src/assets/logo.svg" align="right" height="120">
-Causal relationships are of great interest in many research areas. In order to
-model causal relationships, graphical causal models are widely used.
-
-This repository contains algorithms for dealing with such graphical causal
-models. Mainly, the three following problems are considered and algorithms to
-solve them are implemented in this repository.
-
-1. The extendability problem: Given a partially directed graph, compute a
-consistent DAG extension if possible, otherwise return "Not possible".
-2. The recognition problem: Given a partially directed graph, decide whether
-it is an MPDAG (PDAG, CPDAG, CG).
-3. The maximum orientation problem: Given a partially directed acyclic graph,
-compute the graph resulting from applying Meek's rules repeatedly.
-
-All of the implemented algorithms are based on the paper "Extendability of
-Causal Graphical Models: Algorithms and Computational Complexity".
-> M. Wienöbst, M. Bannach, M. Liśkiewicz (2021).
-> Extendability of Causal Graphical Models: Algorithms and Computational Complexity.
-> 37th Conference on Uncertainty in Artificial Intelligence, 2021 (UAI 2021).
+This repository contains a benchmarking framework for the extendability of
+(causal) graphs.
+The benchmarking framework contains efficient algorithms for extending
+(causal) graphs and more than 1000 exemplary input graph instances.
 
 ## Usage
 In order to run the benchmarks, download the repository first.
@@ -33,11 +18,19 @@ run the same command inside of the Docker container (this allows to
 execute the code without installing Julia or any of the dependencies on
 your machine).
 
-In case you want to use Docker and Linux is your operating system, you
-have to set the parameters `H_UID` and `H_GID` in
-[`docker-compose.yml`](https://github.com/Malte311/PdagExtendability/blob/master/docker-compose.yml).
-`H_UID` should be set to the user id of the current user and `H_GID` to
-the group id of the current user.
+See also the [documentation](https://malte311.github.io/PdagExtendability/getting_started/)
+for more detailed information on how to adjust the configuration for a run.
+
+## References
+Many of the implemented algorithms are from the following papers:
+
+> D. Dor, M. Tarsi (1992).
+> A simple algorithm to construct a consistent extension of a partially oriented graph.
+> Technicial Report R-185, Cognitive Systems Laboratory, UCLA.
+
+> M. Wienöbst, M. Bannach, M. Liśkiewicz (2021).
+> Extendability of Causal Graphical Models: Algorithms and Computational Complexity.
+> 37th Conference on Uncertainty in Artificial Intelligence, 2021 (UAI 2021).
 
 ## Development with Docker
 The whole software is wrapped inside a Docker container. Thus, it is not even
@@ -45,5 +38,6 @@ necessary to have Julia installed on your system. Using Docker, simply run
 `./run.sh` to start the system. Edit the source files as you like and execute
 them directly in the shell provided by Docker.
 
-In case the Dockerfile changes, you can run `./run.sh b` to rebuild the
-Docker container before starting it.
+In case the [Dockerfile](https://github.com/Malte311/PdagExtendability/blob/master/Dockerfile)
+is edited, you can run `./run.sh b` to rebuild the Docker container
+before starting it.
