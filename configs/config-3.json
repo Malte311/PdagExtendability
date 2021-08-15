@@ -1,0 +1,18 @@
+{
+	"algorithm": [
+		"enumerate_v1()",
+		"enumerate_v2()"
+	],
+	"algorithm_log_id": "",
+	"benchmarkdir": "../benchmarks/pdirected/enumeration/n=100/m=10/",
+	"create_csv": false,
+	"enumerate": true,
+	"logdir": "../logs/",
+	"logfile": "log-3.txt",
+	"logtofile": false,
+	"num_evals": 1,
+	"num_samples": 5,
+	"only_undirected": false,
+	"use_median": true,
+	"visualize": false
+}
