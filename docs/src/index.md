@@ -5,8 +5,12 @@ The benchmarking framework contains efficient algorithms for extending
 (causal) graphs and more than 1000 exemplary input graph instances.
 
 More precisely, algorithms solving the following two problems are provided:
-1. Given any partially directed graph _G_, compute a consistent DAG extension for _G_ if _G_ admits such an extension, otherwise return a negative answer (Extension Problem).
-2. Given any partially directed graph _G_, compute the set of **all** consistent DAG extensions for _G_ (Enumeration Problem).
+1. Given any partially directed graph $G$, compute a consistent DAG extension for $G$ if $G$ admits such an extension, otherwise return a negative answer (Extension Problem).
+2. Given any partially directed graph $G$, compute the set of **all** consistent DAG extensions for $G$ (Enumeration Problem).
+
+We denote that the number of vertices in the input graph as $|V|$ and the
+number of edges in the input graph as $|E|$. The maximum degree in the
+input graph is denoted as $\Delta$.
 
 !!! note
 

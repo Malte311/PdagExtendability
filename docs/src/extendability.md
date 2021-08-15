@@ -1,4 +1,4 @@
-# [Extendability](@id extendability_header)
+# [Extension Problem](@id extendability_header)
 
 The main component of this framework is composed of algorithms for
 the extension problem. That is, given a partially directed graph,
@@ -19,8 +19,8 @@ Since the performance of the implementation with LightGraphs is inferior
 to the performance of the HashSets implementation, not all algorithms have
 been implemented using LightGraphs. Available algorithms are:
 
-- [`pdag2dag_lg`](@ref) - An algorithm with worst-case time complexity $O(|V|^4)$.
-- [`fastpdag2dag_lg`](@ref) - An algorithm with worst-case time complexity $O(|V|^3)$.
+- [`pdag2dag_lg`](@ref) - An algorithm with worst-case time complexity $O(\Delta^2 |E|)$.
+- [`fastpdag2dag_lg`](@ref) - An algorithm with worst-case time complexity $O(\Delta |E|)$.
 
 All of the other functions that are listed below are called internally in these algorithms.
 
@@ -39,10 +39,10 @@ Pages = [
 Basically, there are three different algorithms implemented using HashSets
 internally:
 
-- [`pdag2dag_hs`](@ref) - An algorithm with worst-case time complexity $O(|V|^4)$.
-- [`altpdag2dag_hs`](@ref) - An alternative implementation for [`pdag2dag_hs`](@ref).
-- [`fastpdag2dag_hs`](@ref) - An algorithm with worst-case time complexity $O(|V|^3)$.
-- [`pdag2mpdag2dag`](@ref) - An algorithm with worst-case time complexity $O(|V|*|E|^2)$ (as the worst-case complexity already suggests, this algorithm is way slower than the other algorithms).
+- [`pdag2dag_hs`](@ref) - An algorithm with worst-case time complexity $O(\Delta^2 |E|)$.
+- [`altpdag2dag_hs`](@ref) - An alternative implementation for [`pdag2dag_hs`](@ref) with worst-case time complexity $O(\Delta^2 |E|)$.
+- [`fastpdag2dag_hs`](@ref) - An algorithm with worst-case time complexity $O(\Delta |E|)$.
+- [`pdag2mpdag2dag`](@ref) - An algorithm with worst-case time complexity $O(\Delta |E|^2)$ (as the worst-case complexity already suggests, this algorithm is way slower than the other algorithms).
 
 Again, all of the other functions listed below are called internally in these algorithms.
 
