@@ -18,7 +18,7 @@ provided by Docker.
 In order to run the benchmarks, simply run the following command.
 
 ```bash
-julia run.jl "../configs/config.json"
+julia run.jl "../configs/config-1.json"
 ```
 
 You can adapt the configuration file `config.json` in order to customize

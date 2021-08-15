@@ -18,7 +18,7 @@ DAG extensions for _G_ (Enumeration Problem).
 In order to run the benchmarks, download the repository first.
 The benchmarks can be started directly from the terminal via
 ```bash
-julia run.jl "../configs/config.json"
+julia run.jl "../configs/config-1.json"
 ```
 Alternatively, you can start a Docker container via `./run.sh` and
 run the same command inside of the Docker container (this allows to
