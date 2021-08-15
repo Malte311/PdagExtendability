@@ -24,7 +24,7 @@ julia run.jl "../configs/config.json"
 You can adapt the configuration file `config.json` in order to customize
 the setup. These are the configuration options which are provided:
 
-- `algorithm`: An array containing the function calls of the algorithms which should be run (i.e., parenthesis and additional parameters must be provided). Available algorithms are [`pdag2dag_hs`](@ref), [`altpdag2dag_hs`](@ref), [`pdag2dag_lg`](@ref), [`fastpdag2dag_hs`](@ref), and [`fastpdag2dag_lg`](@ref). For fully undirected graphs [`undir2dag`](@ref) is an option as well and for fully directed graphs the algorithm [`dir2dag`](@ref) can be utilized as well.
+- `algorithm`: An array containing the function calls of the algorithms which should be run (i.e., parenthesis and additional parameters must be provided). Available algorithms for the extension problem are [`pdag2dag_hs`](@ref), [`altpdag2dag_hs`](@ref), [`pdag2dag_lg`](@ref), [`fastpdag2dag_hs`](@ref), [`fastpdag2dag_lg`](@ref), and [`pdag2mpdag2dag`](@ref). For fully undirected graphs [`undir2dag`](@ref) is an option as well, for fully directed graphs the algorithm [`dir2dag`](@ref) can be used as well, and for MPDAGs (i.e., graphs from the subdirectory `benchmarks/mpdirected`) the algorithm [`mpdag2dag`](@ref) might be utilized as well.
 - `algorithm_log_id` (optional): An id to identify a specific run. For example, if you run the same algorithm twice, both results are named the same. In order to prevent this, you can add an id for each run. The id can be an arbitrary string.
 - `benchmarkdir`: The path to the directory which contains the benchmarks which should be run. Note that all subdirectories are evaluated as well.
 - `create_csv`: Boolean value to specify whether a `.csv` file of the run should be created. The file contains one row per benchmark. Each row contains the name of the algorithm, the name of the input file, and the measured time for that instance.
@@ -34,11 +34,35 @@ the setup. These are the configuration options which are provided:
 - `logtofile`: Boolean value to specify whether logs should be written to the logfile (`true`) or to `stdout` (`false`).
 - `num_evals`: The number of evaluations per sample.
 - `num_samples`: The number of samples to take.
-- `only_undirected`: Boolean value to specify whether the input graphs contain only undirected edges (`true`) or not (`false`), i.e., if undirected edges are **not** encoded via two directed edges in the input file. For the `benchmarks/undirected` directory, this should be set to `true`. For the other directories (`benchmarks/directed` and `benchmarks/pdirected`), it should be set to `false`.
+- `only_undirected`: Boolean value to specify whether the input graphs contain only undirected edges (`true`) or not (`false`), i.e., if undirected edges are **not** encoded via two directed edges in the input file. For the `benchmarks/undirected` directory, this should be set to `true`. For all of the other directories (e.g., `benchmarks/directed` and `benchmarks/pdirected`), it should be set to `false`.
 - `use_median`: Boolean value to specify whether to use the median of the measurements. If set to `false`, the mean will be used instead.
 - `visualize`: Boolean value to specify whether the input graph and the output graph should be plotted and saved to a `.svg` file.
 
 It is also possible to run multiple trials simultaneously using different configuration files for each trial.
+An exemplary configuration file could look like this:
+
+```json
+{
+	"algorithm": [
+		"pdag2dag_hs(false)",
+		"pdag2dag_hs(true)",
+		"fastpdag2dag_hs(false)",
+		"fastpdag2dag_hs(true)"
+	],
+	"algorithm_log_id": "",
+	"benchmarkdir": "../benchmarks/pdirected/sparse/n=1024/",
+	"create_csv": false,
+	"enumerate": false,
+	"logdir": "../logs/",
+	"logfile": "log-1.txt",
+	"logtofile": false,
+	"num_evals": 1,
+	"num_samples": 5,
+	"only_undirected": false,
+	"use_median": true,
+	"visualize": false
+}
+```
 
 ## Generating Your Own Benchmarks
 In order to run the algorithms on other graphs than the provided

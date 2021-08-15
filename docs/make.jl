@@ -15,9 +15,8 @@ makedocs(
 	pages = [
 		"Overview" => "index.md",
 		"Getting Started" => "getting_started.md",
-		"Extendability" => "extendability.md",
-		"Recognition" => "recognition.md",
-		"Maximum Orientation" => "maximum_orientation.md",
+		"Extension Problem" => "extendability.md",
+		"Enumeration Problem" => "enumeration.md",
 		"Utilities" => "utils.md"
 	],
 	format = Documenter.HTML(

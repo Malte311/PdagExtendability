@@ -56,6 +56,17 @@ Pages = [
 ]
 ```
 
+## MPDAGs
+
+```@autodocs
+Modules = [PdagExtendability]
+Pages = [
+	"extendability/implementation_mpdag/connected_components.jl",
+	"extendability/implementation_mpdag/meek_rules.jl",
+	"extendability/implementation_mpdag/new_algo_mpdag.jl"
+]
+```
+
 ## Debugging
 
 In practice, the algorithm [`pdag2dag_hs`](@ref) may sometimes be faster
